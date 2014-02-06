@@ -8,7 +8,7 @@
     <name>MATPlugin</name>
 
     <description>This plugin allows you to track installs and events using MobileAppTracking.</description>
-    <repo>https://github.com/john-gu/phonegap-mat-plugin.git</repo>
+    <repo>https://github.com/MobileAppTracking/phonegap-plugin.git</repo>
     <keywords>cordova,mat,mobileapptracking,tracking</keywords>
     <license>Apache 2.0</license>
     
