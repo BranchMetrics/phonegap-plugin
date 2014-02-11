@@ -16,22 +16,30 @@ import com.mobileapptracker.MobileAppTracker;
 
 public class MATPlugin extends CordovaPlugin {
     public static final String INIT = "initTracker";
-    public static final String TRACKINSTALL = "trackInstall";
     public static final String TRACKACTION = "trackAction";
     public static final String TRACKACTIONWITHITEMS = "trackActionWithItems";
     public static final String TRACKACTIONWITHRECEIPT = "trackActionWithReceipt";
-    public static final String TRACKUPDATE = "trackUpdate";
+    public static final String TRACKSESSION = "trackSession";
     public static final String SETAGE = "setAge";
     public static final String SETAPPADTRACKING = "setAppAdTracking";
     public static final String SETALLOWDUP = "setAllowDuplicates";
     public static final String SETDEBUG = "setDebugMode";
+    public static final String SETEVENTATTRIBUTE1 = "setEventAttribute1";
+    public static final String SETEVENTATTRIBUTE2 = "setEventAttribute2";
+    public static final String SETEVENTATTRIBUTE3 = "setEventAttribute3";
+    public static final String SETEVENTATTRIBUTE4 = "setEventAttribute4";
+    public static final String SETEVENTATTRIBUTE5 = "setEventAttribute5";
+    public static final String SETEXISTINGUSER = "setExistingUser";
     public static final String SETGENDER = "setGender";
+    public static final String SETGOOGLEADVERTISINGID = "setGoogleAdvertisingId";
     public static final String SETLOCATION = "setLocation";
     public static final String SETLOCATIONWITHALTITUDE = "setLocationWithAltitude";
     public static final String SETPACKAGENAME = "setPackageName";
-    public static final String SETREFID = "setRefId";
-    public static final String SETTPID = "setTrusteTPID";
+    public static final String SETTRACKING = "setTracking";
+    public static final String SETTPID = "setTRUSTeID";
+    public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
+    public static final String SETUSERNAME = "setUserName";
     public static final String SETFBUSERID = "setFacebookUserId";
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETGGUSERID = "setGoogleUserId";
@@ -51,21 +59,11 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("Advertiser id or key is null or empty");
                     return false;
                 }
-            } else if (TRACKINSTALL.equals(action)) {
+            } else if (TRACKSESSION.equals(action)) {
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
                         if (tracker != null) {
-                            tracker.trackInstall();
-                        }
-                        callbackContext.success();
-                    }
-                });
-                return true;
-            } else if (TRACKUPDATE.equals(action)) {
-                cordova.getThreadPool().execute(new Runnable() {
-                    public void run() {
-                        if (tracker != null) {
-                            tracker.trackUpdate();
+                            tracker.trackSession();
                         }
                         callbackContext.success();
                     }
@@ -78,9 +76,9 @@ public class MATPlugin extends CordovaPlugin {
                 String currency = null;
                 
                 try {
-                    refId = args.getString(2);
-                    revenue = args.getDouble(3);
-                    currency = args.getString(4);
+                    refId = args.getString(1);
+                    revenue = args.getDouble(2);
+                    currency = args.getString(3);
                 } catch (JSONException e) {
                 }
                 
@@ -100,12 +98,12 @@ public class MATPlugin extends CordovaPlugin {
                 String receiptData = null;
                 String receiptSignature = null;
                 try {
-                    eventItems = args.getJSONArray(2);
-                    refId = args.getString(3);
-                    revenue = args.getDouble(4);
-                    currency = args.getString(5);
-                    receiptData = args.getString(7);
-                    receiptSignature = args.getString(8);
+                    eventItems = args.getJSONArray(1);
+                    refId = args.getString(2);
+                    revenue = args.getDouble(3);
+                    currency = args.getString(4);
+                    receiptData = args.getString(6);
+                    receiptSignature = args.getString(7);
                 } catch (JSONException e) {
                 }
                 
@@ -200,10 +198,59 @@ public class MATPlugin extends CordovaPlugin {
                 }
                 callbackContext.success();
                 return true;
+            } else if (SETEVENTATTRIBUTE1.equals(action)) {
+                String attributeVal = args.getString(0);
+                if (tracker != null) {
+                    tracker.setEventAttribute1(attributeVal);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTATTRIBUTE2.equals(action)) {
+                String attributeVal = args.getString(0);
+                if (tracker != null) {
+                    tracker.setEventAttribute2(attributeVal);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTATTRIBUTE3.equals(action)) {
+                String attributeVal = args.getString(0);
+                if (tracker != null) {
+                    tracker.setEventAttribute3(attributeVal);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTATTRIBUTE4.equals(action)) {
+                String attributeVal = args.getString(0);
+                if (tracker != null) {
+                    tracker.setEventAttribute4(attributeVal);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTATTRIBUTE5.equals(action)) {
+                String attributeVal = args.getString(0);
+                if (tracker != null) {
+                    tracker.setEventAttribute5(attributeVal);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEXISTINGUSER.equals(action)) {
+                boolean existingUser = args.getBoolean(0);
+                if (tracker != null) {
+                    tracker.setExistingUser(existingUser);
+                }
+                callbackContext.success();
+                return true;
             } else if (SETGENDER.equals(action)) {
                 int gender = args.getInt(0);
                 if (tracker != null) {
                     tracker.setGender(gender);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETGOOGLEADVERTISINGID.equals(action)) {
+                String googleAid = args.getString(0);
+                if (tracker != null) {
+                    tracker.setGoogleAdvertisingId(googleAid);
                 }
                 callbackContext.success();
                 return true;
@@ -239,18 +286,6 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("Package name null or empty");
                     return false;
                 }
-            } else if (SETREFID.equals(action)) {
-                String refId = args.getString(0);
-                if (refId != null && refId.length() > 0) {
-                    if (tracker != null) {
-                        tracker.setRefId(refId);
-                    }
-                    callbackContext.success();
-                    return true;
-                } else {
-                    callbackContext.error("Ref ID null or empty");
-                    return false;
-                }
             } else if (SETTPID.equals(action)) {
                 String tpid = args.getString(0);
                 if (tpid != null && tpid.length() > 0) {
@@ -263,6 +298,30 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("TPID null or empty");
                     return false;
                 }
+            } else if (SETTRACKING.equals(action)) {
+                String targetPackageName = args.getString(0);
+                String publisherAdvertiserId = args.getString(1);
+                String targetOfferId = args.getString(2);
+                String targetPublisherId = args.getString(3);
+                boolean shouldRedirect = args.getBoolean(4);
+                
+                if (tracker != null) {
+                    tracker.setTracking(publisherAdvertiserId, targetPackageName, targetPublisherId, targetOfferId, shouldRedirect);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETUSEREMAIL.equals(action)) {
+                String userEmail = args.getString(0);
+                if (userEmail != null && userEmail.length() > 0) {
+                    if (tracker != null) {
+                        tracker.setUserEmail(userEmail);
+                    }
+                    callbackContext.success();
+                    return true;
+                } else {
+                    callbackContext.error("User email null or empty");
+                    return false;
+                }
             } else if (SETUSERID.equals(action)) {
                 String userId = args.getString(0);
                 if (userId != null && userId.length() > 0) {
@@ -273,6 +332,18 @@ public class MATPlugin extends CordovaPlugin {
                     return true;
                 } else {
                     callbackContext.error("User ID null or empty");
+                    return false;
+                }
+            } else if (SETUSERNAME.equals(action)) {
+                String userName = args.getString(0);
+                if (userName != null && userName.length() > 0) {
+                    if (tracker != null) {
+                        tracker.setUserName(userName);
+                    }
+                    callbackContext.success();
+                    return true;
+                } else {
+                    callbackContext.error("User name null or empty");
                     return false;
                 }
             } else if (SETFBUSERID.equals(action)) {
@@ -336,8 +407,10 @@ public class MATPlugin extends CordovaPlugin {
         
         @Override
         public void run() {
-            tracker = new MobileAppTracker(context, advertiserId, advertiserKey);
+            MobileAppTracker.init(context, advertiserId, advertiserKey);
+            tracker = MobileAppTracker.getInstance();
             tracker.setPluginName("phonegap");
+            tracker.setReferralSources(context);
             cbc.success();
         }
     }
@@ -365,33 +438,25 @@ public class MATPlugin extends CordovaPlugin {
         
         @Override
         public void run() {
+            // Set currency code if exists
+            if (currency != null && currency.length() > 0 && !currency.equals("null")) {
+                tracker.setCurrencyCode(currency);
+            }
             // If there are any event items, track with event item
             if (eventItemList != null && eventItemList.size() > 0) {
-                // Set revenue if exists
-                if (revenue != 0) {
-                    tracker.setRevenue(revenue);
-                }
-                // Set currency code if exists
-                if (currency != null && currency.length() > 0 && !currency.equals("null")) {
-                    tracker.setCurrencyCode(currency);
-                }
-                // Set advertiser ref ID if exists
-                if (refId != null && refId.length() > 0 && !refId.equals("null")) {
-                    tracker.setRefId(refId);
-                }
                 if (receiptData != null && !receiptData.equals("null") && receiptSignature != null && !receiptSignature.equals("null")) {
                     // Track with receipt data if not null
-                    tracker.trackAction(eventName, eventItemList, receiptData, receiptSignature);
+                    tracker.trackAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
                 } else {
                     // Track with just event item
-                    tracker.trackAction(eventName, eventItemList);
+                    tracker.trackAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
                 }
             } else if (receiptData != null && receiptSignature != null) {
-                tracker.trackAction(eventName, revenue, currency, refId, receiptData, receiptSignature);
+                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
             } else if (refId != null && refId.length() > 0) {
-                tracker.trackAction(eventName, revenue, currency, refId);
+                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode(), refId);
             } else if (currency != null && currency.length() > 0) {
-                tracker.trackAction(eventName, revenue, currency);
+                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode());
             } else {
                 tracker.trackAction(eventName, revenue);
             }

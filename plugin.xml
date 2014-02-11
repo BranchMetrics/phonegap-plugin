@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
         xmlns:android="http://schemas.android.com/apk/res/android" 
         id="com.mobileapptracking.matplugin" 
-        version="2.7">
+        version="3.0.3">
 
     <name>MATPlugin</name>
 
@@ -13,7 +13,7 @@
     <license>Apache 2.0</license>
     
     <engines>
-        <engine name="cordova" version=">=2.0.0" />
+        <engine name="cordova" version=">=3.0.0" />
     </engines>
         
     <js-module src="www/MATPlugin.js" name="MATPlugin">
@@ -43,7 +43,7 @@
             </receiver>
         </config-file>
 
-        <source-file src="src/android/lib/MobileAppTracker-2.7.jar" target-dir="libs/" />
+        <source-file src="src/android/lib/MobileAppTracker-3.0.3.jar" target-dir="libs/" />
         <source-file src="src/android/com/mobileapptracking/MATPlugin.java"
                      target-dir="src/com/mobileapptracking" />
     </platform>
@@ -64,15 +64,16 @@
         <header-file src="src/ios/MATPlugin.h" />
 
         <!-- MobileAppTracker framework -->
-        <source-file src="src/ios/MobileAppTracker-2.7.a" framework="true" />
+        <source-file src="src/ios/MobileAppTracker-3.0.3.a" framework="true" />
 
         <header-file src="src/ios/MobileAppTracker.h" />
+        <header-file src="src/ios/MATEventItem.h" />
         
         <!-- system frameworks -->
-        <framework src="AdSupport.framework" weak="true" />
         <framework src="CoreTelephony.framework" />
         <framework src="MobileCoreServices.framework" />
         <framework src="SystemConfiguration.framework" />
+        <framework src="iAd.framework" />
     </platform>
 
 </plugin>

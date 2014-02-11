@@ -16,13 +16,10 @@
 
 - (void)initTracker:(CDVInvokedUrlCommand*)command;
 
-- (void)sdkDataParameters:(CDVInvokedUrlCommand*)command;
 - (void)setAllowDuplicates:(CDVInvokedUrlCommand*)command;
 - (void)setDebugMode:(CDVInvokedUrlCommand*)command;
 - (void)setDelegate:(CDVInvokedUrlCommand*)command;
 
-- (void)setMATAdvertiserId:(CDVInvokedUrlCommand*)command;
-- (void)setMATConversionKey:(CDVInvokedUrlCommand*)command;
 - (void)setPackageName:(CDVInvokedUrlCommand*)command;
 - (void)setSiteId:(CDVInvokedUrlCommand*)command;
 
@@ -36,19 +33,16 @@
 - (void)setJailbroken:(CDVInvokedUrlCommand*)command;
 - (void)setLocation:(CDVInvokedUrlCommand*)command;
 - (void)setLocationWithAltitude:(CDVInvokedUrlCommand*)command;
-- (void)setMACAddress:(CDVInvokedUrlCommand*)command;
-- (void)setOpenUDID:(CDVInvokedUrlCommand*)command;
-- (void)setODIN1:(CDVInvokedUrlCommand*)command;
-- (void)setTrusteTPID:(CDVInvokedUrlCommand*)command;
-- (void)setUIID:(CDVInvokedUrlCommand*)command;
+- (void)setTRUSTeId:(CDVInvokedUrlCommand*)command;
 - (void)setUseCookieTracking:(CDVInvokedUrlCommand*)command;
+- (void)setUserEmail:(CDVInvokedUrlCommand*)command;
 - (void)setUserId:(CDVInvokedUrlCommand*)command;
+- (void)setUserName:(CDVInvokedUrlCommand*)command;
 - (void)setFacebookUserId:(CDVInvokedUrlCommand*)command;
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command;
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command;
 
 - (void)setShouldAutoDetectJailbroken:(CDVInvokedUrlCommand*)command;
-- (void)setShouldAutoGenerateAppleAdvertisingIdentifier:(CDVInvokedUrlCommand*)command;
 - (void)setShouldAutoGenerateAppleVendorIdentifier:(CDVInvokedUrlCommand*)command;
 
 - (void)applicationDidOpenURL:(CDVInvokedUrlCommand*)command;
@@ -56,11 +50,17 @@
 - (void)setTracking:(CDVInvokedUrlCommand*)command;
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command;
 
-- (void)trackInstall:(CDVInvokedUrlCommand*)command;
-- (void)trackUpdate:(CDVInvokedUrlCommand*)command;
+- (void)setExistingUser:(CDVInvokedUrlCommand*)command;
+- (void)trackSession:(CDVInvokedUrlCommand*)command;
 
 - (void)trackAction:(CDVInvokedUrlCommand*)command;
 - (void)trackActionWithItems:(CDVInvokedUrlCommand*)command;
 - (void)trackActionWithReceipt:(CDVInvokedUrlCommand*)command;
+
+- (void)setEventAttribute1:(CDVInvokedUrlCommand*)command;
+- (void)setEventAttribute2:(CDVInvokedUrlCommand*)command;
+- (void)setEventAttribute3:(CDVInvokedUrlCommand*)command;
+- (void)setEventAttribute4:(CDVInvokedUrlCommand*)command;
+- (void)setEventAttribute5:(CDVInvokedUrlCommand*)command;
 
 @end

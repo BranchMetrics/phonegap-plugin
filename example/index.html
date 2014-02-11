@@ -25,6 +25,17 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>MAT PhoneGap Test App</title>
+        
+        <style>
+            button.btn {
+                width: 80%;  height: 40px;
+                font-size: 16px;
+            }
+            div.btnDiv {
+                text-align: center;
+                margin-bottom:0.5em;
+            }
+        </style>
     </head>
     <body>
         <script type="text/javascript" src="cordova.js"></script>
@@ -66,16 +77,14 @@
             
             function testSetters()
             {
-                mat.setODIN1(resultHandler, errorHandler, "tempODIN1");
-                mat.setOpenUDID(resultHandler, errorHandler, "tempOpenUDID");
-                mat.setMACAddress(resultHandler, errorHandler, "tempMACAddress");
-                mat.setTrusteTPID(resultHandler, errorHandler, "tempTrusteTPID");
+                mat.setTRUSTeId(resultHandler, errorHandler, "tempTrusteId");
+                mat.setUserEmail(resultHandler, errorHandler, "tempUserEmail@tempUserCompany.com");
                 mat.setUserId(resultHandler, errorHandler, "tempUserId");
+                mat.setUserName(resultHandler, errorHandler, "tempUserName");
                 mat.setFacebookUserId(resultHandler, errorHandler, "tempFacebookId");
                 mat.setTwitterUserId(resultHandler, errorHandler, "tempTwitterId");
                 mat.setGoogleUserId(resultHandler, errorHandler, "tempGoogleId");
 
-                mat.setUIID(resultHandler, errorHandler, "tempUIID");
                 mat.setCurrencyCode(resultHandler, errorHandler, "tempCurrencyCode");
                 mat.setGender(resultHandler, errorHandler, 1);
                 mat.setLocation(resultHandler, errorHandler, 1.1, 2.2);
@@ -84,30 +93,23 @@
                 mat.setAppAdTracking(resultHandler, errorHandler, true);
                 mat.setAge(resultHandler, errorHandler, 23);
                 mat.setJailbroken(resultHandler, errorHandler, false);
-                mat.setMATAdvertiserId(resultHandler, errorHandler, "tempMATAdvId");
-                mat.setMATConversionKey(resultHandler, errorHandler, "tempMATConvKey");
-                mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012");
+                mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012", true);
                 mat.setAppleVendorIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012");
                 mat.setPackageName(resultHandler, errorHandler, "testPackageName");
                 
+                mat.setEventAttribute1(resultHandler, errorHandler, "eventAttr1");
+                mat.setEventAttribute2(resultHandler, errorHandler, "eventAttr2");
+                mat.setEventAttribute3(resultHandler, errorHandler, "eventAttr3");
+                mat.setEventAttribute4(resultHandler, errorHandler, "eventAttr4");
+                mat.setEventAttribute5(resultHandler, errorHandler, "eventAttr5");
+                
                 // print the sdk data params
                 mat.setDelegate(resultHandler, errorHandler, true);
-                mat.sdkDataParameters(resultHandler, errorHandler);
             }
             
-            function printSDKDataParameters()
+            function testTrackSession()
             {
-                mat.sdkDataParameters(resultHandler, errorHandler);
-            }
-            
-            function testTrackInstall()
-            {
-                mat.trackInstall(resultHandler, errorHandler);
-            }
-            
-            function testTrackUpdate()
-            {
-                mat.trackUpdate(resultHandler, errorHandler);
+                mat.trackSession(resultHandler, errorHandler);
             }
             
             function trackActionTest()
@@ -115,7 +117,6 @@
                 mat.trackAction(resultHandler,
                                 errorHandler,
                                 "purchase",
-                                false,
                                 "ref1",
                                 0.99,
                                 "USD"
@@ -126,7 +127,8 @@
             {
                 var eventItems = new Array();
                 
-                var eventItem1 = {"item":"item1",
+                var eventItem1 = {
+                					"item":"item1",
                                     "quantity":1,
                                     "unit_price":0.99,
                                     "revenue":0.99,
@@ -138,7 +140,8 @@
                                 };
                 eventItems[0] = eventItem1;
                 
-                var eventItem2 = {"item":"item2",
+                var eventItem2 = {
+                					"item":"item2",
                                     "quantity":2,
                                     "unit_price":0.50,
                                     "revenue":1
@@ -148,7 +151,6 @@
                 mat.trackActionWithItems(resultHandler,
                                          errorHandler,
                                          "purchase",
-                                         false,
                                          eventItems,
                                          "ref1",
                                          0.99,
@@ -160,7 +162,8 @@
             {
                 var eventItems = new Array();
                 
-                var eventItem1 = {"item":"item1",
+                var eventItem1 = {
+                					"item":"item1",
                                     "quantity":1,
                                     "unit_price":0.99,
                                     "revenue":0.99,
@@ -172,7 +175,8 @@
                                 };
                 eventItems[0] = eventItem1;
                 
-                var eventItem2 = {"item":"item2",
+                var eventItem2 = {
+                					"item":"item2",
                                     "quantity":2,
                                     "unit_price":0.50,
                                     "revenue":1
@@ -182,7 +186,6 @@
                 mat.trackActionWithReceipt(resultHandler,
                                            errorHandler,
                                            "purchase",
-                                           false,
                                            eventItems,
                                            "ref1",
                                            0.99,
@@ -212,29 +215,17 @@
         
         <div>
 	        <br>
+            <h1>MAT PhoneGap TestApp</h1>
     	    <br>
-            <div><input id="btnStart" type="button" value="Start MAT" onclick="startMAT();" /></div>
-            <br>
-            <div><input id="btnDebug" type="button" value="MAT Debug Mode" onclick="setMATDebugMode();" /></div>
-            <br>
-            <div><input id="btnAllowDuplicates" type="button" value="MAT Allow Duplicates" onclick="setAllowDuplicates();" /></div>
-            <br>
-            <div><input id="btnDelegate" type="button" value="MAT Delegate" onclick="setMATDelegate();" /></div>
-            <br>
-            <div><input id="btnPrintParams" type="button" value="Print SDK Data Params" onclick="printSDKDataParameters();" /></div>
-            <br>
-            <div><button id="btnInstall" onclick="testTrackInstall();" />Track Install</button></div>
-            <br>
-            <div><button id="btnUpdate" onclick="testTrackUpdate();" />Track Update</button></div>
-            <br>
-            <div><button id="btnAction" onclick="trackActionTest();" />Track Action</button></div>
-            <br>
-            <div><button id="btnActionWithItems" onclick="trackActionWithItemsTest();" />Track Action With Items</button></div>
-            <br>
-            <div><button id="btnActionWithReceipt" onclick="trackActionWithReceiptTest();" />Track Action With Receipt</button></div>
-            <br>
-            <div><button id="btnSetters" onclick="testSetters();" />Test Setter Methods</button></div>
-            <br>
+            <div class="btnDiv"><button id="btnStart" class="btn" onclick="startMAT();">Start MAT</button></div>
+            <div class="btnDiv"><button id="btnDebug" class="btn" onclick="setMATDebugMode();">MAT Debug Mode</button></div>
+            <div class="btnDiv"><button id="btnAllowDuplicates" class="btn" onclick="setAllowDuplicates();">MAT Allow Duplicates</button></div>
+            <div class="btnDiv"><button id="btnDelegate" class="btn" onclick="setMATDelegate();">MAT Delegate</button></div>
+            <div class="btnDiv"><button id="btnSession" class="btn" onclick="testTrackSession();">Track Session</button></div>
+            <div class="btnDiv"><button id="btnAction" class="btn" onclick="trackActionTest();">Track Action</button></div>
+            <div class="btnDiv"><button id="btnActionWithItems" class="btn" onclick="trackActionWithItemsTest();">Track Action With Items</button></div>
+            <div class="btnDiv"><button id="btnActionWithReceipt" class="btn" onclick="trackActionWithReceiptTest();">Track Action With Receipt</button></div>
+            <div class="btnDiv"><button id="btnSetters" class="btn" onclick="testSetters();">Test Setter Methods</button></div>
         </div>
     </body>
 </html>
