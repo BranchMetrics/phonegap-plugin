@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.mobileapptracker.MATEventItem;
@@ -410,7 +411,11 @@ public class MATPlugin extends CordovaPlugin {
             MobileAppTracker.init(context, advertiserId, advertiserKey);
             tracker = MobileAppTracker.getInstance();
             tracker.setPluginName("phonegap");
-            tracker.setReferralSources(context);
+            try {
+                Activity act = (Activity) context;
+                tracker.setReferralSources(act);
+            } catch (Exception e) {
+            }
             cbc.success();
         }
     }
