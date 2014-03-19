@@ -27,8 +27,8 @@
         }
         else
         {
-            [MobileAppTracker startTrackerWithMATAdvertiserId:advid
-                                             MATConversionKey:convkey];
+            [MobileAppTracker initializeWithMATAdvertiserId:advid
+                                           MATConversionKey:convkey];
             [MobileAppTracker setPluginName:@"phonegap"];
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -89,9 +89,9 @@
     }];
 }
 
-- (void)trackSession:(CDVInvokedUrlCommand *)command
+- (void)measureSession:(CDVInvokedUrlCommand *)command
 {
-    NSLog(@"MATPlugin: trackSession");
+    NSLog(@"MATPlugin: measureSession");
     
     NSArray* arguments = command.arguments;
     
@@ -103,16 +103,16 @@
     }
     
     [self.commandDelegate runInBackground:^{
-        [MobileAppTracker trackSessionWithReferenceId:refId];
+        [MobileAppTracker measureSessionWithReferenceId:refId];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-- (void)trackAction:(CDVInvokedUrlCommand*)command
+- (void)measureAction:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"MATPlugin: trackAction");
+    NSLog(@"MATPlugin: measureAction");
     
     NSArray* arguments = command.arguments;
     
@@ -141,10 +141,10 @@
                 strCurrency = nil;
             }
             
-            [MobileAppTracker trackActionForEventIdOrName:strEvent
-                                              referenceId:strRefId
-                                            revenueAmount:revenue
-                                             currencyCode:strCurrency];
+            [MobileAppTracker measureAction:strEvent
+                                referenceId:strRefId
+                              revenueAmount:revenue
+                               currencyCode:strCurrency];
             
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -156,9 +156,9 @@
     }];
 }
 
-- (void)trackActionWithItems:(CDVInvokedUrlCommand*)command
+- (void)measureActionWithItems:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"MATPlugin: trackActionWithItems");
+    NSLog(@"MATPlugin: measureActionWithItems");
     
     NSArray* arguments = command.arguments;
     
@@ -191,11 +191,11 @@
                 strCurrency = nil;
             }
             
-            [MobileAppTracker trackActionForEventIdOrName:strEvent
-                                               eventItems:arrItems
-                                              referenceId:strRefId
-                                            revenueAmount:revenue
-                                             currencyCode:strCurrency];
+            [MobileAppTracker measureAction:strEvent
+                                 eventItems:arrItems
+                                referenceId:strRefId
+                              revenueAmount:revenue
+                               currencyCode:strCurrency];
             
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -207,9 +207,9 @@
     }];
 }
 
-- (void)trackActionWithReceipt:(CDVInvokedUrlCommand*)command
+- (void)measureActionWithReceipt:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"MATPlugin: trackActionWithReceipt");
+    NSLog(@"MATPlugin: measureActionWithReceipt");
     
     NSArray* arguments = command.arguments;
     
@@ -258,13 +258,13 @@
                 receiptData = [strReceipt dataUsingEncoding:NSUTF8StringEncoding];
             }
             
-            [MobileAppTracker trackActionForEventIdOrName:strEvent
-                                               eventItems:arrItems
-                                              referenceId:strRefId
-                                            revenueAmount:revenue
-                                             currencyCode:strCurrency
-                                         transactionState:transactionState
-                                                  receipt:receiptData];
+            [MobileAppTracker measureAction:strEvent
+                                 eventItems:arrItems
+                                referenceId:strRefId
+                              revenueAmount:revenue
+                               currencyCode:strCurrency
+                           transactionState:transactionState
+                                    receipt:receiptData];
             
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -865,9 +865,9 @@
     }];
 }
 
-- (void)setTracking:(CDVInvokedUrlCommand*)command
+- (void)startAppToAppTracking:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"MATPlugin: setTracking");
+    NSLog(@"MATPlugin: startAppToAppTracking");
     
     NSArray* arguments = command.arguments;
     
@@ -887,11 +887,11 @@
         {
             BOOL shouldRedirect = [strShouldRedirect boolValue];
             
-            [MobileAppTracker setTracking:strTargetAppPackageName
-                                             advertiserId:strTargetAdvId
-                                                  offerId:strTargetOfferId
-                                              publisherId:strTargetPublisherId
-                                                 redirect:shouldRedirect];
+            [MobileAppTracker startAppToAppTracking:strTargetAppPackageName
+                                       advertiserId:strTargetAdvId
+                                            offerId:strTargetOfferId
+                                        publisherId:strTargetPublisherId
+                                           redirect:shouldRedirect];
             
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -940,6 +940,31 @@
             BOOL isExistingUser = [strExistingUser boolValue];
             
             [MobileAppTracker setExistingUser:isExistingUser];
+            
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+        else
+        {
+            [self throwInvalidArgsErrorForCommand:command];
+        }
+    }];
+}
+
+-(void)setPayingUser:(CDVInvokedUrlCommand *)command
+{
+    NSLog(@"MATPlugin: setPayingUser");
+    
+    NSArray* arguments = command.arguments;
+    
+    [self.commandDelegate runInBackground:^{
+        NSString* strPayingUser = [arguments objectAtIndex:0];
+        
+        if(![self isNull:strPayingUser])
+        {
+            BOOL isPayingUser = [strPayingUser boolValue];
+            
+            [MobileAppTracker setPayingUser:isPayingUser];
             
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1017,6 +1042,54 @@
     [self setEventAttributeN:command num:5];
 }
 
+#pragma mark - Getter Methods
+
+- (void)getMatId:(CDVInvokedUrlCommand *)command
+{
+    NSLog(@"MATPlugin: getMatId");
+    
+    [self.commandDelegate runInBackground:^{
+
+        NSString *matId = [MobileAppTracker matId];
+            
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:matId];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+- (void)getOpenLogId:(CDVInvokedUrlCommand *)command
+{
+    NSLog(@"MATPlugin: getOpenLogId");
+    
+    [self.commandDelegate runInBackground:^{
+        
+        NSString *logId = [MobileAppTracker openLogId];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:logId];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+- (void)getIsPayingUser:(CDVInvokedUrlCommand *)command
+{
+    NSLog(@"MATPlugin: getIsPayingUser");
+    
+    [self.commandDelegate runInBackground:^{
+        
+        BOOL payingUser = [MobileAppTracker isPayingUser];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:payingUser];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+#pragma mark - Android only placeholder methods
+
+- (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command
+{
+    // no-op Android only placeholder method
+}
+
 #pragma mark - Helper Methods
 
 - (NSArray *)convertToMATEventItems:(NSArray *)arrDictionaries
@@ -1080,6 +1153,11 @@
 - (void)mobileAppTrackerDidFailWithError:(NSError *)error
 {
     NSLog(@"MATPlugin.matDelegate.failure: %@", error);
+}
+
+- (void)mobileAppTrackerEnqueuedActionWithReferenceId:(NSString *)referenceId
+{
+    NSLog(@"MATPlugin.matDelegate.enqueued: %@", referenceId);
 }
 
 @end

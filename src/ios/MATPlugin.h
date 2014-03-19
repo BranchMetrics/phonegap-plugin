@@ -41,26 +41,32 @@
 - (void)setFacebookUserId:(CDVInvokedUrlCommand*)command;
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command;
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command;
-
+- (void)setPayingUser:(CDVInvokedUrlCommand *)command;
 - (void)setShouldAutoDetectJailbroken:(CDVInvokedUrlCommand*)command;
 - (void)setShouldAutoGenerateAppleVendorIdentifier:(CDVInvokedUrlCommand*)command;
 
 - (void)applicationDidOpenURL:(CDVInvokedUrlCommand*)command;
 
-- (void)setTracking:(CDVInvokedUrlCommand*)command;
+- (void)startAppToAppTracking:(CDVInvokedUrlCommand*)command;
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command;
 
 - (void)setExistingUser:(CDVInvokedUrlCommand*)command;
-- (void)trackSession:(CDVInvokedUrlCommand*)command;
+- (void)measureSession:(CDVInvokedUrlCommand*)command;
 
-- (void)trackAction:(CDVInvokedUrlCommand*)command;
-- (void)trackActionWithItems:(CDVInvokedUrlCommand*)command;
-- (void)trackActionWithReceipt:(CDVInvokedUrlCommand*)command;
+- (void)measureAction:(CDVInvokedUrlCommand*)command;
+- (void)measureActionWithItems:(CDVInvokedUrlCommand*)command;
+- (void)measureActionWithReceipt:(CDVInvokedUrlCommand*)command;
 
 - (void)setEventAttribute1:(CDVInvokedUrlCommand*)command;
 - (void)setEventAttribute2:(CDVInvokedUrlCommand*)command;
 - (void)setEventAttribute3:(CDVInvokedUrlCommand*)command;
 - (void)setEventAttribute4:(CDVInvokedUrlCommand*)command;
 - (void)setEventAttribute5:(CDVInvokedUrlCommand*)command;
+
+- (void)getMatId:(CDVInvokedUrlCommand *)command;
+- (void)getOpenLogId:(CDVInvokedUrlCommand *)command;
+- (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
+
+- (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command;
 
 @end

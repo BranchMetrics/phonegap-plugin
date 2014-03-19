@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ -->
 <html>
     <head>
         <meta charset="utf-8" />
@@ -43,12 +43,18 @@
             document.addEventListener("deviceready", onDeviceReady, true);
             
             var mat;
-        
+            var gaid;
+            var ifa;
+            
             function onDeviceReady()
             {
                 mat = window.plugins.matPlugin;
+                gaid = window.plugins.gaidWrapperPlugin;
+                ifa = window.plugins.ifaWrapperPlugin;
+                
+                console.log('onDeviceReady: mat = ' + mat + ', gaid = ' + gaid + ', ifa = ' + ifa);
             }
-            
+        
             function setMATDebugMode()
             {
                 mat.setDebugMode(resultHandler, errorHandler, true);
@@ -69,9 +75,32 @@
                 mat.initTracker(initResultHandler, errorHandler, "877", "8c14d6bbe466b65211e781d62e301eec");
             }
             
+            function gaidResultHandler(result)
+            {
+                console.log('gaidResultHandler: gaid = ' + result.gaid + ', trackingEnabled = ' + result.isLAT);
+                
+                mat.setGoogleAdvertisingId(resultHandler, errorHandler, result.gaid, result.isLAT);
+            }
+            
+            function ifaResultHandler(result)
+            {
+                console.log('ifaResultHandler: ifa = ' + result.ifa + ', trackingEnabled = ' + result.trackingEnabled);
+                
+                mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, result.ifa, result.trackingEnabled);
+            }
+            
             function initResultHandler (result)
             {
-            	console.log('initResultHandler: ' + result);
+                console.log('initResultHandler: ' + result);
+                
+                if (gaid !== null && typeof gaid !== 'undefined') {
+                    gaid.getGoogleAdvertisingId(gaidResultHandler, errorHandler);
+                }
+                
+                if (ifa !== null && typeof ifa !== 'undefined') {
+                    ifa.getAppleAdvertisingIdentifier(ifaResultHandler, errorHandler);
+                }
+                
                 mat.setPackageName(resultHandler, errorHandler, "com.hasoffers.phonegaptestapp");
             }
             
@@ -84,7 +113,6 @@
                 mat.setFacebookUserId(resultHandler, errorHandler, "tempFacebookId");
                 mat.setTwitterUserId(resultHandler, errorHandler, "tempTwitterId");
                 mat.setGoogleUserId(resultHandler, errorHandler, "tempGoogleId");
-
                 mat.setCurrencyCode(resultHandler, errorHandler, "tempCurrencyCode");
                 mat.setGender(resultHandler, errorHandler, 1);
                 mat.setLocation(resultHandler, errorHandler, 1.1, 2.2);
@@ -93,9 +121,11 @@
                 mat.setAppAdTracking(resultHandler, errorHandler, true);
                 mat.setAge(resultHandler, errorHandler, 23);
                 mat.setJailbroken(resultHandler, errorHandler, false);
-                mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012", true);
                 mat.setAppleVendorIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012");
                 mat.setPackageName(resultHandler, errorHandler, "testPackageName");
+                
+                mat.setExistingUser(resultHandler, errorHandler, false);
+                mat.setPayingUser(resultHandler, errorHandler, true);
                 
                 mat.setEventAttribute1(resultHandler, errorHandler, "eventAttr1");
                 mat.setEventAttribute2(resultHandler, errorHandler, "eventAttr2");
@@ -107,93 +137,102 @@
                 mat.setDelegate(resultHandler, errorHandler, true);
             }
             
-            function testTrackSession()
+            function testGetters()
             {
-                mat.trackSession(resultHandler, errorHandler);
+                console.log('testGetters clicked');
+                
+                mat.getMatId(resultHandler, errorHandler);
+                mat.getOpenLogId(resultHandler, errorHandler);
+                mat.getIsPayingUser(resultHandler, errorHandler);
             }
             
-            function trackActionTest()
+            function measureSessionTest()
             {
-                mat.trackAction(resultHandler,
-                                errorHandler,
-                                "purchase",
-                                "ref1",
-                                0.99,
-                                "USD"
-                                );
+                mat.measureSession(resultHandler, errorHandler);
             }
             
-            function trackActionWithItemsTest()
+            function measureActionTest()
+            {
+                mat.measureAction(resultHandler,
+                                  errorHandler,
+                                  "purchase1",
+                                  "ref1",
+                                  0.99,
+                                  "USD"
+                                  );
+            }
+            
+            function measureActionWithItemsTest()
             {
                 var eventItems = new Array();
                 
                 var eventItem1 = {
-                					"item":"item1",
-                                    "quantity":1,
-                                    "unit_price":0.99,
-                                    "revenue":0.99,
-                                    "attribute_sub1":"1",
-                                    "attribute_sub2":"2",
-                                    "attribute_sub3":"3",
-                                    "attribute_sub4":"4",
-                                    "attribute_sub5":"5"
-                                };
+                    "item":"item1",
+                    "quantity":1,
+                    "unit_price":0.99,
+                    "revenue":0.99,
+                    "attribute_sub1":"1",
+                    "attribute_sub2":"2",
+                    "attribute_sub3":"3",
+                    "attribute_sub4":"4",
+                    "attribute_sub5":"5"
+                };
                 eventItems[0] = eventItem1;
                 
                 var eventItem2 = {
-                					"item":"item2",
-                                    "quantity":2,
-                                    "unit_price":0.50,
-                                    "revenue":1
-                                };
+                    "item":"item2",
+                    "quantity":2,
+                    "unit_price":0.50,
+                    "revenue":1
+                };
                 eventItems[1] = eventItem2;
                 
-                mat.trackActionWithItems(resultHandler,
-                                         errorHandler,
-                                         "purchase",
-                                         eventItems,
-                                         "ref1",
-                                         0.99,
-                                         "USD"
-                                         );
-            }
-            
-            function trackActionWithReceiptTest()
-            {
-                var eventItems = new Array();
-                
-                var eventItem1 = {
-                					"item":"item1",
-                                    "quantity":1,
-                                    "unit_price":0.99,
-                                    "revenue":0.99,
-                                    "attribute_sub1":"1",
-                                    "attribute_sub2":"2",
-                                    "attribute_sub3":"3",
-                                    "attribute_sub4":"4",
-                                    "attribute_sub5":"5"
-                                };
-                eventItems[0] = eventItem1;
-                
-                var eventItem2 = {
-                					"item":"item2",
-                                    "quantity":2,
-                                    "unit_price":0.50,
-                                    "revenue":1
-                                };
-                eventItems[1] = eventItem2;
-                
-                mat.trackActionWithReceipt(resultHandler,
+                mat.measureActionWithItems(resultHandler,
                                            errorHandler,
-                                           "purchase",
+                                           "purchase2",
                                            eventItems,
-                                           "ref1",
+                                           "ref2",
                                            0.99,
-                                           "USD",
-                                           0,
-                                           getSampleiTunesIAPReceipt(),
-                                           null
+                                           "USD"
                                            );
+            }
+            
+            function measureActionWithReceiptTest()
+            {
+                var eventItems = new Array();
+                
+                var eventItem1 = {
+                    "item":"item1",
+                    "quantity":1,
+                    "unit_price":0.99,
+                    "revenue":0.99,
+                    "attribute_sub1":"1",
+                    "attribute_sub2":"2",
+                    "attribute_sub3":"3",
+                    "attribute_sub4":"4",
+                    "attribute_sub5":"5"
+                };
+                eventItems[0] = eventItem1;
+                
+                var eventItem2 = {
+                    "item":"item2",
+                    "quantity":2,
+                    "unit_price":0.50,
+                    "revenue":1
+                };
+                eventItems[1] = eventItem2;
+                
+                mat.measureActionWithReceipt(resultHandler,
+                                             errorHandler,
+                                             "purchase3",
+                                             eventItems,
+                                             "ref3",
+                                             0.99,
+                                             "USD",
+                                             0,
+                                             getSampleiTunesIAPReceipt(),
+                                             null
+                                             );
             }
             
             function getSampleiTunesIAPReceipt()
@@ -214,18 +253,19 @@
         </script>
         
         <div>
-	        <br>
+            <br>
             <h1>MAT PhoneGap TestApp</h1>
-    	    <br>
+            <br>
             <div class="btnDiv"><button id="btnStart" class="btn" onclick="startMAT();">Start MAT</button></div>
             <div class="btnDiv"><button id="btnDebug" class="btn" onclick="setMATDebugMode();">MAT Debug Mode</button></div>
             <div class="btnDiv"><button id="btnAllowDuplicates" class="btn" onclick="setAllowDuplicates();">MAT Allow Duplicates</button></div>
             <div class="btnDiv"><button id="btnDelegate" class="btn" onclick="setMATDelegate();">MAT Delegate</button></div>
-            <div class="btnDiv"><button id="btnSession" class="btn" onclick="testTrackSession();">Track Session</button></div>
-            <div class="btnDiv"><button id="btnAction" class="btn" onclick="trackActionTest();">Track Action</button></div>
-            <div class="btnDiv"><button id="btnActionWithItems" class="btn" onclick="trackActionWithItemsTest();">Track Action With Items</button></div>
-            <div class="btnDiv"><button id="btnActionWithReceipt" class="btn" onclick="trackActionWithReceiptTest();">Track Action With Receipt</button></div>
+            <div class="btnDiv"><button id="btnSession" class="btn" onclick="measureSessionTest();">Measure Session</button></div>
+            <div class="btnDiv"><button id="btnAction" class="btn" onclick="measureActionTest();">Measure Action</button></div>
+            <div class="btnDiv"><button id="btnActionWithItems" class="btn" onclick="measureActionWithItemsTest();">Measure Action With Items</button></div>
+            <div class="btnDiv"><button id="btnActionWithReceipt" class="btn" onclick="measureActionWithReceiptTest();">Measure Action With Receipt</button></div>
             <div class="btnDiv"><button id="btnSetters" class="btn" onclick="testSetters();">Test Setter Methods</button></div>
+            <div class="btnDiv"><button id="btnSetters" class="btn" onclick="testGetters();">Test Getter Methods</button></div>
         </div>
     </body>
 </html>

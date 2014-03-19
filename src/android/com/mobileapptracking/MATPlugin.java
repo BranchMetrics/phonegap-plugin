@@ -17,10 +17,10 @@ import com.mobileapptracker.MobileAppTracker;
 
 public class MATPlugin extends CordovaPlugin {
     public static final String INIT = "initTracker";
-    public static final String TRACKACTION = "trackAction";
-    public static final String TRACKACTIONWITHITEMS = "trackActionWithItems";
-    public static final String TRACKACTIONWITHRECEIPT = "trackActionWithReceipt";
-    public static final String TRACKSESSION = "trackSession";
+    public static final String MEASUREACTION = "measureAction";
+    public static final String MEASUREACTIONWITHITEMS = "measureActionWithItems";
+    public static final String MEASUREACTIONWITHRECEIPT = "measureActionWithReceipt";
+    public static final String MEASURESESSION = "measureSession";
     public static final String SETAGE = "setAge";
     public static final String SETAPPADTRACKING = "setAppAdTracking";
     public static final String SETALLOWDUP = "setAllowDuplicates";
@@ -36,7 +36,8 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETLOCATION = "setLocation";
     public static final String SETLOCATIONWITHALTITUDE = "setLocationWithAltitude";
     public static final String SETPACKAGENAME = "setPackageName";
-    public static final String SETTRACKING = "setTracking";
+    public static final String SETPAYINGUSER = "setPayingUser";
+    public static final String STARTAPPTOAPPTRACKING = "startAppToAppTracking";
     public static final String SETTPID = "setTRUSTeID";
     public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
@@ -44,6 +45,10 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETFBUSERID = "setFacebookUserId";
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETGGUSERID = "setGoogleUserId";
+    
+    public static final String GETMATID = "getMatId";
+    public static final String GETOPENLOGID = "getOpenLogId";
+    public static final String GETISPAYINGUSER = "getIsPayingUser";
     
     private MobileAppTracker tracker;
     
@@ -60,17 +65,17 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("Advertiser id or key is null or empty");
                     return false;
                 }
-            } else if (TRACKSESSION.equals(action)) {
+            } else if (MEASURESESSION.equals(action)) {
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
                         if (tracker != null) {
-                            tracker.trackSession();
+                            tracker.measureSession();
                         }
                         callbackContext.success();
                     }
                 });
                 return true;
-            } else if (TRACKACTION.equals(action)) {
+            } else if (MEASUREACTION.equals(action)) {
                 String eventName = args.getString(0);
                 String refId = null;
                 double revenue = 0;
@@ -84,13 +89,13 @@ public class MATPlugin extends CordovaPlugin {
                 }
                 
                 if (eventName != null && eventName.length() > 0) {
-                    cordova.getThreadPool().execute(new TrackActionThread(eventName, revenue, currency, refId, null, null, null, callbackContext));
+                    cordova.getThreadPool().execute(new MeasureActionThread(eventName, revenue, currency, refId, null, null, null, callbackContext));
                     return true;
                 } else {
                     callbackContext.error("Event name null or empty");
                     return false;
                 }
-            } else if (TRACKACTIONWITHITEMS.equals(action) || TRACKACTIONWITHRECEIPT.equals(action)) {
+            } else if (MEASUREACTIONWITHITEMS.equals(action) || MEASUREACTIONWITHRECEIPT.equals(action)) {
                 String eventName = args.getString(0);
                 String refId = null;
                 double revenue = 0;
@@ -165,7 +170,7 @@ public class MATPlugin extends CordovaPlugin {
                 }
                 
                 if (eventName != null && eventName.length() > 0) {
-                    cordova.getThreadPool().execute(new TrackActionThread(eventName, revenue, currency, refId, eventItemList, receiptData, receiptSignature, callbackContext));
+                    cordova.getThreadPool().execute(new MeasureActionThread(eventName, revenue, currency, refId, eventItemList, receiptData, receiptSignature, callbackContext));
                     return true;
                 } else {
                     callbackContext.error("Event name null or empty");
@@ -188,7 +193,7 @@ public class MATPlugin extends CordovaPlugin {
             } else if (SETAPPADTRACKING.equals(action)) {
                 boolean adTracking = args.getBoolean(0);
                 if (tracker != null) {
-                    tracker.setLimitAdTrackingEnabled(!adTracking);
+                    tracker.setAppAdTrackingEnabled(adTracking);
                 }
                 callbackContext.success();
                 return true;
@@ -250,8 +255,9 @@ public class MATPlugin extends CordovaPlugin {
                 return true;
             } else if (SETGOOGLEADVERTISINGID.equals(action)) {
                 String googleAid = args.getString(0);
+                boolean isLAT = args.getBoolean(1);
                 if (tracker != null) {
-                    tracker.setGoogleAdvertisingId(googleAid);
+                    tracker.setGoogleAdvertisingId(googleAid, isLAT);
                 }
                 callbackContext.success();
                 return true;
@@ -287,6 +293,13 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("Package name null or empty");
                     return false;
                 }
+            } else if (SETPAYINGUSER.equals(action)) {
+                boolean payingUser = args.getBoolean(0);
+                if (tracker != null) {
+                    tracker.setIsPayingUser(payingUser);
+                }
+                callbackContext.success();
+                return true;
             } else if (SETTPID.equals(action)) {
                 String tpid = args.getString(0);
                 if (tpid != null && tpid.length() > 0) {
@@ -299,7 +312,7 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("TPID null or empty");
                     return false;
                 }
-            } else if (SETTRACKING.equals(action)) {
+            } else if (SETAPPADTRACKING.equals(action)) {
                 String targetPackageName = args.getString(0);
                 String publisherAdvertiserId = args.getString(1);
                 String targetOfferId = args.getString(2);
@@ -383,6 +396,18 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("G+ User ID null or empty");
                     return false;
                 }
+            } else if (GETMATID.equals(action)) {
+                String matId = tracker.getMatId();
+                callbackContext.success(matId);
+                return true;
+            } else if (GETOPENLOGID.equals(action)) {
+                String logId = tracker.getOpenLogId();
+                callbackContext.success(logId);
+                return true;
+            } else if (GETISPAYINGUSER.equals(action)) {
+                boolean payingUser = tracker.getIsPayingUser();
+                callbackContext.success(String.valueOf(payingUser));
+                return true;
             } else {
                 callbackContext.error("Unsupported action on Android");
                 return false;
@@ -420,7 +445,7 @@ public class MATPlugin extends CordovaPlugin {
         }
     }
     
-    class TrackActionThread implements Runnable {
+    class MeasureActionThread implements Runnable {
         String eventName;
         double revenue;
         String currency;
@@ -430,7 +455,7 @@ public class MATPlugin extends CordovaPlugin {
         String receiptSignature;
         CallbackContext cbc;
         
-        public TrackActionThread(String eventName, double revenue, String currency, String refId, List<MATEventItem> eventItemList, String receiptData, String receiptSignature, CallbackContext callbackContext) {
+        public MeasureActionThread(String eventName, double revenue, String currency, String refId, List<MATEventItem> eventItemList, String receiptData, String receiptSignature, CallbackContext callbackContext) {
             this.eventName = eventName;
             this.revenue = revenue;
             this.currency = currency;
@@ -451,19 +476,17 @@ public class MATPlugin extends CordovaPlugin {
             if (eventItemList != null && eventItemList.size() > 0) {
                 if (receiptData != null && !receiptData.equals("null") && receiptSignature != null && !receiptSignature.equals("null")) {
                     // Track with receipt data if not null
-                    tracker.trackAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                    tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
                 } else {
                     // Track with just event item
-                    tracker.trackAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
+                    tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
                 }
             } else if (receiptData != null && receiptSignature != null) {
-                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
             } else if (refId != null && refId.length() > 0) {
-                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode(), refId);
-            } else if (currency != null && currency.length() > 0) {
-                tracker.trackAction(eventName, revenue, tracker.getCurrencyCode());
+                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId);
             } else {
-                tracker.trackAction(eventName, revenue);
+                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode());
             }
             cbc.success();
         }

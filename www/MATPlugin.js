@@ -9,6 +9,21 @@ MATPlugin.prototype.initTracker = function(success, failure, matAdvertiserId, ma
     cordova.exec(success, failure, "MATPlugin", "initTracker", [matAdvertiserId, matConversionKey]);
 };
 
+MATPlugin.prototype.getMatId = function(success, failure) {
+    console.log("MATPlugin.js: Calling getMatId");
+    cordova.exec(success, failure, "MATPlugin", "getMatId", []);
+};
+
+MATPlugin.prototype.getOpenLogId = function(success, failure) {
+    console.log("MATPlugin.js: Calling getOpenLogId");
+    cordova.exec(success, failure, "MATPlugin", "getOpenLogId", []);
+};
+
+MATPlugin.prototype.getIsPayingUser = function(success, failure) {
+    console.log("MATPlugin.js: Calling getIsPayingUser");
+    cordova.exec(success, failure, "MATPlugin", "getIsPayingUser", []);
+};
+
 MATPlugin.prototype.setAge = function(success, failure, age) {
     console.log("MATPlugin.js: Calling setAge");
     cordova.exec(success, failure, "MATPlugin", "setAge", [age]);
@@ -79,9 +94,9 @@ MATPlugin.prototype.setGender = function(success, failure, gender) {
     cordova.exec(success, failure, "MATPlugin", "setGender", [gender]);
 };
 
-MATPlugin.prototype.setGoogleAdvertisingId = function(success, failure, googleAid) {
+MATPlugin.prototype.setGoogleAdvertisingId = function(success, failure, googleAid, isLAT) {
     console.log("MATPlugin.js: Calling setGoogleAdvertisingId");
-    cordova.exec(success, failure, "MATPlugin", "setGoogleAdvertisingId", [googleAid]);
+    cordova.exec(success, failure, "MATPlugin", "setGoogleAdvertisingId", [googleAid, isLAT]);
 }
 
 MATPlugin.prototype.setGoogleUserId = function(success, failure, googleUserId) {
@@ -102,6 +117,11 @@ MATPlugin.prototype.setLocationWithAltitude = function(success, failure, latitud
 MATPlugin.prototype.setPackageName = function(success, failure, packageName) {
     console.log("MATPlugin.js: Calling setPackageName");
     cordova.exec(success, failure, "MATPlugin", "setPackageName", [packageName]);
+};
+
+MATPlugin.prototype.setPayingUser = function(success, failure, payingUser) {
+    console.log("MATPlugin.js: Calling setPayingUser");
+    cordova.exec(success, failure, "MATPlugin", "setPayingUser", [payingUser]);
 };
 
 MATPlugin.prototype.setTRUSTeId = function(success, failure, trusteID) {
@@ -164,9 +184,9 @@ MATPlugin.prototype.applicationDidOpenURL = function(success, failure, urlString
     cordova.exec(success, failure, "MATPlugin", "applicationDidOpenURL", [urlString, sourceApp]);
 };
 
-MATPlugin.prototype.setTracking = function(success, failure, targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect) {
-    console.log("MATPlugin.js: Calling setTracking");
-    cordova.exec(success, failure, "MATPlugin", "setTracking", [targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect]);
+MATPlugin.prototype.startAppToAppTracking = function(success, failure, targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect) {
+    console.log("MATPlugin.js: Calling startAppToAppTracking");
+    cordova.exec(success, failure, "MATPlugin", "startAppToAppTracking", [targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect]);
 };
 
 MATPlugin.prototype.setRedirectUrl = function(success, failure, redirectUrl) {
@@ -174,24 +194,24 @@ MATPlugin.prototype.setRedirectUrl = function(success, failure, redirectUrl) {
     cordova.exec(success, failure, "MATPlugin", "setRedirectUrl", [redirectUrl]);
 };
 
-MATPlugin.prototype.trackSession = function(success, failure) {
-    console.log("MATPlugin.js: calling trackSession");
-    cordova.exec(success, failure, "MATPlugin", "trackSession", []);
+MATPlugin.prototype.measureSession = function(success, failure) {
+    console.log("MATPlugin.js: calling measureSession");
+    cordova.exec(success, failure, "MATPlugin", "measureSession", []);
 }
 
-MATPlugin.prototype.trackAction = function(success, failure, eventName, referenceId, revenue, currency) {
-    console.log("MATPlugin.js: Calling trackAction");
-    cordova.exec(success, failure, "MATPlugin", "trackAction", [eventName, referenceId, revenue, currency]);
+MATPlugin.prototype.measureAction = function(success, failure, eventName, referenceId, revenue, currency) {
+    console.log("MATPlugin.js: Calling measureAction");
+    cordova.exec(success, failure, "MATPlugin", "measureAction", [eventName, referenceId, revenue, currency]);
 };
 
-MATPlugin.prototype.trackActionWithItems = function(success, failure, eventName, items, referenceId, revenue, currency) {
-    console.log("MATPlugin.js: Calling trackActionWithItems");
-    cordova.exec(success, failure, "MATPlugin", "trackActionWithItems", [eventName, items, referenceId, revenue, currency]);
+MATPlugin.prototype.measureActionWithItems = function(success, failure, eventName, items, referenceId, revenue, currency) {
+    console.log("MATPlugin.js: Calling measureActionWithItems");
+    cordova.exec(success, failure, "MATPlugin", "measureActionWithItems", [eventName, items, referenceId, revenue, currency]);
 };
 
-MATPlugin.prototype.trackActionWithReceipt = function(success, failure, eventName, items, referenceId, revenue, currency, transactionState, receipt, signature) {
-    console.log("MATPlugin.js: Calling trackActionWithReceipt");
-    cordova.exec(success, failure, "MATPlugin", "trackActionWithReceipt", [eventName, items, referenceId, revenue, currency, transactionState, receipt, signature]);
+MATPlugin.prototype.measureActionWithReceipt = function(success, failure, eventName, items, referenceId, revenue, currency, transactionState, receipt, signature) {
+    console.log("MATPlugin.js: Calling measureActionWithReceipt");
+    cordova.exec(success, failure, "MATPlugin", "measureActionWithReceipt", [eventName, items, referenceId, revenue, currency, transactionState, receipt, signature]);
 };
 
 module.exports = new MATPlugin();

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+        xmlns:android="http://schemas.android.com/apk/res/android" 
+        id="com.mobileapptracking.ifawrapper"
+        version="1.0">
+
+    <name>IFAWrapperPlugin</name>
+
+    <description>This plugin allows you to access the Apple Advertising Identifier</description>
+    <repo>https://github.com/MobileAppTracking/phonegap-plugin.git</repo>
+    <keywords>cordova,mat,mobileapptracking,tracking,ifa,idfa,advertisingIdentifer,AdSupport</keywords>
+    <license>Apache 2.0</license>
+    
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+    
+    <js-module src="www/IFAWrapperPlugin.js" name="IFAWrapperPlugin">
+        <clobbers target="window.plugins.ifaWrapperPlugin" />
+    </js-module>
+    
+    <platform name="ios">
+        <!-- Cordova < 2.3 -->
+        <plugins-plist key="IFAWrapperPlugin" string="IFAWrapperPlugin" />
+        
+        <config-file target="config.xml" parent="/*">
+	        <feature name="IFAWrapperPlugin">
+				<param name="ios-package" value="IFAWrapperPlugin" />
+				<param name="onload" value="true" />
+			</feature>
+        </config-file>
+        
+        <source-file src="src/ios/IFAWrapperPlugin.m" />
+        <header-file src="src/ios/IFAWrapperPlugin.h" />
+        
+        <!-- system frameworks -->
+        <framework src="AdSupport.framework" />
+    </platform>
+</plugin>
