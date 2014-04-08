@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
         xmlns:android="http://schemas.android.com/apk/res/android" 
         id="com.mobileapptracking.matplugin" 
-        version="3.1.1">
+        version="3.1.2">
 
     <name>MATPlugin</name>
 
@@ -64,7 +64,7 @@
         <header-file src="src/ios/MATPlugin.h" />
 
         <!-- MobileAppTracker framework -->
-        <source-file src="src/ios/MobileAppTracker-3.1.1.a" framework="true" />
+        <source-file src="src/ios/MobileAppTracker-3.1.2.a" framework="true" />
 
         <header-file src="src/ios/MobileAppTracker.h" />
         <header-file src="src/ios/MATEventItem.h" />
