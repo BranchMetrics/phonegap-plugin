@@ -468,27 +468,30 @@ public class MATPlugin extends CordovaPlugin {
         
         @Override
         public void run() {
-            // Set currency code if exists
-            if (currency != null && currency.length() > 0 && !currency.equals("null")) {
-                tracker.setCurrencyCode(currency);
-            }
-            // If there are any event items, track with event item
-            if (eventItemList != null && eventItemList.size() > 0) {
-                if (receiptData != null && !receiptData.equals("null") && receiptSignature != null && !receiptSignature.equals("null")) {
-                    // Track with receipt data if not null
-                    tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
-                } else {
-                    // Track with just event item
-                    tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
+            if (tracker != null) {
+                // Set currency code if exists
+                if (currency != null && currency.length() > 0 && !currency.equals("null")) {
+                    tracker.setCurrencyCode(currency);
                 }
-            } else if (receiptData != null && receiptSignature != null) {
-                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
-            } else if (refId != null && refId.length() > 0) {
-                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId);
-            } else {
-                tracker.measureAction(eventName, revenue, tracker.getCurrencyCode());
+                // If there are any event items, track with event item
+                if (eventItemList != null && eventItemList.size() > 0) {
+                    if (receiptData != null && !receiptData.equals("null") && receiptSignature != null && !receiptSignature.equals("null")) {
+                        // Track with receipt data if not null
+                        tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                    } else {
+                        // Track with just event item
+                        tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
+                    }
+                } else if (receiptData != null && receiptSignature != null) {
+                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                } else if (refId != null && refId.length() > 0) {
+                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId);
+                } else {
+                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode());
+                }
+                cbc.success();
             }
-            cbc.success();
+            cbc.error("Tracker was null");
         }
     }
 }

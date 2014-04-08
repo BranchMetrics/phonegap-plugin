@@ -14,27 +14,25 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* advid = [arguments objectAtIndex:0];
-        NSString* convkey = [arguments objectAtIndex:1];
+    NSString* advid = [arguments objectAtIndex:0];
+    NSString* convkey = [arguments objectAtIndex:1];
+    
+    NSLog(@"MATPlugin: initTracker: adv id = %@, conv key = %@", advid, convkey);
+    
+    CDVPluginResult* pluginResult = nil;
+    if (advid == nil || convkey == nil || 0 == [advid length] || 0 == [convkey length])
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Advertiser Id and Conversion Key cannot be nil"];
+    }
+    else
+    {
+        [MobileAppTracker initializeWithMATAdvertiserId:advid
+                                       MATConversionKey:convkey];
+        [MobileAppTracker setPluginName:@"phonegap"];
         
-        NSLog(@"MATPlugin: initTracker: adv id = %@, conv key = %@", advid, convkey);
-        
-        CDVPluginResult* pluginResult = nil;
-        if (advid == nil || convkey == nil || 0 == [advid length] || 0 == [convkey length])
-        {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Advertiser Id and Conversion Key cannot be nil"];
-        }
-        else
-        {
-            [MobileAppTracker initializeWithMATAdvertiserId:advid
-                                           MATConversionKey:convkey];
-            [MobileAppTracker setPluginName:@"phonegap"];
-            
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)setDebugMode:(CDVInvokedUrlCommand*)command
@@ -43,24 +41,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
+    NSString* strEnable = [arguments objectAtIndex:0];
+    
+    if (![self isNull:strEnable])
+    {
+        BOOL enable = [strEnable boolValue];
         
-        NSString* strEnable = [arguments objectAtIndex:0];
+        [MobileAppTracker setDebugMode:enable];
         
-        if (![self isNull:strEnable])
-        {
-            BOOL enable = [strEnable boolValue];
-            
-            [MobileAppTracker setDebugMode:enable];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setDelegate:(CDVInvokedUrlCommand*)command
@@ -69,45 +64,31 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
+    NSString* strEnable = [arguments objectAtIndex:0];
+    
+    if (![self isNull:strEnable])
+    {
+        BOOL enable = [strEnable boolValue];
         
-        NSString* strEnable = [arguments objectAtIndex:0];
+        [MobileAppTracker setDelegate:enable ? self : nil];
         
-        if (![self isNull:strEnable])
-        {
-            BOOL enable = [strEnable boolValue];
-            
-            [MobileAppTracker setDelegate:enable ? self : nil];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)measureSession:(CDVInvokedUrlCommand *)command
 {
     NSLog(@"MATPlugin: measureSession");
     
-    NSArray* arguments = command.arguments;
+    [MobileAppTracker measureSession];
     
-    NSString *refId = nil;
-    
-    if ([NSNull null] != (id)arguments && [arguments count] == 1)
-    {
-        refId = [arguments objectAtIndex:0];
-    }
-    
-    [self.commandDelegate runInBackground:^{
-        [MobileAppTracker measureSessionWithReferenceId:refId];
-        
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)measureAction:(CDVInvokedUrlCommand*)command
@@ -116,44 +97,41 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        
-        NSString *strEvent = [arguments objectAtIndex:0];
-        NSString *strRefId = [arguments objectAtIndex:1];
-        NSNumber* numRev = [arguments objectAtIndex:2];
-        NSString *strCurrency = [arguments objectAtIndex:3];
-        
-        if (![self isNull:strEvent])
+    NSString *strEvent = [arguments objectAtIndex:0];
+    NSString *strRefId = [arguments objectAtIndex:1];
+    NSNumber* numRev = [arguments objectAtIndex:2];
+    NSString *strCurrency = [arguments objectAtIndex:3];
+    
+    if (![self isNull:strEvent])
+    {
+        double revenue = 0;
+        if(![self isNull:numRev])
         {
-            double revenue = 0;
-            if(![self isNull:numRev])
-            {
-            	revenue = [numRev doubleValue];
-            }
-            
-            if([self isNull:strRefId])
-            {
-                strRefId = nil;
-            }
-            
-            if([self isNull:strCurrency])
-            {
-                strCurrency = nil;
-            }
-            
-            [MobileAppTracker measureAction:strEvent
-                                referenceId:strRefId
-                              revenueAmount:revenue
-                               currencyCode:strCurrency];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            revenue = [numRev doubleValue];
         }
-        else
+        
+        if([self isNull:strRefId])
         {
-            [self throwInvalidArgsErrorForCommand:command];
+            strRefId = nil;
         }
-    }];
+        
+        if([self isNull:strCurrency])
+        {
+            strCurrency = nil;
+        }
+        
+        [MobileAppTracker measureAction:strEvent
+                            referenceId:strRefId
+                          revenueAmount:revenue
+                           currencyCode:strCurrency];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)measureActionWithItems:(CDVInvokedUrlCommand*)command
@@ -162,49 +140,46 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
+    NSString *strEvent = [arguments objectAtIndex:0];
+    NSArray *arrItems = [arguments objectAtIndex:1];
+    NSString *strRefId = [arguments objectAtIndex:2];
+    NSNumber* numRev = [arguments objectAtIndex:3];
+    NSString *strCurrency = [arguments objectAtIndex:4];
+    
+    if(![self isNull:strEvent])
+    {
+        arrItems = [NSNull null] == (id)arrItems ? nil : arrItems;
+        arrItems = [self convertToMATEventItems:arrItems];
         
-        NSString *strEvent = [arguments objectAtIndex:0];
-        NSArray *arrItems = [arguments objectAtIndex:1];
-        NSString *strRefId = [arguments objectAtIndex:2];
-        NSNumber* numRev = [arguments objectAtIndex:3];
-        NSString *strCurrency = [arguments objectAtIndex:4];
+        double revenue = 0;
+        if(![self isNull:numRev])
+        {
+            revenue = [numRev doubleValue];
+        }
         
-        if(![self isNull:strEvent])
+        if([self isNull:strRefId])
         {
-            arrItems = [NSNull null] == (id)arrItems ? nil : arrItems;
-            arrItems = [self convertToMATEventItems:arrItems];
-            
-            double revenue = 0;
-            if(![self isNull:numRev])
-            {
-            	revenue = [numRev doubleValue];
-            }
-            
-            if([self isNull:strRefId])
-            {
-                strRefId = nil;
-            }
-            
-            if([self isNull:strCurrency])
-            {
-                strCurrency = nil;
-            }
-            
-            [MobileAppTracker measureAction:strEvent
-                                 eventItems:arrItems
-                                referenceId:strRefId
-                              revenueAmount:revenue
-                               currencyCode:strCurrency];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            strRefId = nil;
         }
-        else
+        
+        if([self isNull:strCurrency])
         {
-            [self throwInvalidArgsErrorForCommand:command];
+            strCurrency = nil;
         }
-    }];
+        
+        [MobileAppTracker measureAction:strEvent
+                             eventItems:arrItems
+                            referenceId:strRefId
+                          revenueAmount:revenue
+                           currencyCode:strCurrency];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)measureActionWithReceipt:(CDVInvokedUrlCommand*)command
@@ -213,67 +188,64 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
+    NSString *strEvent = [arguments objectAtIndex:0];
+    NSArray *arrItems = [arguments objectAtIndex:1];
+    NSString *strRefId = [arguments objectAtIndex:2];
+    NSNumber *numRev = [arguments objectAtIndex:3];
+    NSString *strCurrency = [arguments objectAtIndex:4];
+    NSNumber *numTransactionState = [arguments objectAtIndex:5];
+    NSString *strReceipt = [arguments objectAtIndex:6];
+    
+    if(![self isNull:strEvent])
+    {
+        arrItems = [NSNull null] == (id)arrItems ? nil : arrItems;
+        arrItems = [self convertToMATEventItems:arrItems];
         
-        NSString *strEvent = [arguments objectAtIndex:0];
-        NSArray *arrItems = [arguments objectAtIndex:1];
-        NSString *strRefId = [arguments objectAtIndex:2];
-        NSNumber *numRev = [arguments objectAtIndex:3];
-        NSString *strCurrency = [arguments objectAtIndex:4];
-        NSNumber *numTransactionState = [arguments objectAtIndex:5];
-        NSString *strReceipt = [arguments objectAtIndex:6];
+        if([self isNull:strRefId])
+        {
+            strRefId = nil;
+        }
         
-        if(![self isNull:strEvent])
+        if([self isNull:strCurrency])
         {
-            arrItems = [NSNull null] == (id)arrItems ? nil : arrItems;
-            arrItems = [self convertToMATEventItems:arrItems];
-            
-            if([self isNull:strRefId])
-            {
-                strRefId = nil;
-            }
-            
-            if([self isNull:strCurrency])
-            {
-                strCurrency = nil;
-            }
-            
-            double revenue = 0;
-            if(![self isNull:numRev])
-            {
-            	revenue = [numRev doubleValue];
-            }
-            
-            // Ref: https://developer.apple.com/library/mac/documentation/StoreKit/Reference/SKPaymentTransaction_Class/Reference/Reference.html#//apple_ref/c/econst/SKPaymentTransactionStatePurchased
-            // default to -1, since valid values start from 0
-            int transactionState = -1;
-            if(![self isNull:numTransactionState])
-            {
-            	transactionState = [numTransactionState intValue];
-            }
-	        
-            NSData *receiptData = nil;
-            if(![self isNull:strReceipt])
-            {
-                receiptData = [strReceipt dataUsingEncoding:NSUTF8StringEncoding];
-            }
-            
-            [MobileAppTracker measureAction:strEvent
-                                 eventItems:arrItems
-                                referenceId:strRefId
-                              revenueAmount:revenue
-                               currencyCode:strCurrency
-                           transactionState:transactionState
-                                    receipt:receiptData];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            strCurrency = nil;
         }
-        else
+        
+        double revenue = 0;
+        if(![self isNull:numRev])
         {
-            [self throwInvalidArgsErrorForCommand:command];
+            revenue = [numRev doubleValue];
         }
-    }];
+        
+        // Ref: https://developer.apple.com/library/mac/documentation/StoreKit/Reference/SKPaymentTransaction_Class/Reference/Reference.html#//apple_ref/c/econst/SKPaymentTransactionStatePurchased
+        // default to -1, since valid values start from 0
+        int transactionState = -1;
+        if(![self isNull:numTransactionState])
+        {
+            transactionState = [numTransactionState intValue];
+        }
+        
+        NSData *receiptData = nil;
+        if(![self isNull:strReceipt])
+        {
+            receiptData = [strReceipt dataUsingEncoding:NSUTF8StringEncoding];
+        }
+        
+        [MobileAppTracker measureAction:strEvent
+                             eventItems:arrItems
+                            referenceId:strRefId
+                          revenueAmount:revenue
+                           currencyCode:strCurrency
+                       transactionState:transactionState
+                                receipt:receiptData];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setAllowDuplicates:(CDVInvokedUrlCommand*)command
@@ -282,21 +254,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *strEnable = [arguments objectAtIndex:0];
+    NSString *strEnable = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strEnable])
+    {
+        [MobileAppTracker setAllowDuplicateRequests:[strEnable boolValue]];
         
-        if(![self isNull:strEnable])
-        {
-            [MobileAppTracker setAllowDuplicateRequests:[strEnable boolValue]];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setPackageName:(CDVInvokedUrlCommand*)command
@@ -305,21 +275,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *packageName = [arguments objectAtIndex:0];
+    NSString *packageName = [arguments objectAtIndex:0];
+    
+    if(![self isNull:packageName])
+    {
+        [MobileAppTracker setPackageName:packageName];
         
-        if(![self isNull:packageName])
-        {
-            [MobileAppTracker setPackageName:packageName];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setSiteId:(CDVInvokedUrlCommand*)command
@@ -328,21 +296,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *siteId = [arguments objectAtIndex:0];
+    NSString *siteId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:siteId])
+    {
+        [MobileAppTracker setSiteId:siteId];
         
-        if(![self isNull:siteId])
-        {
-            [MobileAppTracker setSiteId:siteId];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setCurrencyCode:(CDVInvokedUrlCommand*)command
@@ -351,21 +317,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *currencyCode = [arguments objectAtIndex:0];
+    NSString *currencyCode = [arguments objectAtIndex:0];
+    
+    if(![self isNull:currencyCode])
+    {
+        [MobileAppTracker setCurrencyCode:currencyCode];
         
-        if(![self isNull:currencyCode])
-        {
-            [MobileAppTracker setCurrencyCode:currencyCode];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setAppleAdvertisingIdentifier:(CDVInvokedUrlCommand*)command
@@ -374,37 +338,35 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *strAppleAdvId = [arguments objectAtIndex:0];
-        NSString *strEnabled = [arguments objectAtIndex:1];
-        
-        id classNSUUID = NSClassFromString(@"NSUUID");
-        
-        CDVPluginResult* pluginResult = nil;
-        
-        if(classNSUUID)
+    NSString *strAppleAdvId = [arguments objectAtIndex:0];
+    NSString *strEnabled = [arguments objectAtIndex:1];
+    
+    id classNSUUID = NSClassFromString(@"NSUUID");
+    
+    CDVPluginResult* pluginResult = nil;
+    
+    if(classNSUUID)
+    {
+        if(![self isNull:strAppleAdvId] && ![self isNull:strEnabled])
         {
-            if(![self isNull:strAppleAdvId] && ![self isNull:strEnabled])
-            {
-            	NSUUID *ifa = [[classNSUUID alloc] initWithUUIDString:strAppleAdvId];
-            	BOOL trackingEnabled = [strEnabled boolValue];
-            	
-                [MobileAppTracker setAppleAdvertisingIdentifier:ifa advertisingTrackingEnabled:trackingEnabled];
-                
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            }
-            else
-            {
-                [self throwInvalidArgsErrorForCommand:command];
-            }
+            NSUUID *ifa = [[classNSUUID alloc] initWithUUIDString:strAppleAdvId];
+            BOOL trackingEnabled = [strEnabled boolValue];
+            
+            [MobileAppTracker setAppleAdvertisingIdentifier:ifa advertisingTrackingEnabled:trackingEnabled];
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         }
         else
         {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NSUUID class not found"];
+            [self throwInvalidArgsErrorForCommand:command];
         }
-        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    }
+    else
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NSUUID class not found"];
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)setAppleVendorIdentifier:(CDVInvokedUrlCommand*)command
@@ -413,35 +375,33 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *strAppleVendorId = [arguments objectAtIndex:0];
-        
-        id classNSUUID = NSClassFromString(@"NSUUID");
-        
-        CDVPluginResult* pluginResult = nil;
-        
-        if(classNSUUID)
+    NSString *strAppleVendorId = [arguments objectAtIndex:0];
+    
+    id classNSUUID = NSClassFromString(@"NSUUID");
+    
+    CDVPluginResult* pluginResult = nil;
+    
+    if(classNSUUID)
+    {
+        if(![self isNull:strAppleVendorId])
         {
-            if(![self isNull:strAppleVendorId])
-            {
-	            NSUUID *ifv = [[classNSUUID alloc] initWithUUIDString:strAppleVendorId];
-	            
-                [MobileAppTracker setAppleVendorIdentifier:ifv];
-                
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            }
-            else
-            {
-                [self throwInvalidArgsErrorForCommand:command];
-            }
+            NSUUID *ifv = [[classNSUUID alloc] initWithUUIDString:strAppleVendorId];
+            
+            [MobileAppTracker setAppleVendorIdentifier:ifv];
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         }
         else
         {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NSUUID class not found"];
+            [self throwInvalidArgsErrorForCommand:command];
         }
-        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    }
+    else
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NSUUID class not found"];
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)setTRUSTeId:(CDVInvokedUrlCommand*)command
@@ -450,21 +410,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *tpid = [arguments objectAtIndex:0];
+    NSString *tpid = [arguments objectAtIndex:0];
+    
+    if(![self isNull:tpid])
+    {
+        [MobileAppTracker setTRUSTeId:tpid];
         
-        if(![self isNull:tpid])
-        {
-            [MobileAppTracker setTRUSTeId:tpid];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setUserEmail:(CDVInvokedUrlCommand*)command
@@ -473,21 +431,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userEmail = [arguments objectAtIndex:0];
+    NSString *userEmail = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userEmail])
+    {
+        [MobileAppTracker setUserEmail:userEmail];
         
-        if(![self isNull:userEmail])
-        {
-            [MobileAppTracker setUserEmail:userEmail];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setUserId:(CDVInvokedUrlCommand*)command
@@ -496,21 +452,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userId = [arguments objectAtIndex:0];
+    NSString *userId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userId])
+    {
+        [MobileAppTracker setUserId:userId];
         
-        if(![self isNull:userId])
-        {
-            [MobileAppTracker setUserId:userId];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setUserName:(CDVInvokedUrlCommand*)command
@@ -519,21 +473,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userName = [arguments objectAtIndex:0];
+    NSString *userName = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userName])
+    {
+        [MobileAppTracker setUserName:userName];
         
-        if(![self isNull:userName])
-        {
-            [MobileAppTracker setUserName:userName];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setFacebookUserId:(CDVInvokedUrlCommand*)command
@@ -542,21 +494,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userId = [arguments objectAtIndex:0];
+    NSString *userId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userId])
+    {
+        [MobileAppTracker setFacebookUserId:userId];
         
-        if(![self isNull:userId])
-        {
-            [MobileAppTracker setFacebookUserId:userId];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command
@@ -565,21 +515,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userId = [arguments objectAtIndex:0];
+    NSString *userId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userId])
+    {
+        [MobileAppTracker setTwitterUserId:userId];
         
-        if(![self isNull:userId])
-        {
-            [MobileAppTracker setTwitterUserId:userId];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command
@@ -588,21 +536,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *userId = [arguments objectAtIndex:0];
+    NSString *userId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:userId])
+    {
+        [MobileAppTracker setGoogleUserId:userId];
         
-        if(![self isNull:userId])
-        {
-            [MobileAppTracker setGoogleUserId:userId];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setJailbroken:(CDVInvokedUrlCommand*)command
@@ -611,23 +557,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strJailbroken = [arguments objectAtIndex:0];
+    NSString* strJailbroken = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strJailbroken])
+    {
+        BOOL jailbroken = [strJailbroken boolValue];
         
-        if(![self isNull:strJailbroken])
-        {
-            BOOL jailbroken = [strJailbroken boolValue];
-            
-            [MobileAppTracker setJailbroken:jailbroken];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setJailbroken:jailbroken];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setAge:(CDVInvokedUrlCommand*)command
@@ -636,23 +580,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strAge = [arguments objectAtIndex:0];
+    NSString* strAge = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strAge])
+    {
+        int age = [strAge intValue];
         
-        if(![self isNull:strAge])
-        {
-            int age = [strAge intValue];
-            
-            [MobileAppTracker setAge:age];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setAge:age];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setLocation:(CDVInvokedUrlCommand*)command
@@ -661,27 +603,24 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
+    NSNumber* numLat = [arguments objectAtIndex:0];
+    NSNumber* numLon = [arguments objectAtIndex:1];
+    
+    if(![self isNull:numLat]
+       && ![self isNull:numLon])
+    {
+        CGFloat lat = [numLat doubleValue];
+        CGFloat lon = [numLon doubleValue];
         
-        NSNumber* numLat = [arguments objectAtIndex:0];
-        NSNumber* numLon = [arguments objectAtIndex:1];
+        [MobileAppTracker setLatitude:lat longitude:lon];
         
-        if(![self isNull:numLat]
-           && ![self isNull:numLon])
-        {
-            CGFloat lat = [numLat doubleValue];
-            CGFloat lon = [numLon doubleValue];
-            
-            [MobileAppTracker setLatitude:lat longitude:lon];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setLocationWithAltitude:(CDVInvokedUrlCommand*)command
@@ -690,29 +629,27 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSNumber* numLat = [arguments objectAtIndex:0];
-        NSNumber* numLon = [arguments objectAtIndex:1];
-        NSNumber* numAlt = [arguments objectAtIndex:2];
+    NSNumber* numLat = [arguments objectAtIndex:0];
+    NSNumber* numLon = [arguments objectAtIndex:1];
+    NSNumber* numAlt = [arguments objectAtIndex:2];
+    
+    if(![self isNull:numLat]
+       && ![self isNull:numLon]
+       && ![self isNull:numAlt])
+    {
+        CGFloat lat = [numLat doubleValue];
+        CGFloat lon = [numLon doubleValue];
+        CGFloat alt = [numAlt doubleValue];
         
-        if(![self isNull:numLat]
-           && ![self isNull:numLon]
-           && ![self isNull:numAlt])
-        {
-            CGFloat lat = [numLat doubleValue];
-            CGFloat lon = [numLon doubleValue];
-            CGFloat alt = [numAlt doubleValue];
-            
-            [MobileAppTracker setLatitude:lat longitude:lon altitude:alt];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setLatitude:lat longitude:lon altitude:alt];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setUseCookieTracking:(CDVInvokedUrlCommand*)command
@@ -721,23 +658,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strUseCookie = [arguments objectAtIndex:0];
+    NSString* strUseCookie = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strUseCookie])
+    {
+        BOOL useCookie = [strUseCookie boolValue];
         
-        if(![self isNull:strUseCookie])
-        {
-            BOOL useCookie = [strUseCookie boolValue];
-            
-            [MobileAppTracker setUseCookieTracking:useCookie];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setUseCookieTracking:useCookie];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setShouldAutoDetectJailbroken:(CDVInvokedUrlCommand*)command
@@ -746,23 +681,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strAutoDetect = [arguments objectAtIndex:0];
+    NSString* strAutoDetect = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strAutoDetect])
+    {
+        BOOL autoDetect = [strAutoDetect boolValue];
         
-        if(![self isNull:strAutoDetect])
-        {
-            BOOL autoDetect = [strAutoDetect boolValue];
-            
-            [MobileAppTracker setShouldAutoDetectJailbroken:autoDetect];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setShouldAutoDetectJailbroken:autoDetect];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setShouldAutoGenerateAppleVendorIdentifier:(CDVInvokedUrlCommand*)command
@@ -771,23 +704,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strAutoGen = [arguments objectAtIndex:0];
+    NSString* strAutoGen = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strAutoGen])
+    {
+        BOOL autoGen = [strAutoGen boolValue];
         
-        if(![self isNull:strAutoGen])
-        {
-            BOOL autoGen = [strAutoGen boolValue];
-            
-            [MobileAppTracker setShouldAutoGenerateAppleVendorIdentifier:autoGen];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setShouldAutoGenerateAppleVendorIdentifier:autoGen];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setAppAdTracking:(CDVInvokedUrlCommand*)command
@@ -796,23 +727,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strEnable = [arguments objectAtIndex:0];
+    NSString* strEnable = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strEnable])
+    {
+        BOOL enable = [strEnable boolValue];
         
-        if(![self isNull:strEnable])
-        {
-            BOOL enable = [strEnable boolValue];
-            
-            [MobileAppTracker setAppAdTracking:enable];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setAppAdTracking:enable];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setGender:(CDVInvokedUrlCommand*)command
@@ -821,23 +750,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strGender = [arguments objectAtIndex:0];
+    NSString* strGender = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strGender])
+    {
+        int gender = [strGender intValue];
         
-        if(![self isNull:strGender])
-        {
-            int gender = [strGender intValue];
-            
-            [MobileAppTracker setGender:gender];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setGender:gender];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)applicationDidOpenURL:(CDVInvokedUrlCommand*)command
@@ -846,23 +773,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strURL = [arguments objectAtIndex:0];
-        NSString* strSource = [arguments objectAtIndex:1];
+    NSString* strURL = [arguments objectAtIndex:0];
+    NSString* strSource = [arguments objectAtIndex:1];
+    
+    if(![self isNull:strURL]
+       && ![self isNull:strSource])
+    {
+        [MobileAppTracker applicationDidOpenURL:strURL sourceApplication:strSource];
         
-        if(![self isNull:strURL]
-           && ![self isNull:strSource])
-        {
-            [MobileAppTracker applicationDidOpenURL:strURL sourceApplication:strSource];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)startAppToAppTracking:(CDVInvokedUrlCommand*)command
@@ -871,36 +796,33 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strTargetAppPackageName = [arguments objectAtIndex:0];
-        NSString* strTargetAdvId = [arguments objectAtIndex:1];
-        NSString* strTargetOfferId = [arguments objectAtIndex:2];
-        NSString* strTargetPublisherId = [arguments objectAtIndex:3];
-        NSString* strShouldRedirect = [arguments objectAtIndex:4];
+    NSString* strTargetAppPackageName = [arguments objectAtIndex:0];
+    NSString* strTargetAdvId = [arguments objectAtIndex:1];
+    NSString* strTargetOfferId = [arguments objectAtIndex:2];
+    NSString* strTargetPublisherId = [arguments objectAtIndex:3];
+    NSString* strShouldRedirect = [arguments objectAtIndex:4];
+    
+    if(![self isNull:strTargetAppPackageName]
+       && ![self isNull:strTargetAdvId]
+       && ![self isNull:strTargetOfferId]
+       && ![self isNull:strTargetPublisherId]
+       && ![self isNull:strShouldRedirect])
+    {
+        BOOL shouldRedirect = [strShouldRedirect boolValue];
         
+        [MobileAppTracker startAppToAppTracking:strTargetAppPackageName
+                                   advertiserId:strTargetAdvId
+                                        offerId:strTargetOfferId
+                                    publisherId:strTargetPublisherId
+                                       redirect:shouldRedirect];
         
-        if(![self isNull:strTargetAppPackageName]
-           && ![self isNull:strTargetAdvId]
-           && ![self isNull:strTargetOfferId]
-           && ![self isNull:strTargetPublisherId]
-           && ![self isNull:strShouldRedirect])
-        {
-            BOOL shouldRedirect = [strShouldRedirect boolValue];
-            
-            [MobileAppTracker startAppToAppTracking:strTargetAppPackageName
-                                       advertiserId:strTargetAdvId
-                                            offerId:strTargetOfferId
-                                        publisherId:strTargetPublisherId
-                                           redirect:shouldRedirect];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command
@@ -909,21 +831,19 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strURL = [arguments objectAtIndex:0];
+    NSString* strURL = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strURL])
+    {
+        [MobileAppTracker setRedirectUrl:strURL];
         
-        if(![self isNull:strURL])
-        {
-            [MobileAppTracker setRedirectUrl:strURL];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setExistingUser:(CDVInvokedUrlCommand *)command
@@ -932,23 +852,21 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strExistingUser = [arguments objectAtIndex:0];
+    NSString* strExistingUser = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strExistingUser])
+    {
+        BOOL isExistingUser = [strExistingUser boolValue];
         
-        if(![self isNull:strExistingUser])
-        {
-            BOOL isExistingUser = [strExistingUser boolValue];
-            
-            [MobileAppTracker setExistingUser:isExistingUser];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setExistingUser:isExistingUser];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 -(void)setPayingUser:(CDVInvokedUrlCommand *)command
@@ -957,64 +875,60 @@
     
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString* strPayingUser = [arguments objectAtIndex:0];
+    NSString* strPayingUser = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strPayingUser])
+    {
+        BOOL isPayingUser = [strPayingUser boolValue];
         
-        if(![self isNull:strPayingUser])
-        {
-            BOOL isPayingUser = [strPayingUser boolValue];
-            
-            [MobileAppTracker setPayingUser:isPayingUser];
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        [MobileAppTracker setPayingUser:isPayingUser];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setEventAttributeN:(CDVInvokedUrlCommand*)command num:(int)attrNum
 {
 	NSLog(@"MATPlugin: setEventAttribute%d", attrNum);
-
+    
     NSArray* arguments = command.arguments;
     
-    [self.commandDelegate runInBackground:^{
-        NSString *attr = [arguments objectAtIndex:0];
+    NSString *attr = [arguments objectAtIndex:0];
+    
+    if(![self isNull:attr])
+    {
+        switch (attrNum) {
+            case 1:
+            [MobileAppTracker setEventAttribute1:attr];
+            break;
+            case 2:
+            [MobileAppTracker setEventAttribute2:attr];
+            break;
+            case 3:
+            [MobileAppTracker setEventAttribute3:attr];
+            break;
+            case 4:
+            [MobileAppTracker setEventAttribute4:attr];
+            break;
+            case 5:
+            [MobileAppTracker setEventAttribute5:attr];
+            break;
+            default:
+            break;
+        }
         
-        if(![self isNull:attr])
-        {
-            switch (attrNum) {
-                case 1:
-                    [MobileAppTracker setEventAttribute1:attr];
-                    break;
-                case 2:
-                    [MobileAppTracker setEventAttribute2:attr];
-                    break;
-                case 3:
-                    [MobileAppTracker setEventAttribute3:attr];
-                    break;
-                case 4:
-                    [MobileAppTracker setEventAttribute4:attr];
-                    break;
-                case 5:
-                    [MobileAppTracker setEventAttribute5:attr];
-                    break;
-                default:
-                    break;
-            }
-            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-        else
-        {
-            [self throwInvalidArgsErrorForCommand:command];
-        }
-    }];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
 }
 
 - (void)setEventAttribute1:(CDVInvokedUrlCommand*)command
@@ -1048,39 +962,30 @@
 {
     NSLog(@"MATPlugin: getMatId");
     
-    [self.commandDelegate runInBackground:^{
-
-        NSString *matId = [MobileAppTracker matId];
-            
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:matId];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    NSString *matId = [MobileAppTracker matId];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:matId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command
 {
     NSLog(@"MATPlugin: getOpenLogId");
     
-    [self.commandDelegate runInBackground:^{
-        
-        NSString *logId = [MobileAppTracker openLogId];
-        
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:logId];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    NSString *logId = [MobileAppTracker openLogId];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:logId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command
 {
     NSLog(@"MATPlugin: getIsPayingUser");
     
-    [self.commandDelegate runInBackground:^{
-        
-        BOOL payingUser = [MobileAppTracker isPayingUser];
-        
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:payingUser];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    BOOL payingUser = [MobileAppTracker isPayingUser];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:payingUser];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 #pragma mark - Android only placeholder methods
