@@ -956,6 +956,188 @@
     [self setEventAttributeN:command num:5];
 }
 
+- (void)setEventContentId:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventContentId");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString *contentId = [arguments objectAtIndex:0];
+    
+    if(![self isNull:contentId])
+    {
+        [MobileAppTracker setEventContentId:contentId];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventContentType:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventContentType");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString *contentType = [arguments objectAtIndex:0];
+    
+    if(![self isNull:contentType])
+    {
+        [MobileAppTracker setEventContentType:contentType];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventDate1:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventDate1");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSNumber* numDateMillis = [arguments objectAtIndex:0];
+    
+    if(![self isNull:numDateMillis])
+    {
+        double dateMillis = [numDateMillis doubleValue];
+        
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
+        
+        [MobileAppTracker setEventDate1:date];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventDate2:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventDate2");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSNumber* numDateMillis = [arguments objectAtIndex:0];
+    
+    if(![self isNull:numDateMillis])
+    {
+        double dateMillis = [numDateMillis doubleValue];
+        
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
+        
+        [MobileAppTracker setEventDate2:date];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventLevel:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventLevel");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString* strLevel = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strLevel])
+    {
+        int level = [strLevel intValue];
+        
+        [MobileAppTracker setEventLevel:level];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventQuantity:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventQuantity");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString* strQuantity = [arguments objectAtIndex:0];
+    
+    if(![self isNull:strQuantity])
+    {
+        int quantity = [strQuantity intValue];
+        
+        [MobileAppTracker setEventQuantity:quantity];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventRating:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventRating");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSNumber* numRating = [arguments objectAtIndex:0];
+    
+    if(![self isNull:numRating])
+    {
+        CGFloat rating = [numRating doubleValue];
+        
+        [MobileAppTracker setEventRating:rating];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setEventSearchString:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setEventSearchString");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString *searchString = [arguments objectAtIndex:0];
+    
+    if(![self isNull:searchString])
+    {
+        [MobileAppTracker setEventSearchString:searchString];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 #pragma mark - Getter Methods
 
 - (void)getMatId:(CDVInvokedUrlCommand *)command

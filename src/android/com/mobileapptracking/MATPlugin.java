@@ -1,6 +1,7 @@
 package com.mobileapptracking;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.cordova.CallbackContext;
@@ -30,6 +31,16 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETEVENTATTRIBUTE3 = "setEventAttribute3";
     public static final String SETEVENTATTRIBUTE4 = "setEventAttribute4";
     public static final String SETEVENTATTRIBUTE5 = "setEventAttribute5";
+    
+    public static final String SETEVENTCONTENTID = "setEventContentId";
+    public static final String SETEVENTCONTENTTYPE = "setEventContentType";
+    public static final String SETEVENTDATE1 = "setEventDate1";
+    public static final String SETEVENTDATE2 = "setEventDate2";
+    public static final String SETEVENTLEVEL = "setEventLevel";
+    public static final String SETEVENTQUANTITY = "setEventQuantity";
+    public static final String SETEVENTRATING = "setEventRating";
+    public static final String SETEVENTSEARCHSTRING = "setEventSearchString";
+    
     public static final String SETEXISTINGUSER = "setExistingUser";
     public static final String SETGENDER = "setGender";
     public static final String SETGOOGLEADVERTISINGID = "setGoogleAdvertisingId";
@@ -37,7 +48,6 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETLOCATIONWITHALTITUDE = "setLocationWithAltitude";
     public static final String SETPACKAGENAME = "setPackageName";
     public static final String SETPAYINGUSER = "setPayingUser";
-    public static final String STARTAPPTOAPPTRACKING = "startAppToAppTracking";
     public static final String SETTPID = "setTRUSTeID";
     public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
@@ -239,6 +249,77 @@ public class MATPlugin extends CordovaPlugin {
                 }
                 callbackContext.success();
                 return true;
+            } else if (SETEVENTCONTENTID.equals(action)) {
+                String contentId = args.getString(0);
+                if (contentId != null && contentId.length() > 0) {
+                    if (tracker != null) {
+                        tracker.setEventContentId(contentId);
+                    }
+                    callbackContext.success();
+                    return true;
+                } else {
+                    callbackContext.error("EventContentId null or empty");
+                    return false;
+                }
+            } else if (SETEVENTCONTENTTYPE.equals(action)) {
+                String contentType = args.getString(0);
+                if (contentType != null && contentType.length() > 0) {
+                    if (tracker != null) {
+                        tracker.setEventContentType(contentType);
+                    }
+                    callbackContext.success();
+                    return true;
+                } else {
+                    callbackContext.error("EventContentId null or empty");
+                    return false;
+                }
+            } else if (SETEVENTDATE1.equals(action)) {
+                double dateMillis = args.getDouble(0);
+                if (tracker != null) {
+                    tracker.setEventDate1(new Date((long)dateMillis));
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTDATE2.equals(action)) {
+                double dateMillis = args.getDouble(0);
+                if (tracker != null) {
+                    tracker.setEventDate2(new Date((long)dateMillis));
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTLEVEL.equals(action)) {
+                int level = args.getInt(0);
+                if (tracker != null) {
+                    tracker.setEventLevel(level);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTQUANTITY.equals(action)) {
+                int quantity = args.getInt(0);
+                if (tracker != null) {
+                    tracker.setEventQuantity(quantity);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTRATING.equals(action)) {
+                double rating = args.getDouble(0);
+                if (tracker != null) {
+                    tracker.setEventRating((float)rating);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEVENTSEARCHSTRING.equals(action)) {
+                String searchString = args.getString(0);
+                if (searchString != null && searchString.length() > 0) {
+                    if (tracker != null) {
+                        tracker.setEventSearchString(searchString);
+                    }
+                    callbackContext.success();
+                    return true;
+                } else {
+                    callbackContext.error("EventSearchString null or empty");
+                    return false;
+                }
             } else if (SETEXISTINGUSER.equals(action)) {
                 boolean existingUser = args.getBoolean(0);
                 if (tracker != null) {
@@ -312,18 +393,6 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("TPID null or empty");
                     return false;
                 }
-            } else if (SETAPPADTRACKING.equals(action)) {
-                String targetPackageName = args.getString(0);
-                String publisherAdvertiserId = args.getString(1);
-                String targetOfferId = args.getString(2);
-                String targetPublisherId = args.getString(3);
-                boolean shouldRedirect = args.getBoolean(4);
-                
-                if (tracker != null) {
-                    tracker.setTracking(publisherAdvertiserId, targetPackageName, targetPublisherId, targetOfferId, shouldRedirect);
-                }
-                callbackContext.success();
-                return true;
             } else if (SETUSEREMAIL.equals(action)) {
                 String userEmail = args.getString(0);
                 if (userEmail != null && userEmail.length() > 0) {
@@ -483,7 +552,7 @@ public class MATPlugin extends CordovaPlugin {
                         tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
                     }
                 } else if (receiptData != null && receiptSignature != null) {
-                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                    tracker.measureAction(eventName, null, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
                 } else if (refId != null && refId.length() > 0) {
                     tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId);
                 } else {

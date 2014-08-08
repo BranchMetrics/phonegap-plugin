@@ -63,6 +63,15 @@
 - (void)setEventAttribute4:(CDVInvokedUrlCommand*)command;
 - (void)setEventAttribute5:(CDVInvokedUrlCommand*)command;
 
+- (void)setEventContentType:(CDVInvokedUrlCommand*)command;
+- (void)setEventContentId:(CDVInvokedUrlCommand*)command;
+- (void)setEventDate1:(CDVInvokedUrlCommand*)command;
+- (void)setEventDate2:(CDVInvokedUrlCommand*)command;
+- (void)setEventLevel:(CDVInvokedUrlCommand*)command;
+- (void)setEventQuantity:(CDVInvokedUrlCommand*)command;
+- (void)setEventRating:(CDVInvokedUrlCommand*)command;
+- (void)setEventSearchString:(CDVInvokedUrlCommand*)command;
+
 - (void)getMatId:(CDVInvokedUrlCommand *)command;
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command;
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;

@@ -106,35 +106,40 @@
             
             function testSetters()
             {
-                mat.setTRUSTeId(resultHandler, errorHandler, "tempTrusteId");
-                mat.setUserEmail(resultHandler, errorHandler, "tempUserEmail@tempUserCompany.com");
-                mat.setUserId(resultHandler, errorHandler, "tempUserId");
-                mat.setUserName(resultHandler, errorHandler, "tempUserName");
-                mat.setFacebookUserId(resultHandler, errorHandler, "tempFacebookId");
-                mat.setTwitterUserId(resultHandler, errorHandler, "tempTwitterId");
-                mat.setGoogleUserId(resultHandler, errorHandler, "tempGoogleId");
-                mat.setCurrencyCode(resultHandler, errorHandler, "tempCurrencyCode");
-                mat.setGender(resultHandler, errorHandler, 1);
-                mat.setLocation(resultHandler, errorHandler, 1.1, 2.2);
-                mat.setLocationWithAltitude(resultHandler, errorHandler, 3.3, 4.4, 5.5);
-                mat.setUseCookieTracking(resultHandler, errorHandler, false);
-                mat.setAppAdTracking(resultHandler, errorHandler, true);
                 mat.setAge(resultHandler, errorHandler, 23);
-                mat.setJailbroken(resultHandler, errorHandler, false);
+                mat.setAppAdTracking(resultHandler, errorHandler, true);
                 mat.setAppleVendorIdentifier(resultHandler, errorHandler, "12345678-1234-1234-1234-123456789012");
-                mat.setPackageName(resultHandler, errorHandler, "testPackageName");
-                
-                mat.setExistingUser(resultHandler, errorHandler, false);
-                mat.setPayingUser(resultHandler, errorHandler, true);
-                
+                mat.setCurrencyCode(resultHandler, errorHandler, "tempCurrencyCode");
                 mat.setEventAttribute1(resultHandler, errorHandler, "eventAttr1");
                 mat.setEventAttribute2(resultHandler, errorHandler, "eventAttr2");
                 mat.setEventAttribute3(resultHandler, errorHandler, "eventAttr3");
                 mat.setEventAttribute4(resultHandler, errorHandler, "eventAttr4");
                 mat.setEventAttribute5(resultHandler, errorHandler, "eventAttr5");
                 
-                // print the sdk data params
-                mat.setDelegate(resultHandler, errorHandler, true);
+                mat.setEventContentId(resultHandler, errorHandler, "tempContentId");
+                mat.setEventContentType(resultHandler, errorHandler, "tempContentType");
+                mat.setEventDate1(resultHandler, errorHandler, new Date().getTime());
+                mat.setEventDate2(resultHandler, errorHandler, new Date().getTime() + 60 * 1000);
+                mat.setEventLevel(resultHandler, errorHandler, 3);
+                mat.setEventQuantity(resultHandler, errorHandler, 2);
+                mat.setEventRating(resultHandler, errorHandler, 4.5);
+                mat.setEventSearchString(resultHandler, errorHandler, "tempSearchString");
+                
+                mat.setExistingUser(resultHandler, errorHandler, false);
+                mat.setFacebookUserId(resultHandler, errorHandler, "tempFacebookId");
+                mat.setGender(resultHandler, errorHandler, 1);
+                mat.setGoogleUserId(resultHandler, errorHandler, "tempGoogleId");
+                mat.setJailbroken(resultHandler, errorHandler, false);
+                mat.setLocation(resultHandler, errorHandler, 1.1, 2.2);
+                mat.setLocationWithAltitude(resultHandler, errorHandler, 3.3, 4.4, 5.5);
+                mat.setPackageName(resultHandler, errorHandler, "testPackageName");
+                mat.setPayingUser(resultHandler, errorHandler, true);
+                mat.setTRUSTeId(resultHandler, errorHandler, "tempTrusteId");
+                mat.setTwitterUserId(resultHandler, errorHandler, "tempTwitterId");
+                mat.setUseCookieTracking(resultHandler, errorHandler, false);
+                mat.setUserEmail(resultHandler, errorHandler, "tempUserEmail@tempUserCompany.com");
+                mat.setUserId(resultHandler, errorHandler, "tempUserId");
+                mat.setUserName(resultHandler, errorHandler, "tempUserName");
             }
             
             function testGetters()

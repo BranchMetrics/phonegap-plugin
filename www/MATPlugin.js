@@ -79,6 +79,46 @@ MATPlugin.prototype.setEventAttribute5 = function(success, failure, attr) {
     cordova.exec(success, failure, "MATPlugin", "setEventAttribute5", [attr]);
 };
 
+MATPlugin.prototype.setEventContentId = function(success, failure, contentId) {
+    console.log("MATPlugin.js: Calling setEventContentId");
+    cordova.exec(success, failure, "MATPlugin", "setEventContentId", [contentId]);
+};
+
+MATPlugin.prototype.setEventContentType = function(success, failure, contentType) {
+    console.log("MATPlugin.js: Calling setEventContentType");
+    cordova.exec(success, failure, "MATPlugin", "setEventContentType", [contentType]);
+};
+
+MATPlugin.prototype.setEventDate1 = function(success, failure, date1) {
+    console.log("MATPlugin.js: Calling setEventDate1");
+    cordova.exec(success, failure, "MATPlugin", "setEventDate1", [date1]);
+};
+
+MATPlugin.prototype.setEventDate2 = function(success, failure, date2) {
+    console.log("MATPlugin.js: Calling setEventDate2");
+    cordova.exec(success, failure, "MATPlugin", "setEventDate2", [date2]);
+};
+
+MATPlugin.prototype.setEventLevel = function(success, failure, level) {
+    console.log("MATPlugin.js: Calling setEventLevel");
+    cordova.exec(success, failure, "MATPlugin", "setEventLevel", [level]);
+};
+
+MATPlugin.prototype.setEventQuantity = function(success, failure, quantity) {
+    console.log("MATPlugin.js: Calling setEventQuantity");
+    cordova.exec(success, failure, "MATPlugin", "setEventQuantity", [quantity]);
+};
+
+MATPlugin.prototype.setEventRating = function(success, failure, rating) {
+    console.log("MATPlugin.js: Calling setEventRating");
+    cordova.exec(success, failure, "MATPlugin", "setEventRating", [rating]);
+};
+
+MATPlugin.prototype.setEventSearchString = function(success, failure, searchString) {
+    console.log("MATPlugin.js: Calling setEventSearchString");
+    cordova.exec(success, failure, "MATPlugin", "setEventSearchString", [searchString]);
+};
+
 MATPlugin.prototype.setExistingUser = function(success, failure, existingUser) {
     console.log("MATPlugin.js: Calling setExistingUser");
     cordova.exec(success, failure, "MATPlugin", "setExistingUser", [existingUser]);
