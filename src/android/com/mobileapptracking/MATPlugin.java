@@ -559,8 +559,9 @@ public class MATPlugin extends CordovaPlugin {
                     tracker.measureAction(eventName, revenue, tracker.getCurrencyCode());
                 }
                 cbc.success();
+            } else {
+                cbc.error("Tracker was null");
             }
-            cbc.error("Tracker was null");
         }
     }
 }
