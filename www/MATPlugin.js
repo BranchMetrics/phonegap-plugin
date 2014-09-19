@@ -34,6 +34,11 @@ MATPlugin.prototype.setAllowDuplicates = function(success, failure, enable) {
     cordova.exec(success, failure, "MATPlugin", "setAllowDuplicates", [enable]);
 };
 
+MATPlugin.prototype.setAndroidId = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setAndroidId");
+    cordova.exec(success, failure, "MATPlugin", "setAndroidId", [enable]);
+};
+
 MATPlugin.prototype.setAppAdTracking = function(success, failure, enable) {
     console.log("MATPlugin.js: Calling setAppAdTracking");
     cordova.exec(success, failure, "MATPlugin", "setAppAdTracking", [enable]);
@@ -52,6 +57,11 @@ MATPlugin.prototype.setDebugMode = function(success, failure, enable) {
 MATPlugin.prototype.setDelegate = function(success, failure, enable) {
     console.log("MATPlugin.js: Calling setDelegate");
     cordova.exec(success, failure, "MATPlugin", "setDelegate", [enable]);
+};
+
+MATPlugin.prototype.setDeviceId = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setDeviceId");
+    cordova.exec(success, failure, "MATPlugin", "setDeviceId", [enable]);
 };
 
 MATPlugin.prototype.setEventAttribute1 = function(success, failure, attr) {

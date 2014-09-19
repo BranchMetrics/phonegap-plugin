@@ -12,6 +12,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.provider.Settings.Secure;
+import android.telephony.TelephonyManager;
 
 import com.mobileapptracker.MATEventItem;
 import com.mobileapptracker.MobileAppTracker;
@@ -23,9 +26,11 @@ public class MATPlugin extends CordovaPlugin {
     public static final String MEASUREACTIONWITHRECEIPT = "measureActionWithReceipt";
     public static final String MEASURESESSION = "measureSession";
     public static final String SETAGE = "setAge";
+    public static final String SETANDROIDID = "setAndroidId";
     public static final String SETAPPADTRACKING = "setAppAdTracking";
     public static final String SETALLOWDUP = "setAllowDuplicates";
     public static final String SETDEBUG = "setDebugMode";
+    public static final String SETDEVICEID = "setDeviceId";
     public static final String SETEVENTATTRIBUTE1 = "setEventAttribute1";
     public static final String SETEVENTATTRIBUTE2 = "setEventAttribute2";
     public static final String SETEVENTATTRIBUTE3 = "setEventAttribute3";
@@ -200,6 +205,13 @@ public class MATPlugin extends CordovaPlugin {
                 }
                 callbackContext.success();
                 return true;
+            } else if (SETANDROIDID.equals(action)) {
+                boolean enableAndroidId = args.getBoolean(0);
+                if (tracker != null && enableAndroidId) {
+                    tracker.setAndroidId(Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID));
+                }
+                callbackContext.success();
+                return true;
             } else if (SETAPPADTRACKING.equals(action)) {
                 boolean adTracking = args.getBoolean(0);
                 if (tracker != null) {
@@ -211,6 +223,19 @@ public class MATPlugin extends CordovaPlugin {
                 boolean debug = args.getBoolean(0);
                 if (tracker != null) {
                     tracker.setDebugMode(debug);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETDEVICEID.equals(action)) {
+                boolean enableDeviceId = args.getBoolean(0);
+                if (tracker != null && enableDeviceId) {
+                    // Check for READ_PHONE_STATE permission
+                    String permission = "android.permission.READ_PHONE_STATE";
+                    int res = this.cordova.getActivity().getApplicationContext().checkCallingOrSelfPermission(permission);
+                    if (res == PackageManager.PERMISSION_GRANTED) {
+                        TelephonyManager telephonyManager = (TelephonyManager)this.cordova.getActivity().getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+                        tracker.setDeviceId(telephonyManager.getDeviceId());
+                    }
                 }
                 callbackContext.success();
                 return true;

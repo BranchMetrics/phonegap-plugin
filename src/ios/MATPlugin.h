@@ -76,6 +76,8 @@
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command;
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
 
+- (void)setAndroidId:(CDVInvokedUrlCommand *)command;
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command;
+- (void)setDeviceId:(CDVInvokedUrlCommand *)command;
 
 @end

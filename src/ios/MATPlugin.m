@@ -1172,6 +1172,16 @@
 
 #pragma mark - Android only placeholder methods
 
+- (void)setAndroidId:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setDeviceId:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command
 {
     // no-op Android only placeholder method

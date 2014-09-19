@@ -1,6 +1,7 @@
 package com.mobileapptracking.gaidwrapper;
 
 import java.io.IOException;
+import java.lang.NullPointerException;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -55,6 +56,8 @@ public class GAIDWrapperPlugin extends CordovaPlugin {
                 // Google Play services is not available entirely.
                 cbc.error(e.getMessage());
             } catch (GooglePlayServicesRepairableException e) {
+                cbc.error(e.getMessage());
+            } catch (NullPointerException e) {
                 cbc.error(e.getMessage());
             }
 

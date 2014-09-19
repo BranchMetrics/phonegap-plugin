@@ -74,4 +74,24 @@
         <framework src="SystemConfiguration.framework" />
     </platform>
 
+    <!-- WP8 -->
+    <platform name="wp8">
+        <config-file target="config.xml" parent="/*">
+            <feature name="MATPlugin">
+                <param name="wp-package" value="MATPlugin"/>
+            </feature>
+        </config-file>
+
+        <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+            <Capability Name="ID_CAP_IDENTITY_DEVICE" />
+        </config-file>
+
+         <framework src="src/wp8/MATPhone8SDK.dll" custom="true" />
+         <framework src="src/wp8/Newtonsoft.Json.dll" custom="true" />
+
+        <source-file src="src/wp8/MATPlugin.cs"/>
+        <source-file src="src/wp8/MATPhone8SDK.dll"/>
+        <source-file src="src/wp8/Newtonsoft.Json.dll"/>
+    </platform>
+
 </plugin>
