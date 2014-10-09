@@ -62,7 +62,7 @@
         <header-file src="src/ios/MATPlugin.h" />
 
         <!-- MobileAppTracker framework -->
-        <source-file src="src/ios/MobileAppTracker-3.2.a" framework="true" />
+        <source-file src="src/ios/MobileAppTracker-3.5.2.a" framework="true" />
 
         <header-file src="src/ios/MobileAppTracker.h" />
         <header-file src="src/ios/MATEventItem.h" />
