@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 
 import com.mobileapptracker.MATEventItem;
+import com.mobileapptracker.MATResponse;
 import com.mobileapptracker.MobileAppTracker;
 
 public class MATPlugin extends CordovaPlugin {
@@ -30,6 +32,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETAPPADTRACKING = "setAppAdTracking";
     public static final String SETALLOWDUP = "setAllowDuplicates";
     public static final String SETDEBUG = "setDebugMode";
+    public static final String SETDELEGATE = "setDelegate";
     public static final String SETDEVICEID = "setDeviceId";
     public static final String SETEVENTATTRIBUTE1 = "setEventAttribute1";
     public static final String SETEVENTATTRIBUTE2 = "setEventAttribute2";
@@ -502,6 +505,32 @@ public class MATPlugin extends CordovaPlugin {
                 boolean payingUser = tracker.getIsPayingUser();
                 callbackContext.success(String.valueOf(payingUser));
                 return true;
+            } else if (SETDELEGATE.equals(action)) {
+                // default to true
+                boolean enabled = args.optBoolean(0, true);
+                tracker.setMATResponse(new MATResponse() {
+                    @Override
+                    public void enqueuedActionWithRefId(String refId) {
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, "MATPlugin.matDelegate.enqueued: " + refId);
+                        result.setKeepCallback(true);
+                        callbackContext.sendPluginResult(result);
+                    }
+
+                    @Override
+                    public void didSucceedWithData(JSONObject data) {
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, data.toString());
+                        result.setKeepCallback(true);
+                        callbackContext.sendPluginResult(result);
+                    }
+
+                    @Override
+                    public void didFailWithError(JSONObject error) {
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, error.toString());
+                        result.setKeepCallback(true);
+                        callbackContext.sendPluginResult(result);
+                    }
+                });
+                return true;
             } else {
                 callbackContext.error("Unsupported action on Android");
                 return false;
@@ -563,25 +592,21 @@ public class MATPlugin extends CordovaPlugin {
         @Override
         public void run() {
             if (tracker != null) {
-                // Set currency code if exists
-                if (currency != null && currency.length() > 0 && !currency.equals("null")) {
-                    tracker.setCurrencyCode(currency);
-                }
                 // If there are any event items, track with event item
                 if (eventItemList != null && eventItemList.size() > 0) {
                     if (receiptData != null && !receiptData.equals("null") && receiptSignature != null && !receiptSignature.equals("null")) {
                         // Track with receipt data if not null
-                        tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                        tracker.measureAction(eventName, eventItemList, revenue, currency, refId, receiptData, receiptSignature);
                     } else {
                         // Track with just event item
-                        tracker.measureAction(eventName, eventItemList, revenue, tracker.getCurrencyCode(), refId);
+                        tracker.measureAction(eventName, eventItemList, revenue, currency, refId);
                     }
                 } else if (receiptData != null && receiptSignature != null) {
-                    tracker.measureAction(eventName, null, revenue, tracker.getCurrencyCode(), refId, receiptData, receiptSignature);
+                    tracker.measureAction(eventName, null, revenue, currency, refId, receiptData, receiptSignature);
                 } else if (refId != null && refId.length() > 0) {
-                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode(), refId);
+                    tracker.measureAction(eventName, revenue, currency, refId);
                 } else {
-                    tracker.measureAction(eventName, revenue, tracker.getCurrencyCode());
+                    tracker.measureAction(eventName, revenue, currency);
                 }
                 cbc.success();
             } else {
