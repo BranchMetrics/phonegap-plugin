@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +52,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETGOOGLEADVERTISINGID = "setGoogleAdvertisingId";
     public static final String SETLOCATION = "setLocation";
     public static final String SETLOCATIONWITHALTITUDE = "setLocationWithAltitude";
+    public static final String SETDELEGATE = "setDelegate";
     public static final String SETPACKAGENAME = "setPackageName";
     public static final String SETPAYINGUSER = "setPayingUser";
     public static final String SETTPID = "setTRUSTeID";
@@ -502,10 +504,36 @@ public class MATPlugin extends CordovaPlugin {
                 boolean payingUser = tracker.getIsPayingUser();
                 callbackContext.success(String.valueOf(payingUser));
                 return true;
+            } else if (SETDELEGATE.equals(action)) {
+                // default to true
+                boolean enabled = args.optBoolean(0, true);
+                tracker.setMATResponse(new MATResponse() {
+                  @Override
+                  public void enqueuedActionWithRefId(String refId) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, "MATPlugin.matDelegate.enqueued: " + refId);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
+                  }
+
+                  @Override
+                  public void didSucceedWithData(JSONObject data) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
+                  }
+
+                  @Override
+                  public void didFailWithError(JSONObject error) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, error);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
+                  }
+                });
+                return enabled;
             } else {
                 callbackContext.error("Unsupported action on Android");
                 return false;
-            }
+            } 
         } catch (JSONException e) {
             callbackContext.error("JSON exception");
             return false;
