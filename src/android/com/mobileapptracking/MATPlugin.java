@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 
+import com.mobileapptracker.Encryption;
 import com.mobileapptracker.MATEventItem;
 import com.mobileapptracker.MATResponse;
 import com.mobileapptracker.MobileAppTracker;
@@ -29,17 +30,20 @@ public class MATPlugin extends CordovaPlugin {
     public static final String MEASURESESSION = "measureSession";
     public static final String SETAGE = "setAge";
     public static final String SETANDROIDID = "setAndroidId";
+    public static final String SETANDROIDIDMD5 = "setAndroidIdMd5";
+    public static final String SETANDROIDIDSHA1 = "setAndroidIdSha1";
+    public static final String SETANDROIDIDSHA256 = "setAndroidIdSha256";
     public static final String SETAPPADTRACKING = "setAppAdTracking";
     public static final String SETALLOWDUP = "setAllowDuplicates";
     public static final String SETDEBUG = "setDebugMode";
     public static final String SETDELEGATE = "setDelegate";
     public static final String SETDEVICEID = "setDeviceId";
+    public static final String SETEMAILCOLLECTION = "setEmailCollection";
     public static final String SETEVENTATTRIBUTE1 = "setEventAttribute1";
     public static final String SETEVENTATTRIBUTE2 = "setEventAttribute2";
     public static final String SETEVENTATTRIBUTE3 = "setEventAttribute3";
     public static final String SETEVENTATTRIBUTE4 = "setEventAttribute4";
     public static final String SETEVENTATTRIBUTE5 = "setEventAttribute5";
-    
     public static final String SETEVENTCONTENTID = "setEventContentId";
     public static final String SETEVENTCONTENTTYPE = "setEventContentType";
     public static final String SETEVENTDATE1 = "setEventDate1";
@@ -48,8 +52,8 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETEVENTQUANTITY = "setEventQuantity";
     public static final String SETEVENTRATING = "setEventRating";
     public static final String SETEVENTSEARCHSTRING = "setEventSearchString";
-    
     public static final String SETEXISTINGUSER = "setExistingUser";
+    public static final String SETFBEVENTLOGGING = "setFacebookEventLogging";
     public static final String SETGENDER = "setGender";
     public static final String SETGOOGLEADVERTISINGID = "setGoogleAdvertisingId";
     public static final String SETLOCATION = "setLocation";
@@ -63,7 +67,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETFBUSERID = "setFacebookUserId";
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETGGUSERID = "setGoogleUserId";
-    
+    public static final String CHECKDEFERREDDEEPLINK = "checkForDeferredDeeplink";
     public static final String GETMATID = "getMatId";
     public static final String GETOPENLOGID = "getOpenLogId";
     public static final String GETISPAYINGUSER = "getIsPayingUser";
@@ -211,7 +215,32 @@ public class MATPlugin extends CordovaPlugin {
             } else if (SETANDROIDID.equals(action)) {
                 boolean enableAndroidId = args.getBoolean(0);
                 if (tracker != null && enableAndroidId) {
-                    tracker.setAndroidId(Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID));
+                    String androidId = Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
+                    tracker.setAndroidId(androidId);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETANDROIDIDMD5.equals(action)) {
+                boolean enableAndroidIdMd5 = args.getBoolean(0);
+                if (tracker != null && enableAndroidIdMd5) {
+                    String androidId = Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
+                    tracker.setAndroidIdMd5(Encryption.md5(androidId));
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETANDROIDIDSHA1.equals(action)) {
+                boolean enableAndroidIdSha1 = args.getBoolean(0);
+                if (tracker != null && enableAndroidIdSha1) {
+                    String androidId = Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
+                    tracker.setAndroidIdSha1(Encryption.sha1(androidId));
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETANDROIDIDSHA256.equals(action)) {
+                boolean enableAndroidIdSha256 = args.getBoolean(0);
+                if (tracker != null && enableAndroidIdSha256) {
+                    String androidId = Secure.getString(this.cordova.getActivity().getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
+                    tracker.setAndroidIdSha256(Encryption.sha256(androidId));
                 }
                 callbackContext.success();
                 return true;
@@ -239,6 +268,13 @@ public class MATPlugin extends CordovaPlugin {
                         TelephonyManager telephonyManager = (TelephonyManager)this.cordova.getActivity().getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
                         tracker.setDeviceId(telephonyManager.getDeviceId());
                     }
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETEMAILCOLLECTION.equals(action)) {
+                boolean collectEmail = args.getBoolean(0);
+                if (tracker != null && collectEmail) {
+                    tracker.setEmailCollection(collectEmail);
                 }
                 callbackContext.success();
                 return true;
@@ -352,6 +388,13 @@ public class MATPlugin extends CordovaPlugin {
                 boolean existingUser = args.getBoolean(0);
                 if (tracker != null) {
                     tracker.setExistingUser(existingUser);
+                }
+                callbackContext.success();
+                return true;
+            } else if (SETFBEVENTLOGGING.equals(action)) {
+                boolean fbEventLogging = args.getBoolean(0);
+                if (tracker != null) {
+                    tracker.setFacebookEventLogging(this.cordova.getActivity(), fbEventLogging);
                 }
                 callbackContext.success();
                 return true;
@@ -493,6 +536,17 @@ public class MATPlugin extends CordovaPlugin {
                     callbackContext.error("G+ User ID null or empty");
                     return false;
                 }
+            } else if (CHECKDEFERREDDEEPLINK.equals(action)) {
+                final int timeout = args.getInt(0);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        if (tracker != null) {
+                            String deeplink = tracker.checkForDeferredDeeplink(timeout);
+                            callbackContext.success(deeplink);
+                        }
+                    }
+                });
+                return true;
             } else if (GETMATID.equals(action)) {
                 String matId = tracker.getMatId();
                 callbackContext.success(matId);

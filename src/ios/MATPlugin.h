@@ -38,6 +38,7 @@
 - (void)setUserEmail:(CDVInvokedUrlCommand*)command;
 - (void)setUserId:(CDVInvokedUrlCommand*)command;
 - (void)setUserName:(CDVInvokedUrlCommand*)command;
+- (void)setFacebookEventLogging:(CDVInvokedUrlCommand*)command;
 - (void)setFacebookUserId:(CDVInvokedUrlCommand*)command;
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command;
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command;
@@ -50,6 +51,7 @@
 - (void)startAppToAppTracking:(CDVInvokedUrlCommand*)command;
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command;
 
+- (void)checkForDeferredDeeplink:(CDVInvokedUrlCommand*)command;
 - (void)setExistingUser:(CDVInvokedUrlCommand*)command;
 - (void)measureSession:(CDVInvokedUrlCommand*)command;
 
@@ -77,7 +79,11 @@
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
 
 - (void)setAndroidId:(CDVInvokedUrlCommand *)command;
+- (void)setAndroidIdMd5:(CDVInvokedUrlCommand *)command;
+- (void)setAndroidIdSha1:(CDVInvokedUrlCommand *)command;
+- (void)setAndroidIdSha256:(CDVInvokedUrlCommand *)command;
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command;
 - (void)setDeviceId:(CDVInvokedUrlCommand *)command;
+- (void)setEmailCollection:(CDVInvokedUrlCommand *)command;
 
 @end

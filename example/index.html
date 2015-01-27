@@ -54,6 +54,11 @@
                 
                 console.log('onDeviceReady: mat = ' + mat + ', gaid = ' + gaid + ', ifa = ' + ifa);
             }
+
+            function handleOpenURL(url)
+            {
+                console.log('handleOpenURL: url = ' + url);
+            }
         
             function setMATDebugMode()
             {
@@ -77,16 +82,26 @@
             
             function gaidResultHandler(result)
             {
-                console.log('gaidResultHandler: gaid = ' + result.gaid + ', trackingEnabled = ' + result.isLAT);
-                
-                mat.setGoogleAdvertisingId(resultHandler, errorHandler, result.gaid, result.isLAT);
+                if(result != undefined)
+                {
+                    console.log('gaidResultHandler: gaid = ' + result.gaid + ', trackingEnabled = ' + result.isLAT);
+                    
+                    mat.setGoogleAdvertisingId(resultHandler, errorHandler, result.gaid, result.isLAT);
+                    
+                    mat.checkForDeferredDeeplink(resultHandler, errorHandler, 750); // 750 ms
+                }
             }
             
             function ifaResultHandler(result)
             {
-                console.log('ifaResultHandler: ifa = ' + result.ifa + ', trackingEnabled = ' + result.trackingEnabled);
-                
-                mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, result.ifa, result.trackingEnabled);
+                if(result != undefined)
+                {
+                    console.log('ifaResultHandler: ifa = ' + result.ifa + ', trackingEnabled = ' + result.trackingEnabled);
+                    
+                    mat.setAppleAdvertisingIdentifier(resultHandler, errorHandler, result.ifa, result.trackingEnabled);
+
+                    mat.checkForDeferredDeeplink(resultHandler, errorHandler, 750); // 750 ms
+                }
             }
             
             function initResultHandler (result)
@@ -102,6 +117,8 @@
                 }
                 
                 mat.setPackageName(resultHandler, errorHandler, "com.hasoffers.phonegaptestapp");
+
+                mat.setFacebookEventLogging(resultHandler, errorHandler, true, false);
             }
             
             function testSetters()
@@ -126,6 +143,7 @@
                 mat.setEventSearchString(resultHandler, errorHandler, "tempSearchString");
                 
                 mat.setExistingUser(resultHandler, errorHandler, false);
+                mat.setFacebookEventLogging(resultHandler, errorHandler, true, false);
                 mat.setFacebookUserId(resultHandler, errorHandler, "tempFacebookId");
                 mat.setGender(resultHandler, errorHandler, 1);
                 mat.setGoogleUserId(resultHandler, errorHandler, "tempGoogleId");

@@ -9,6 +9,11 @@ MATPlugin.prototype.initTracker = function(success, failure, matAdvertiserId, ma
     cordova.exec(success, failure, "MATPlugin", "initTracker", [matAdvertiserId, matConversionKey]);
 };
 
+MATPlugin.prototype.checkForDeferredDeeplink = function(success, failure, timeout) {
+    console.log("MATPlugin.js: Calling checkForDeferredDeeplink");
+    cordova.exec(success, failure, "MATPlugin", "checkForDeferredDeeplink", [timeout]);
+};
+
 MATPlugin.prototype.getMatId = function(success, failure) {
     console.log("MATPlugin.js: Calling getMatId");
     cordova.exec(success, failure, "MATPlugin", "getMatId", []);
@@ -39,6 +44,21 @@ MATPlugin.prototype.setAndroidId = function(success, failure, enable) {
     cordova.exec(success, failure, "MATPlugin", "setAndroidId", [enable]);
 };
 
+MATPlugin.prototype.setAndroidIdMd5 = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setAndroidIdMd5");
+    cordova.exec(success, failure, "MATPlugin", "setAndroidIdMd5", [enable]);
+};
+
+MATPlugin.prototype.setAndroidIdSha1 = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setAndroidIdSha1");
+    cordova.exec(success, failure, "MATPlugin", "setAndroidIdSha1", [enable]);
+};
+
+MATPlugin.prototype.setAndroidIdSha256 = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setAndroidIdSha256");
+    cordova.exec(success, failure, "MATPlugin", "setAndroidIdSha256", [enable]);
+};
+
 MATPlugin.prototype.setAppAdTracking = function(success, failure, enable) {
     console.log("MATPlugin.js: Calling setAppAdTracking");
     cordova.exec(success, failure, "MATPlugin", "setAppAdTracking", [enable]);
@@ -62,6 +82,11 @@ MATPlugin.prototype.setDelegate = function(success, failure, enable) {
 MATPlugin.prototype.setDeviceId = function(success, failure, enable) {
     console.log("MATPlugin.js: Calling setDeviceId");
     cordova.exec(success, failure, "MATPlugin", "setDeviceId", [enable]);
+};
+
+MATPlugin.prototype.setEmailCollection = function(success, failure, enable) {
+    console.log("MATPlugin.js: Calling setEmailCollection");
+    cordova.exec(success, failure, "MATPlugin", "setEmailCollection", [enable]);
 };
 
 MATPlugin.prototype.setEventAttribute1 = function(success, failure, attr) {
@@ -132,6 +157,11 @@ MATPlugin.prototype.setEventSearchString = function(success, failure, searchStri
 MATPlugin.prototype.setExistingUser = function(success, failure, existingUser) {
     console.log("MATPlugin.js: Calling setExistingUser");
     cordova.exec(success, failure, "MATPlugin", "setExistingUser", [existingUser]);
+};
+
+MATPlugin.prototype.setFacebookEventLogging = function(success, failure, enable, limit) {
+    console.log("MATPlugin.js: Calling setFacebookEventLogging");
+    cordova.exec(success, failure, "MATPlugin", "setFacebookEventLogging", [enable, limit]);
 };
 
 MATPlugin.prototype.setFacebookUserId = function(success, failure, facebookUserId) {

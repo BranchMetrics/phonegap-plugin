@@ -81,6 +81,29 @@
     }
 }
 
+- (void)checkForDeferredDeeplink:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: checkForDeferredDeeplink");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSNumber* numTimeout = [arguments objectAtIndex:0];
+    
+    if(![self isNull:numTimeout])
+    {
+        CGFloat timeout = [numTimeout doubleValue] / 1000; // millis --> sec
+        
+        [MobileAppTracker checkForDeferredDeeplinkWithTimeout:timeout];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 - (void)measureSession:(CDVInvokedUrlCommand *)command
 {
     NSLog(@"MATPlugin: measureSession");
@@ -478,6 +501,31 @@
     if(![self isNull:userName])
     {
         [MobileAppTracker setUserName:userName];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setFacebookEventLogging:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setFacebookEventLogging");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString* strEnable = [arguments objectAtIndex:0];
+    NSString* strLimit = [arguments objectAtIndex:1];
+    
+    if(![self isNull:strEnable] && ![self isNull:strLimit])
+    {
+        BOOL enable = [strEnable boolValue];
+        BOOL limit = [strLimit boolValue];
+        
+        [MobileAppTracker setFacebookEventLogging:enable limitEventAndDataUsage:limit];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1177,12 +1225,32 @@
     // no-op Android only placeholder method
 }
 
+- (void)setAndroidIdMd5:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setAndroidIdSha1:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setAndroidIdSha256:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
 - (void)setDeviceId:(CDVInvokedUrlCommand*)command
 {
     // no-op Android only placeholder method
 }
 
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setEmailCollection:(CDVInvokedUrlCommand*)command
 {
     // no-op Android only placeholder method
 }
