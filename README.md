@@ -4,6 +4,6 @@ Please see the Quick Start guide here:
 
 [PhoneGap Quick Start](https://developers.mobileapptracking.com/phonegap-plugin/)
 
-MAT PhoneGap Plugin Version : 3.4.2
-Android SDK Version         : 3.3.3
-iOS SDK Version             : 3.5.3
+MAT PhoneGap Plugin Version : 3.7.0
+Android SDK Version         : 3.7.1
+iOS SDK Version             : 3.7.0
