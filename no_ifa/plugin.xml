@@ -71,7 +71,6 @@
         <header-file src="src/ios/MATEventItem.h" />
         
         <!-- system frameworks -->
-        <framework src="AdSupport.framework" />
         <framework src="CoreTelephony.framework" />
         <framework src="iAd.framework" />
         <framework src="MobileCoreServices.framework" />

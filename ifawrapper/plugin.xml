@@ -19,6 +19,18 @@
     <js-module src="www/IFAWrapperPlugin.js" name="IFAWrapperPlugin">
         <clobbers target="window.plugins.ifaWrapperPlugin" />
     </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="IFAWrapperPlugin" >
+                <param name="android-package" value="com.mobileapptracking.ifawrapper.IFAWrapperPlugin" />
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/com/mobileapptracking/ifawrapper/IFAWrapperPlugin.java"
+                     target-dir="src/com/mobileapptracking/ifawrapper" />
+    </platform>
     
     <platform name="ios">
         <!-- Cordova < 2.3 -->

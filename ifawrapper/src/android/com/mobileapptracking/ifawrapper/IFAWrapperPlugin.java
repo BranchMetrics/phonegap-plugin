@@ -1,10 +1,10 @@
-package com.mobileapptracking.gaidwrapper;
+package com.mobileapptracking.ifawrapper;
 
 import java.io.IOException;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import android.content.Context;
+import org.json.JSONArray;
 
 public class IFAWrapperPlugin extends CordovaPlugin {
 
@@ -12,7 +12,6 @@ public class IFAWrapperPlugin extends CordovaPlugin {
     
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
-        
         if (GETIFA.equals(action))
         {
             callbackContext.success();

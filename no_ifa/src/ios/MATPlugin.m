@@ -5,7 +5,6 @@
 //
 
 #import "MATPlugin.h"
-#import <AdSupport/AdSupport.h>
 
 @implementation MATPlugin
 
@@ -32,8 +31,6 @@
         [MobileAppTracker initializeWithMATAdvertiserId:advid
                                        MATConversionKey:convkey];
         [MobileAppTracker setPluginName:@"phonegap"];
-        [MobileAppTracker setAppleAdvertisingIdentifier:[[ASIdentifierManager sharedManager] advertisingIdentifier]
-                             advertisingTrackingEnabled:[[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]];
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
