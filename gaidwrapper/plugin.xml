@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
         xmlns:android="http://schemas.android.com/apk/res/android" 
         id="com.mobileapptracking.gaidwrapper"
-        version="1.0.0">
+        version="1.0.1">
 
     <name>GAIDWrapperPlugin</name>
 
@@ -34,6 +34,8 @@
 
         <source-file src="src/android/com/mobileapptracking/gaidwrapper/GAIDWrapperPlugin.java"
                      target-dir="src/com/mobileapptracking/gaidwrapper" />
+
+        <framework src="com.google.android.gms:play-services-ads:+" />
     </platform>
     
     <platform name="ios">
@@ -41,15 +43,13 @@
         <plugins-plist key="GAIDWrapperPlugin" string="GAIDWrapperPlugin" />
         
         <config-file target="config.xml" parent="/*">
-	        <feature name="GAIDWrapperPlugin">
-				<param name="ios-package" value="GAIDWrapperPlugin" />
-				<param name="onload" value="true" />
-			</feature>
+            <feature name="GAIDWrapperPlugin">
+                <param name="ios-package" value="GAIDWrapperPlugin" />
+                <param name="onload" value="true" />
+            </feature>
         </config-file>
         
         <source-file src="src/ios/GAIDWrapperPlugin.m" />
         <header-file src="src/ios/GAIDWrapperPlugin.h" />
     </platform>
-
-    <dependency id="com.google.playservices" url="https://github.com/MobileChromeApps/google-play-services" commit="master" />
 </plugin>
