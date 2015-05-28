@@ -75,6 +75,8 @@
             {
                 mat.init("877", "8c14d6bbe466b65211e781d62e301eec");
                 mat.setPackageName("com.hasoffers.phonegaptestapp");
+                mat.checkForDeferredDeeplink(750); // 750 ms
+                mat.automateIapEventMeasurement(true);
             }
             
             function testSetters()
@@ -82,24 +84,33 @@
                 mat.setAge(23);
                 mat.setAppAdTracking(true);
                 mat.setAppleVendorIdentifier("12345678-1234-1234-1234-123456789012");
-                mat.setCurrencyCode("tempCurrencyCode");
+                mat.setCurrencyCode("AUD");
                 
                 mat.setExistingUser(false);
                 mat.setFacebookEventLogging(true, false);
-                mat.setFacebookUserId("tempFacebookId");
+                mat.setFacebookUserId("198273645");
                 mat.setGender(1);
-                mat.setGoogleUserId("tempGoogleId");
+                mat.setGoogleUserId("5647382910");
                 mat.setJailbroken(false);
                 mat.setLocation(1.1, 2.2);
                 mat.setLocationWithAltitude(3.3, 4.4, 5.5);
-                mat.setPackageName("testPackageName");
+                mat.setPackageName("com.mycompany.myapp");
                 mat.setPayingUser(true);
                 mat.setTRUSTeId("tempTrusteId");
-                mat.setTwitterUserId("tempTwitterId");
+                mat.setTwitterUserId("1357908642");
                 mat.setUseCookieTracking(false);
                 mat.setUserEmail("tempUserEmail@tempUserCompany.com");
                 mat.setUserId("tempUserId");
                 mat.setUserName("tempUserName");
+
+                var preloadData = {
+                    "publisherId":"1122334455",
+                    "publisherReferenceId":"RX1357",
+                    "agencyId":"66554477",
+                    "publisherSub5":"some_pub_sub_value"
+                };
+                
+                mat.setPreloadData(preloadData);
             }
             
             function testGetters()

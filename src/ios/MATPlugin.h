@@ -43,6 +43,7 @@
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command;
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command;
 - (void)setPayingUser:(CDVInvokedUrlCommand *)command;
+- (void)setPreloadData:(CDVInvokedUrlCommand *)command;
 - (void)setShouldAutoDetectJailbroken:(CDVInvokedUrlCommand*)command;
 - (void)setShouldAutoGenerateAppleVendorIdentifier:(CDVInvokedUrlCommand*)command;
 
@@ -52,6 +53,7 @@
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command;
 
 - (void)checkForDeferredDeeplink:(CDVInvokedUrlCommand*)command;
+- (void)automateIapEventMeasurement:(CDVInvokedUrlCommand*)command;
 - (void)setExistingUser:(CDVInvokedUrlCommand*)command;
 - (void)measureSession:(CDVInvokedUrlCommand*)command;
 

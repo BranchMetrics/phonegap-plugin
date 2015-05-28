@@ -21,6 +21,7 @@ import android.telephony.TelephonyManager;
 import com.mobileapptracker.MATEncryption;
 import com.mobileapptracker.MATEvent;
 import com.mobileapptracker.MATEventItem;
+import com.mobileapptracker.MATPreloadData;
 import com.mobileapptracker.MATResponse;
 import com.mobileapptracker.MobileAppTracker;
 
@@ -49,6 +50,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETLOCATIONWITHALTITUDE = "setLocationWithAltitude";
     public static final String SETPACKAGENAME = "setPackageName";
     public static final String SETPAYINGUSER = "setPayingUser";
+    public static final String SETPRELOADDATA = "setPreloadData";
     public static final String SETTPID = "setTRUSTeID";
     public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
@@ -87,7 +89,7 @@ public class MATPlugin extends CordovaPlugin {
             String eventName = args.optString(0);
             if (eventName.length() > 0) {
                 if (tracker != null) {
-                    //tracker.measureEvent(eventName);
+                    tracker.measureEvent(eventName);
                 }
                 callbackContext.success();
             } else {
@@ -421,6 +423,60 @@ public class MATPlugin extends CordovaPlugin {
                     }
                 }
             });
+            return true;
+        } else if (SETPRELOADDATA.equals(action)) {
+            // Parse preload data from first arg
+            JSONObject preloadData = args.optJSONObject(0);
+            if (preloadData != null && tracker != null) {
+                String publisherId              = preloadData.optString("publisherId");
+                String offerId                  = preloadData.optString("offerId");
+                String agencyId                 = preloadData.optString("agencyId");
+                String publisherReferenceId     = preloadData.optString("publisherReferenceId");
+                String publisherSub1            = preloadData.optString("publisherSub1");
+                String publisherSub2            = preloadData.optString("publisherSub2");
+                String publisherSub3            = preloadData.optString("publisherSub3");
+                String publisherSub4            = preloadData.optString("publisherSub4");
+                String publisherSub5            = preloadData.optString("publisherSub5");
+                String publisherSubAd           = preloadData.optString("publisherSubAd");
+                String publisherSubAdgroup      = preloadData.optString("publisherSubAdgroup");
+                String publisherSubCampaign     = preloadData.optString("publisherSubCampaign");
+                String publisherSubKeyword      = preloadData.optString("publisherSubKeyword");
+                String publisherSubPublisher    = preloadData.optString("publisherSubPublisher");
+                String publisherSubSite         = preloadData.optString("publisherSubSite");
+                String advertiserSubAd          = preloadData.optString("advertiserSubAd");
+                String advertiserSubAdgroup     = preloadData.optString("advertiserSubAdgroup");
+                String advertiserSubCampaign    = preloadData.optString("advertiserSubCampaign");
+                String advertiserSubKeyword     = preloadData.optString("advertiserSubKeyword");
+                String advertiserSubPublisher   = preloadData.optString("advertiserSubPublisher");
+                String advertiserSubSite        = preloadData.optString("advertiserSubSite");
+
+                if (publisherId.length() > 0) {
+                    // Create MATPreloadData from JSONObject fields
+                    MATPreloadData matPreloadData = new MATPreloadData(publisherId)
+                                                        .withOfferId(offerId)
+                                                        .withAgencyId(agencyId)
+                                                        .withPublisherReferenceId(publisherReferenceId)
+                                                        .withPublisherSub1(publisherSub1)
+                                                        .withPublisherSub2(publisherSub2)
+                                                        .withPublisherSub3(publisherSub3)
+                                                        .withPublisherSub4(publisherSub4)
+                                                        .withPublisherSub5(publisherSub5)
+                                                        .withPublisherSubAd(publisherSubAd)
+                                                        .withPublisherSubAdgroup(publisherSubAdgroup)
+                                                        .withPublisherSubCampaign(publisherSubCampaign)
+                                                        .withPublisherSubKeyword(publisherSubKeyword)
+                                                        .withPublisherSubPublisher(publisherSubPublisher)
+                                                        .withPublisherSubSite(publisherSubSite)
+                                                        .withAdvertiserSubAd(advertiserSubAd)
+                                                        .withAdvertiserSubAdgroup(advertiserSubAdgroup)
+                                                        .withAdvertiserSubCampaign(advertiserSubCampaign)
+                                                        .withAdvertiserSubKeyword(advertiserSubKeyword)
+                                                        .withAdvertiserSubPublisher(advertiserSubPublisher)
+                                                        .withAdvertiserSubSite(advertiserSubSite);
+                    tracker.setPreloadedApp(matPreloadData);
+                }
+            }
+            callbackContext.success();
             return true;
         } else if (GETMATID.equals(action)) {
             String matId = tracker.getMatId();

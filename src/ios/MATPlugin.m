@@ -7,7 +7,18 @@
 #import "MATPlugin.h"
 #import <AdSupport/AdSupport.h>
 
+
+#pragma mark - MobileAppTracker Category
+
+@interface MobileAppTracker (PhoneGapPlugin)
+
++ (void)setPluginName:(NSString *)pluginName;
+
+@end
+
+
 @implementation MATPlugin
+
 
 #pragma mark - Init Methods
 
@@ -109,6 +120,29 @@
     }
 }
 
+- (void)automateIapEventMeasurement:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: automateIapEventMeasurement");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSString* strAutomate = [arguments objectAtIndex:0];
+    
+    if (![self isNull:strAutomate])
+    {
+        BOOL automate = [strAutomate boolValue];
+        
+        [MobileAppTracker automateIapEventMeasurement:automate];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 #pragma mark - Measure Session
 
 - (void)measureSession:(CDVInvokedUrlCommand *)command
@@ -133,7 +167,7 @@
     
     if(![self isNull:eventName])
     {
-        [MobileAppTracker measureAction:eventName];
+        [MobileAppTracker measureEventName:eventName];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -156,7 +190,7 @@
     {
         int eventId = [strEventId intValue];
         
-        [MobileAppTracker measureActionWithEventId:eventId];
+        [MobileAppTracker measureEventId:eventId];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -175,145 +209,11 @@
     
     NSDictionary *dict = [arguments objectAtIndex:0];
     
-    NSString *strEventName = dict[@"name"];
-    NSNumber *numEventId = dict[@"id"];
-    
-    if((strEventName && ![self isNull:strEventName]) || (numEventId && ![self isNull:numEventId]))
+    if(![self isNull:dict])
     {
-        NSString *strContentId = dict[@"contentId"];
-        NSString *strContentType = dict[@"contentType"];
-        NSString *strCurrency = dict[@"currency"];
-        NSString *strEventAttribute1 = dict[@"attribute1"];
-        NSString *strEventAttribute2 = dict[@"attribute2"];
-        NSString *strEventAttribute3 = dict[@"attribute3"];
-        NSString *strEventAttribute4 = dict[@"attribute4"];
-        NSString *strEventAttribute5 = dict[@"attribute5"];
-        NSString *strReceipt = dict[@"receipt"];
-        NSString *strRefId = dict[@"advertiserRefId"];
-        NSString *strSearchString = dict[@"searchString"];
+        MATEvent *event = [self convertToMATEvent:dict];
         
-        NSNumber *numLevel = dict[@"level"];
-        NSNumber *numQuantity = dict[@"revenue"];
-        NSNumber *numRev = dict[@"revenue"];
-        NSNumber *numRating = dict[@"rating"];
-        NSNumber *numTransactionState = dict[@"transactionState"];
-        NSNumber* numDate1Millis = dict[@"date1"];
-        NSNumber* numDate2Millis = dict[@"date2"];
-        
-        NSArray *arrItems = dict[@"eventItems"];
-        
-        if(numDate1Millis && ![self isNull:numDate1Millis])
-        {
-            double dateMillis = [numDate1Millis doubleValue];
-            NSDate *date1 = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
-            [MobileAppTracker setEventDate1:date1];
-        }
-        if(numDate2Millis && ![self isNull:numDate2Millis])
-        {
-            double dateMillis = [numDate2Millis doubleValue];
-            NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
-            [MobileAppTracker setEventDate2:date2];
-        }
-        if(strContentId && ![self isNull:strContentId])
-        {
-            [MobileAppTracker setEventContentId:strContentId];
-        }
-        if(strContentType && ![self isNull:strContentType])
-        {
-            [MobileAppTracker setEventContentType:strContentType];
-        }
-        if(strSearchString && ![self isNull:strSearchString])
-        {
-            [MobileAppTracker setEventSearchString:strSearchString];
-        }
-        if (numLevel && ![self isNull:numLevel])
-        {
-            [MobileAppTracker setEventLevel:[numLevel intValue]];
-        }
-        if (numQuantity && ![self isNull:numQuantity])
-        {
-            [MobileAppTracker setEventQuantity:[numQuantity intValue]];
-        }
-        if (numRating && ![self isNull:numRating])
-        {
-            [MobileAppTracker setEventRating:[numRating doubleValue]];
-        }
-        if(strEventAttribute1 && ![self isNull:strEventAttribute1])
-        {
-            [MobileAppTracker setEventAttribute1:strEventAttribute1];
-        }
-        if(strEventAttribute2 && ![self isNull:strEventAttribute2])
-        {
-            [MobileAppTracker setEventAttribute2:strEventAttribute2];
-        }
-        if(strEventAttribute3 && ![self isNull:strEventAttribute3])
-        {
-            [MobileAppTracker setEventAttribute3:strEventAttribute3];
-        }
-        if(strEventAttribute4 && ![self isNull:strEventAttribute4])
-        {
-            [MobileAppTracker setEventAttribute4:strEventAttribute4];
-        }
-        if(strEventAttribute5 && ![self isNull:strEventAttribute5])
-        {
-            [MobileAppTracker setEventAttribute5:strEventAttribute5];
-        }
-        if([self isNull:strRefId])
-        {
-            strRefId = nil;
-        }
-        if([self isNull:strCurrency])
-        {
-            strCurrency = nil;
-        }
-        
-        double revenue = 0;
-        if(numRev && ![self isNull:numRev])
-        {
-            revenue = [numRev doubleValue];
-        }
-        
-        // Ref: https://developer.apple.com/library/mac/documentation/StoreKit/Reference/SKPaymentTransaction_Class/Reference/Reference.html#//apple_ref/c/econst/SKPaymentTransactionStatePurchased
-        // default to -1, since valid values start from 0
-        int transactionState = -1;
-        if(numTransactionState && ![self isNull:numTransactionState])
-        {
-            transactionState = [numTransactionState intValue];
-        }
-        
-        NSData *receiptData = nil;
-        if(strReceipt && ![self isNull:strReceipt])
-        {
-            receiptData = [strReceipt dataUsingEncoding:NSUTF8StringEncoding];
-        }
-        
-        // handle null value
-        arrItems = [self isNull:arrItems] ? nil : arrItems;
-        // convert array of dictionary representations to array of MATEventItem
-        arrItems = [self convertToMATEventItems:arrItems];
-        
-        if(strEventName && ![self isNull:strEventName])
-        {
-            [MobileAppTracker measureAction:strEventName
-                                 eventItems:arrItems
-                                referenceId:strRefId
-                              revenueAmount:revenue
-                               currencyCode:strCurrency
-                           transactionState:transactionState
-                                    receipt:receiptData];
-        }
-        else
-        {
-            int eventId = [numEventId intValue];
-            
-            [MobileAppTracker measureActionWithEventId:eventId
-                                            eventItems:arrItems
-                                           referenceId:strRefId
-                                         revenueAmount:revenue
-                                          currencyCode:strCurrency
-                                      transactionState:transactionState
-                                               receipt:receiptData];
-        }
+        [MobileAppTracker measureEvent:event];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -995,6 +895,29 @@
     }
 }
 
+- (void)setPreloadData:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"MATPlugin: setPreloadData");
+    
+    NSArray* arguments = command.arguments;
+    
+    NSDictionary *dict = [arguments objectAtIndex:0];
+    
+    if(![self isNull:dict])
+    {
+        MATPreloadData *pd = [self convertToMATPreloadData:dict];
+        
+        [MobileAppTracker setPreloadData:pd];
+        
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 #pragma mark - Getter Methods
 
 - (void)getMatId:(CDVInvokedUrlCommand *)command
@@ -1002,6 +925,8 @@
     NSLog(@"MATPlugin: getMatId");
     
     NSString *matId = [MobileAppTracker matId];
+    
+    NSLog(@"MATPlugin: getMatId: %@", matId);
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:matId];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1012,6 +937,7 @@
     NSLog(@"MATPlugin: getOpenLogId");
     
     NSString *logId = [MobileAppTracker openLogId];
+    NSLog(@"MATPlugin: getOpenLogId: %@", logId);
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:logId];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1022,6 +948,7 @@
     NSLog(@"MATPlugin: getIsPayingUser");
     
     BOOL payingUser = [MobileAppTracker isPayingUser];
+    NSLog(@"MATPlugin: getIsPayingUser: %d", payingUser);
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:payingUser];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1066,6 +993,147 @@
 
 #pragma mark - Helper Methods
 
+- (MATEvent *)convertToMATEvent:(NSDictionary *)dict
+{
+    MATEvent *event = nil;
+    
+    NSString *strEventName = dict[@"name"];
+    NSNumber *numEventId = dict[@"id"];
+    
+    if((strEventName && ![self isNull:strEventName]) || (numEventId && ![self isNull:numEventId]))
+    {
+        if(strEventName && ![self isNull:strEventName])
+        {
+            event = [MATEvent eventWithName:strEventName];
+        }
+        else
+        {
+            int eventId = [numEventId intValue];
+            
+            event = [MATEvent eventWithId:eventId];
+        }
+        
+        NSString *strContentId = dict[@"contentId"];
+        NSString *strContentType = dict[@"contentType"];
+        NSString *strCurrency = dict[@"currency"];
+        NSString *strEventAttribute1 = dict[@"attribute1"];
+        NSString *strEventAttribute2 = dict[@"attribute2"];
+        NSString *strEventAttribute3 = dict[@"attribute3"];
+        NSString *strEventAttribute4 = dict[@"attribute4"];
+        NSString *strEventAttribute5 = dict[@"attribute5"];
+        NSString *strReceipt = dict[@"receipt"];
+        NSString *strRefId = dict[@"advertiserRefId"];
+        NSString *strSearchString = dict[@"searchString"];
+        
+        NSNumber *numLevel = dict[@"level"];
+        NSNumber *numQuantity = dict[@"revenue"];
+        NSNumber *numRev = dict[@"revenue"];
+        NSNumber *numRating = dict[@"rating"];
+        NSNumber *numTransactionState = dict[@"transactionState"];
+        NSNumber* numDate1Millis = dict[@"date1"];
+        NSNumber* numDate2Millis = dict[@"date2"];
+        
+        NSArray *arrItems = dict[@"eventItems"];
+        
+        if(numDate1Millis && ![self isNull:numDate1Millis])
+        {
+            double dateMillis = [numDate1Millis doubleValue];
+            NSDate *date1 = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
+            event.date1 = date1;
+        }
+        if(numDate2Millis && ![self isNull:numDate2Millis])
+        {
+            double dateMillis = [numDate2Millis doubleValue];
+            NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:dateMillis / 1000];
+            event.date2 = date2;
+        }
+        if(strContentId && ![self isNull:strContentId])
+        {
+            event.contentId = strContentId;
+        }
+        if(strContentType && ![self isNull:strContentType])
+        {
+            event.contentType = strContentType;
+        }
+        if(strSearchString && ![self isNull:strSearchString])
+        {
+            event.searchString = strSearchString;
+        }
+        if (numLevel && ![self isNull:numLevel])
+        {
+            event.level = [numLevel intValue];
+        }
+        if (numQuantity && ![self isNull:numQuantity])
+        {
+            event.quantity = [numQuantity intValue];
+        }
+        if (numRating && ![self isNull:numRating])
+        {
+            event.rating = [numRating doubleValue];
+        }
+        if(strEventAttribute1 && ![self isNull:strEventAttribute1])
+        {
+            event.attribute1 = strEventAttribute1;
+        }
+        if(strEventAttribute2 && ![self isNull:strEventAttribute2])
+        {
+            event.attribute2 = strEventAttribute2;
+        }
+        if(strEventAttribute3 && ![self isNull:strEventAttribute3])
+        {
+            event.attribute3 = strEventAttribute3;
+        }
+        if(strEventAttribute4 && ![self isNull:strEventAttribute4])
+        {
+            event.attribute4 = strEventAttribute4;
+        }
+        if(strEventAttribute5 && ![self isNull:strEventAttribute5])
+        {
+            event.attribute5 = strEventAttribute5;
+        }
+        if(strRefId && ![self isNull:strRefId])
+        {
+            event.refId = strRefId;
+        }
+        if(strCurrency && ![self isNull:strCurrency])
+        {
+            event.currencyCode = strCurrency;
+        }
+        
+        double revenue = 0;
+        if(numRev && ![self isNull:numRev])
+        {
+            revenue = [numRev doubleValue];
+        }
+        
+        // Ref: https://developer.apple.com/library/mac/documentation/StoreKit/Reference/SKPaymentTransaction_Class/Reference/Reference.html#//apple_ref/c/econst/SKPaymentTransactionStatePurchased
+        // default to -1, since valid values start from 0
+        int transactionState = -1;
+        if(numTransactionState && ![self isNull:numTransactionState])
+        {
+            transactionState = [numTransactionState intValue];
+        }
+        
+        NSData *receiptData = nil;
+        if(strReceipt && ![self isNull:strReceipt])
+        {
+            receiptData = [[NSData alloc] initWithBase64EncodedString:strReceipt options:0];
+        }
+        
+        // handle null value
+        arrItems = [self isNull:arrItems] ? nil : arrItems;
+        // convert array of dictionary representations to array of MATEventItem
+        arrItems = [self convertToMATEventItems:arrItems];
+        
+        event.eventItems = arrItems;
+        event.revenue = revenue;
+        event.transactionState = transactionState;
+        event.receipt = receiptData;
+    }
+    
+    return event;
+}
+
 - (NSArray *)convertToMATEventItems:(NSArray *)arrDictionaries
 {
     NSMutableArray *arrItems = [NSMutableArray array];
@@ -1102,6 +1170,41 @@
     }
     
     return arrItems;
+}
+
+- (MATPreloadData *)convertToMATPreloadData:(NSDictionary *)dict
+{
+    MATPreloadData *pd = nil;
+    
+    NSString *publisherId = [dict valueForKey:@"publisherId"];
+    
+    if(publisherId)
+    {
+        pd = [MATPreloadData preloadDataWithPublisherId:publisherId];
+        
+        pd.advertiserSubAd = [dict valueForKey:@"advertiserSubAd"];
+        pd.advertiserSubAdgroup = [dict valueForKey:@"advertiserSubAdgroup"];
+        pd.advertiserSubCampaign = [dict valueForKey:@"advertiserSubCampaign"];
+        pd.advertiserSubKeyword = [dict valueForKey:@"advertiserSubKeyword"];
+        pd.advertiserSubPublisher = [dict valueForKey:@"advertiserSubPublisher"];
+        pd.advertiserSubSite = [dict valueForKey:@"advertiserSubSite"];
+        pd.agencyId = [dict valueForKey:@"agencyId"];
+        pd.offerId= [dict valueForKey:@"offerId"];
+        pd.publisherReferenceId = [dict valueForKey:@"publisherReferenceId"];
+        pd.publisherSub1 = [dict valueForKey:@"publisherSub1"];
+        pd.publisherSub2 = [dict valueForKey:@"publisherSub2"];
+        pd.publisherSub3 = [dict valueForKey:@"publisherSub3"];
+        pd.publisherSub4 = [dict valueForKey:@"publisherSub4"];
+        pd.publisherSub5 = [dict valueForKey:@"publisherSub5"];
+        pd.publisherSubAd = [dict valueForKey:@"publisherSubAd"];
+        pd.publisherSubAdgroup = [dict valueForKey:@"publisherSubAdgroup"];
+        pd.publisherSubCampaign = [dict valueForKey:@"publisherSubCampaign"];
+        pd.publisherSubKeyword = [dict valueForKey:@"publisherSubKeyword"];
+        pd.publisherSubPublisher = [dict valueForKey:@"publisherSubPublisher"];
+        pd.publisherSubSite = [dict valueForKey:@"publisherSubSite"];
+    }
+    
+    return pd;
 }
 
 #pragma mark - Helper Methods

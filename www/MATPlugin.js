@@ -14,6 +14,12 @@ MATPlugin.prototype.checkForDeferredDeeplink = function(timeout) {
     return this;
 };
 
+MATPlugin.prototype.automateIapEventMeasurement = function(automate) {
+    console.log("MATPlugin.js: Calling automateIapEventMeasurement");
+    exec(null, null, "MATPlugin", "automateIapEventMeasurement", [automate]);
+    return this;
+};
+
 MATPlugin.prototype.getMatId = function(success, failure) {
     console.log("MATPlugin.js: Calling getMatId");
     exec(success, failure, "MATPlugin", "getMatId", []);
@@ -161,6 +167,12 @@ MATPlugin.prototype.setPayingUser = function(payingUser) {
     return this;
 };
 
+MATPlugin.prototype.setPreloadData = function(preloadData) {
+    console.log("MATPlugin.js: Calling setPreloadData");
+    exec(null, null, "MATPlugin", "setPreloadData", [preloadData]);
+    return this;
+};
+
 MATPlugin.prototype.setTRUSTeId = function(trusteID) {
     console.log("MATPlugin.js: Calling setTRUSTeId");
     exec(null, null, "MATPlugin", "setTRUSTeId", [trusteID]);
@@ -255,8 +267,7 @@ MATPlugin.prototype.measureEvent = function(matEvent) {
     if (typeof matEvent == 'number') {
         console.log("MATPlugin.js: Calling measureEventId");
         exec(null, null, "MATPlugin", "measureEventId", [matEvent]);
-    }
-    else if (typeof matEvent == 'string') {
+    } else if (typeof matEvent == 'string') {
         console.log("MATPlugin.js: Calling measureEventName");
         exec(null, null, "MATPlugin", "measureEventName", [matEvent]);
     } else if (typeof matEvent == 'object') {

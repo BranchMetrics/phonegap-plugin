@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
         xmlns:android="http://schemas.android.com/apk/res/android" 
         id="com.mobileapptracking.matplugin" 
-        version="4.0.1">
+        version="4.0.2">
 
     <name>MATPlugin</name>
 
@@ -42,7 +42,7 @@
             <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         </config-file>
 
-        <source-file src="src/android/lib/MobileAppTracker-3.9.jar" target-dir="libs/" />
+        <source-file src="src/android/lib/MobileAppTracker-3.9.1.jar" target-dir="libs/" />
         <source-file src="src/android/com/mobileapptracking/MATPlugin.java"
                      target-dir="src/com/mobileapptracking" />
 
@@ -65,16 +65,19 @@
         <header-file src="src/ios/MATPlugin.h" />
 
         <!-- MobileAppTracker framework -->
-        <source-file src="src/ios/MobileAppTracker-3.8.1.a" framework="true" />
+        <source-file src="src/ios/MobileAppTracker-3.9.1.a" framework="true" />
 
         <header-file src="src/ios/MobileAppTracker.h" />
+        <header-file src="src/ios/MATEvent.h" />
         <header-file src="src/ios/MATEventItem.h" />
+        <header-file src="src/ios/MATPreloadData.h" />
         
         <!-- system frameworks -->
         <framework src="AdSupport.framework" />
         <framework src="CoreTelephony.framework" />
         <framework src="iAd.framework" />
         <framework src="MobileCoreServices.framework" />
+        <framework src="StoreKit.framework" />
         <framework src="SystemConfiguration.framework" />
     </platform>
 
