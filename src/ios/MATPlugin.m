@@ -1163,7 +1163,7 @@
             float revenue = 0;
             if(strRevenue && ![self isNull:strRevenue])
             {
-                unitPrice = [strRevenue floatValue]
+                unitPrice = [strRevenue floatValue];
             }
             
             NSString *strAttribute1 = [dict valueForKey:@"attribute1"];
