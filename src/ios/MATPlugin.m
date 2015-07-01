@@ -1030,8 +1030,8 @@
         NSNumber *numRev = dict[@"revenue"];
         NSNumber *numRating = dict[@"rating"];
         NSNumber *numTransactionState = dict[@"transactionState"];
-        NSNumber* numDate1Millis = dict[@"date1"];
-        NSNumber* numDate2Millis = dict[@"date2"];
+        NSNumber *numDate1Millis = dict[@"date1"];
+        NSNumber *numDate2Millis = dict[@"date2"];
         
         NSArray *arrItems = dict[@"eventItems"];
         
@@ -1140,33 +1140,79 @@
     
     for (NSDictionary *dict in arrDictionaries) {
         
-        NSString *name = [dict valueForKey:@"item"];
-        NSString *strUnitPrice = [dict valueForKey:@"unit_price"];
-        float unitPrice = [NSNull null] == (id)strUnitPrice ? 0 : [strUnitPrice floatValue];
+        NSString *strName = [dict valueForKey:@"item"];
+        if(strName && ![self isNull:strName])
+        {
+            NSString *name = strName;
         
-        NSString *strQuantity = [dict valueForKey:@"quantity"];
-        int quantity = [NSNull null] == (id)strQuantity ? 0 : [strQuantity intValue];
-        
-        NSString *strRevenue = [dict valueForKey:@"revenue"];
-        float revenue = [NSNull null] == (id)strRevenue ? 0 : [strRevenue floatValue];
-        
-        NSString *attribute1 = [dict valueForKey:@"attribute1"];
-        NSString *attribute2 = [dict valueForKey:@"attribute2"];
-        NSString *attribute3 = [dict valueForKey:@"attribute3"];
-        NSString *attribute4 = [dict valueForKey:@"attribute4"];
-        NSString *attribute5 = [dict valueForKey:@"attribute5"];
-        
-        MATEventItem *item = [MATEventItem eventItemWithName:name
-                                                   unitPrice:unitPrice
-                                                    quantity:quantity
-                                                     revenue:revenue
-                                                  attribute1:attribute1
-                                                  attribute2:attribute2
-                                                  attribute3:attribute3
-                                                  attribute4:attribute4
-                                                  attribute5:attribute5];
-        
-        [arrItems addObject:item];
+            NSString *strUnitPrice = [dict valueForKey:@"unit_price"];
+            float unitPrice = 0;
+            if(strUnitPrice && ![self isNull:strUnitPrice])
+            {
+                unitPrice = [strUnitPrice floatValue];
+            }
+            
+            NSString *strQuantity = [dict valueForKey:@"quantity"];
+            int quantity = 0;
+            if(strQuantity && ![self isNull:strQuantity])
+            {
+                unitPrice = [strQuantity intValue];
+            }
+            
+            NSString *strRevenue = [dict valueForKey:@"revenue"];
+            float revenue = 0;
+            if(strRevenue && ![self isNull:strRevenue])
+            {
+                unitPrice = [strRevenue floatValue]
+            }
+            
+            NSString *strAttribute1 = [dict valueForKey:@"attribute1"];
+            NSString *attribute1 = nil;
+            if(strAttribute1 && ![self isNull:strAttribute1])
+            {
+                attribute1 = strAttribute1;
+            }
+            
+            NSString *strAttribute2 = [dict valueForKey:@"attribute2"];
+            NSString *attribute2 = nil;
+            if(strAttribute2 && ![self isNull:strAttribute2])
+            {
+                attribute2 = strAttribute2;
+            }
+            
+            NSString *strAttribute3 = [dict valueForKey:@"attribute3"];
+            NSString *attribute3 = nil;
+            if(strAttribute3 && ![self isNull:strAttribute3])
+            {
+                attribute3 = strAttribute3;
+            }
+            
+            NSString *strAttribute4 = [dict valueForKey:@"attribute4"];
+            NSString *attribute4 = nil;
+            if(strAttribute4 && ![self isNull:strAttribute4])
+            {
+                attribute4 = strAttribute4;
+            }
+            
+            NSString *strAttribute5 = [dict valueForKey:@"attribute5"];
+            NSString *attribute5 = nil;
+            if(strAttribute5 && ![self isNull:strAttribute5])
+            {
+                attribute5 = strAttribute5;
+            }
+            
+            MATEventItem *item = [MATEventItem eventItemWithName:name
+                                                       unitPrice:unitPrice
+                                                        quantity:quantity
+                                                         revenue:revenue
+                                                      attribute1:attribute1
+                                                      attribute2:attribute2
+                                                      attribute3:attribute3
+                                                      attribute4:attribute4
+                                                      attribute5:attribute5];
+            
+            [arrItems addObject:item];
+        }
     }
     
     return arrItems;
@@ -1182,26 +1228,126 @@
     {
         pd = [MATPreloadData preloadDataWithPublisherId:publisherId];
         
-        pd.advertiserSubAd = [dict valueForKey:@"advertiserSubAd"];
-        pd.advertiserSubAdgroup = [dict valueForKey:@"advertiserSubAdgroup"];
-        pd.advertiserSubCampaign = [dict valueForKey:@"advertiserSubCampaign"];
-        pd.advertiserSubKeyword = [dict valueForKey:@"advertiserSubKeyword"];
-        pd.advertiserSubPublisher = [dict valueForKey:@"advertiserSubPublisher"];
-        pd.advertiserSubSite = [dict valueForKey:@"advertiserSubSite"];
-        pd.agencyId = [dict valueForKey:@"agencyId"];
-        pd.offerId= [dict valueForKey:@"offerId"];
-        pd.publisherReferenceId = [dict valueForKey:@"publisherReferenceId"];
-        pd.publisherSub1 = [dict valueForKey:@"publisherSub1"];
-        pd.publisherSub2 = [dict valueForKey:@"publisherSub2"];
-        pd.publisherSub3 = [dict valueForKey:@"publisherSub3"];
-        pd.publisherSub4 = [dict valueForKey:@"publisherSub4"];
-        pd.publisherSub5 = [dict valueForKey:@"publisherSub5"];
-        pd.publisherSubAd = [dict valueForKey:@"publisherSubAd"];
-        pd.publisherSubAdgroup = [dict valueForKey:@"publisherSubAdgroup"];
-        pd.publisherSubCampaign = [dict valueForKey:@"publisherSubCampaign"];
-        pd.publisherSubKeyword = [dict valueForKey:@"publisherSubKeyword"];
-        pd.publisherSubPublisher = [dict valueForKey:@"publisherSubPublisher"];
-        pd.publisherSubSite = [dict valueForKey:@"publisherSubSite"];
+        NSString *advertiserSubAd = [dict valueForKey:@"advertiserSubAd"];
+        NSString *advertiserSubAdgroup = [dict valueForKey:@"advertiserSubAdgroup"];
+        NSString *advertiserSubCampaign = [dict valueForKey:@"advertiserSubCampaign"];
+        NSString *advertiserSubKeyword = [dict valueForKey:@"advertiserSubKeyword"];
+        NSString *advertiserSubPublisher = [dict valueForKey:@"advertiserSubPublisher"];
+        NSString *advertiserSubSite = [dict valueForKey:@"advertiserSubSite"];
+        NSString *agencyId = [dict valueForKey:@"agencyId"];
+        NSString *offerId= [dict valueForKey:@"offerId"];
+        NSString *publisherReferenceId = [dict valueForKey:@"publisherReferenceId"];
+        NSString *publisherSub1 = [dict valueForKey:@"publisherSub1"];
+        NSString *publisherSub2 = [dict valueForKey:@"publisherSub2"];
+        NSString *publisherSub3 = [dict valueForKey:@"publisherSub3"];
+        NSString *publisherSub4 = [dict valueForKey:@"publisherSub4"];
+        NSString *publisherSub5 = [dict valueForKey:@"publisherSub5"];
+        NSString *publisherSubAd = [dict valueForKey:@"publisherSubAd"];
+        NSString *publisherSubAdgroup = [dict valueForKey:@"publisherSubAdgroup"];
+        NSString *publisherSubCampaign = [dict valueForKey:@"publisherSubCampaign"];
+        NSString *publisherSubKeyword = [dict valueForKey:@"publisherSubKeyword"];
+        NSString *publisherSubPublisher = [dict valueForKey:@"publisherSubPublisher"];
+        NSString *publisherSubSite = [dict valueForKey:@"publisherSubSite"];
+        
+        if(advertiserSubAd && ![self isNull:advertiserSubAd])
+        {
+            pd.advertiserSubAd = advertiserSubAd;
+        }
+        
+        if(advertiserSubAdgroup && ![self isNull:advertiserSubAdgroup])
+        {
+            pd.advertiserSubAdgroup = advertiserSubAdgroup;
+        }
+        
+        if(advertiserSubCampaign && ![self isNull:advertiserSubCampaign])
+        {
+            pd.advertiserSubCampaign = advertiserSubCampaign;
+        }
+        
+        if(advertiserSubKeyword && ![self isNull:advertiserSubKeyword])
+        {
+            pd.advertiserSubKeyword = advertiserSubKeyword;
+        }
+        
+        if(advertiserSubPublisher && ![self isNull:advertiserSubPublisher])
+        {
+            pd.advertiserSubPublisher = advertiserSubPublisher;
+        }
+        
+        if(advertiserSubSite && ![self isNull:advertiserSubSite])
+        {
+            pd.advertiserSubSite = advertiserSubSite;
+        }
+        
+        if(agencyId && ![self isNull:agencyId])
+        {
+            pd.agencyId = agencyId;
+        }
+        
+        if(offerId && ![self isNull:offerId])
+        {
+            pd.offerId = offerId;
+        }
+        
+        if(publisherReferenceId && ![self isNull:publisherReferenceId])
+        {
+            pd.publisherReferenceId = publisherReferenceId;
+        }
+        
+        if(publisherSub1 && ![self isNull:publisherSub1])
+        {
+            pd.publisherSub1 = publisherSub1;
+        }
+        
+        if(publisherSub2 && ![self isNull:publisherSub2])
+        {
+            pd.publisherSub2 = publisherSub2;
+        }
+        
+        if(publisherSub3 && ![self isNull:publisherSub3])
+        {
+            pd.publisherSub3 = publisherSub3;
+        }
+        
+        if(publisherSub4 && ![self isNull:publisherSub4])
+        {
+            pd.publisherSub4 = publisherSub4;
+        }
+        
+        if(publisherSub5 && ![self isNull:publisherSub5])
+        {
+            pd.publisherSub5 = publisherSub5;
+        }
+        
+        if(publisherSubAd && ![self isNull:publisherSubAd])
+        {
+            pd.publisherSubAd = publisherSubAd;
+        }
+        
+        if(publisherSubAdgroup && ![self isNull:publisherSubAdgroup])
+        {
+            pd.publisherSubAdgroup = publisherSubAdgroup;
+        }
+        
+        if(publisherSubCampaign && ![self isNull:publisherSubCampaign])
+        {
+            pd.publisherSubCampaign = publisherSubCampaign;
+        }
+        
+        if(publisherSubKeyword && ![self isNull:publisherSubKeyword])
+        {
+            pd.publisherSubKeyword = publisherSubKeyword;
+        }
+        
+        if(publisherSubPublisher && ![self isNull:publisherSubPublisher])
+        {
+            pd.publisherSubPublisher = publisherSubPublisher;
+        }
+        
+        if(publisherSubSite && ![self isNull:publisherSubSite])
+        {
+            pd.publisherSubSite = publisherSubSite;
+        }
     }
     
     return pd;
