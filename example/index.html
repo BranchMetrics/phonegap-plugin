@@ -50,13 +50,13 @@
                 
                 console.log('onDeviceReady: mat = ' + mat);
             }
-
+            
             function handleOpenURL(url)
             {
                 console.log('handleOpenURL: url = ' + url);
             }
-        
-            function setMATDebugMode()
+            
+            function setTUNEDebugMode()
             {
                 mat.setDebugMode(true);
             }
@@ -66,26 +66,34 @@
                 mat.setAllowDuplicates(true);
             }
             
-            function setMATDelegate()
+            function setTUNEDelegate()
             {
-                mat.setDelegate(true);
+                mat.setDelegate(true, resultHandler, errorHandler);
             }
             
-            function startMAT()
+            function startTUNE()
             {
+                // for main app
                 mat.init("877", "8c14d6bbe466b65211e781d62e301eec");
                 mat.setPackageName("com.hasoffers.phonegaptestapp");
-                mat.checkForDeferredDeeplink(750); // 750 ms
+                //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", false);
+                
+                // for wearables (e.g. Apple Watch)
+                //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", true);
+                
+                mat.setDelegate(true, resultHandler, errorHandler);
+                
+                mat.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
+                
                 mat.automateIapEventMeasurement(true);
             }
             
             function testSetters()
             {
                 mat.setAge(23);
-                mat.setAppAdTracking(true);
+                mat.setAppAdMeasurement(true);
                 mat.setAppleVendorIdentifier("12345678-1234-1234-1234-123456789012");
                 mat.setCurrencyCode("AUD");
-                
                 mat.setExistingUser(false);
                 mat.setFacebookEventLogging(true, false);
                 mat.setFacebookUserId("198273645");
@@ -96,13 +104,17 @@
                 mat.setLocationWithAltitude(3.3, 4.4, 5.5);
                 mat.setPackageName("com.mycompany.myapp");
                 mat.setPayingUser(true);
+                mat.setShouldAutoCollectAppleAdvertisingIdentifier(true);
+                mat.setShouldAutoCollectDeviceLocation(true);
+                mat.setShouldAutoDetectJailbroken(true);
+                mat.setShouldAutoGenerateAppleVendorIdentifier(true);
                 mat.setTRUSTeId("tempTrusteId");
                 mat.setTwitterUserId("1357908642");
-                mat.setUseCookieTracking(false);
+                mat.setUseCookieMeasurement(false);
                 mat.setUserEmail("tempUserEmail@tempUserCompany.com");
                 mat.setUserId("tempUserId");
                 mat.setUserName("tempUserName");
-
+                
                 var preloadData = {
                     "publisherId":"1122334455",
                     "publisherReferenceId":"RX1357",
@@ -122,6 +134,37 @@
                 mat.getIsPayingUser(resultHandler, errorHandler);
             }
             
+            function showInterstitial()
+            {
+                console.log('showInterstitial clicked');
+                
+                var metadata = {
+                    "gender": "female",
+                    "birthdate": new Date(2015, 6, 1).getTime(),
+                    "latitude": 67.88,
+                    "longitude": -122.33,
+                    "keywords": ["game", "puzzle", "animals"],
+                    "customTargets": { "key1": "value1", "key2": "value2" },
+                    "debug": true
+                };
+                mat.showInterstitial("Test", metadata);
+            }
+            
+            function showBanner() {
+                console.log('showBanner clicked');
+                mat.showBanner("Test", null, 0);
+            }
+            
+            function showBannerTop() {
+                console.log('showBannerTop clicked');
+                mat.showBanner("Test", null, 1);
+            }
+            
+            function hideBanner() {
+                console.log('hideBanner clicked');
+                mat.hideBanner();
+            }
+            
             function measureSessionTest()
             {
                 mat.measureSession();
@@ -131,7 +174,7 @@
             {
                 // event name
                 mat.measureEvent("purchase1");
-
+                
                 // event id
                 //mat.measureEvent(12345678);
             }
@@ -166,7 +209,7 @@
                     "revenue":1
                 };
                 eventItems[1] = eventItem2;
-
+                
                 var matEvent1 = {
                     "name": "purchase2",
                     "revenue": 0.99,
@@ -188,7 +231,7 @@
                     "attribute4": "attr4",
                     "attribute5": "attr5"
                 };
-
+                
                 mat.measureEvent(matEvent1);
             }
             
@@ -223,21 +266,68 @@
                 console.log('errorHandler: ' + error);
             }
             
-        </script>
+            function deeplinkReceived (deeplink)
+            {
+                console.log('deferred deeplink success: ' + deeplink);
+                
+                // TODO: add your code to handle the deeplink url as appropriate
+            }
+            
+            function deeplinkFailed (error)
+            {
+                console.log('deferred deeplink failed: ' + error);
+            }
+            
+            function handleOpenURL(url)
+            {
+                console.log('deeplink-url to be opened: ' + url);
+            }
+            
+            </script>
         
         <div>
             <br>
-            <h1>MAT PhoneGap TestApp</h1>
+            <h1>MAT PhoneGap Test App</h1>
             <br>
-            <div class="btnDiv"><button id="btnStart" class="btn" onclick="startMAT();">Start MAT</button></div>
-            <div class="btnDiv"><button id="btnDebug" class="btn" onclick="setMATDebugMode();">MAT Debug Mode</button></div>
-            <div class="btnDiv"><button id="btnAllowDuplicates" class="btn" onclick="setAllowDuplicates();">MAT Allow Duplicates</button></div>
-            <div class="btnDiv"><button id="btnDelegate" class="btn" onclick="setMATDelegate();">MAT Delegate</button></div>
-            <div class="btnDiv"><button id="btnSession" class="btn" onclick="measureSessionTest();">Measure Session</button></div>
-            <div class="btnDiv"><button id="btnEventName" class="btn" onclick="measureEventNameTest();">Measure Event Name</button></div>
-            <div class="btnDiv"><button id="btnEvent" class="btn" onclick="measureEventTest();">Measure Event With Items</button></div>
-            <div class="btnDiv"><button id="btnSetters" class="btn" onclick="testSetters();">Test Setter Methods</button></div>
-            <div class="btnDiv"><button id="btnGetters" class="btn" onclick="testGetters();">Test Getter Methods</button></div>
+            <div class="btnDiv">
+                <button id="btnStart" class="btn" onclick="startTUNE();">Start MAT SDK</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnDebug" class="btn" onclick="setTUNEDebugMode();">MAT Debug Mode</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnAllowDuplicates" class="btn" onclick="setAllowDuplicates();">MAT Allow Duplicates</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnDelegate" class="btn" onclick="setTUNEDelegate();">MAT Delegate</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnSession" class="btn" onclick="measureSessionTest();">Measure Session</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnEventName" class="btn" onclick="measureEventNameTest();">Measure Event Name</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnEvent" class="btn" onclick="measureEventTest();">Measure Event With Items</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnSetters" class="btn" onclick="testSetters();">Test Setter Methods</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnGetters" class="btn" onclick="testGetters();">Test Getter Methods</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnShowInterstitial" class="btn" onclick="showInterstitial();">Show Interstitial</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnShowBanner" class="btn" onclick="showBanner();">Show Banner</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnShowBannerTop" class="btn" onclick="showBannerTop();">Show Banner Top</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnHideBanner" class="btn" onclick="hideBanner();">Hide Banner</button>
+            </div>
         </div>
     </body>
 </html>

@@ -3,13 +3,13 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
         xmlns:android="http://schemas.android.com/apk/res/android" 
         id="cordova-plugin-tune" 
-        version="4.0.3">
+        version="4.1.0">
 
     <name>MATPlugin</name>
 
     <description>This plugin allows you to track installs and events using MobileAppTracking.</description>
     <repo>https://github.com/MobileAppTracking/phonegap-plugin.git</repo>
-    <keywords>cordova,mat,mobileapptracking,tracking</keywords>
+    <keywords>cordova,mat,mobileapptracking,tracking,tune</keywords>
     <license>Apache 2.0</license>
     
     <engines>
@@ -39,10 +39,12 @@
                     <action android:name="com.android.vending.INSTALL_REFERRER" />
                 </intent-filter>
             </receiver>
-            <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+            <activity
+                android:name="com.tune.crosspromo.TuneAdActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         </config-file>
 
-        <source-file src="src/android/lib/MobileAppTracker-3.9.1.jar" target-dir="libs/" />
+        <source-file src="src/android/lib/MobileAppTracker-3.11.0.jar" target-dir="libs/" />
         <source-file src="src/android/com/mobileapptracking/MATPlugin.java"
                      target-dir="src/com/mobileapptracking" />
 
@@ -64,13 +66,24 @@
         <source-file src="src/ios/MATPlugin.m" />
         <header-file src="src/ios/MATPlugin.h" />
 
-        <!-- MobileAppTracker framework -->
-        <source-file src="src/ios/MobileAppTracker-3.9.1.a" framework="true" />
-
+        <!-- TUNE framework -->
+        <source-file src="src/ios/MobileAppTracker-3.11.0.a" framework="true" />
+        
         <header-file src="src/ios/MobileAppTracker.h" />
         <header-file src="src/ios/MATEvent.h" />
         <header-file src="src/ios/MATEventItem.h" />
         <header-file src="src/ios/MATPreloadData.h" />
+        
+        <header-file src="src/ios/Tune.h" />
+        <header-file src="src/ios/TuneEvent.h" />
+        <header-file src="src/ios/TuneEventItem.h" />
+        <header-file src="src/ios/TuneLocation.h" />
+        <header-file src="src/ios/TunePreloadData.h" />
+        
+        <header-file src="src/ios/TuneAdMetadata.h" />
+        <header-file src="src/ios/TuneAdView.h" />
+        <header-file src="src/ios/TuneBanner.h" />
+        <header-file src="src/ios/TuneInterstitial.h" />
         
         <!-- system frameworks -->
         <framework src="AdSupport.framework" />

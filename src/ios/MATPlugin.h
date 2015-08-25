@@ -9,7 +9,7 @@
 
 #import "MobileAppTracker.h"
 
-@interface MATPlugin : CDVPlugin <MobileAppTrackerDelegate>
+@interface MATPlugin : CDVPlugin <TuneDelegate, TuneAdDelegate>
 {
     // empty
 }
@@ -23,7 +23,7 @@
 - (void)setPackageName:(CDVInvokedUrlCommand*)command;
 - (void)setSiteId:(CDVInvokedUrlCommand*)command;
 
-- (void)setAppAdTracking:(CDVInvokedUrlCommand*)command;
+- (void)setAppAdMeasurement:(CDVInvokedUrlCommand*)command;
 - (void)setAppleAdvertisingIdentifier:(CDVInvokedUrlCommand*)command;
 - (void)setAppleVendorIdentifier:(CDVInvokedUrlCommand*)command;
 
@@ -34,26 +34,28 @@
 - (void)setLocation:(CDVInvokedUrlCommand*)command;
 - (void)setLocationWithAltitude:(CDVInvokedUrlCommand*)command;
 - (void)setTRUSTeId:(CDVInvokedUrlCommand*)command;
-- (void)setUseCookieTracking:(CDVInvokedUrlCommand*)command;
+- (void)setUseCookieMeasurement:(CDVInvokedUrlCommand*)command;
 - (void)setUserEmail:(CDVInvokedUrlCommand*)command;
 - (void)setUserId:(CDVInvokedUrlCommand*)command;
 - (void)setUserName:(CDVInvokedUrlCommand*)command;
-- (void)setFacebookEventLogging:(CDVInvokedUrlCommand*)command;
 - (void)setFacebookUserId:(CDVInvokedUrlCommand*)command;
 - (void)setTwitterUserId:(CDVInvokedUrlCommand*)command;
 - (void)setGoogleUserId:(CDVInvokedUrlCommand*)command;
 - (void)setPayingUser:(CDVInvokedUrlCommand *)command;
 - (void)setPreloadData:(CDVInvokedUrlCommand *)command;
+- (void)setShouldAutoCollectAppleAdvertisingIdentifier:(CDVInvokedUrlCommand*)command;
+- (void)setShouldAutoCollectDeviceLocation:(CDVInvokedUrlCommand*)command;
 - (void)setShouldAutoDetectJailbroken:(CDVInvokedUrlCommand*)command;
 - (void)setShouldAutoGenerateAppleVendorIdentifier:(CDVInvokedUrlCommand*)command;
 
 - (void)applicationDidOpenURL:(CDVInvokedUrlCommand*)command;
 
-- (void)startAppToAppTracking:(CDVInvokedUrlCommand*)command;
+- (void)startAppToAppMeasurement:(CDVInvokedUrlCommand*)command;
 - (void)setRedirectUrl:(CDVInvokedUrlCommand*)command;
 
 - (void)checkForDeferredDeeplink:(CDVInvokedUrlCommand*)command;
 - (void)automateIapEventMeasurement:(CDVInvokedUrlCommand*)command;
+
 - (void)setExistingUser:(CDVInvokedUrlCommand*)command;
 - (void)measureSession:(CDVInvokedUrlCommand*)command;
 
@@ -66,11 +68,12 @@
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
 
 - (void)setAndroidId:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdMd5:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdSha1:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdSha256:(CDVInvokedUrlCommand *)command;
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command;
 - (void)setDeviceId:(CDVInvokedUrlCommand *)command;
-- (void)setEmailCollection:(CDVInvokedUrlCommand *)command;
+
+- (void)showBanner:(CDVInvokedUrlCommand*)command;
+- (void)hideBanner:(CDVInvokedUrlCommand*)command;
+- (void)cacheInterstitial:(CDVInvokedUrlCommand*)command;
+- (void)showInterstitial:(CDVInvokedUrlCommand*)command;
 
 @end

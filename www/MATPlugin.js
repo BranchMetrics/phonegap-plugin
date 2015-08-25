@@ -2,15 +2,41 @@ var exec = require("cordova/exec");
 
 var MATPlugin = function() {}
 
-MATPlugin.prototype.init = function(matAdvertiserId, matConversionKey) {
+MATPlugin.prototype.init = function(tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable) {
     console.log("MATPlugin.js: Calling init");
-    exec(null, null, "MATPlugin", "init", [matAdvertiserId, matConversionKey]);
+    exec(null, null, "MATPlugin", "init", [tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable]);
     return this;
 };
 
-MATPlugin.prototype.checkForDeferredDeeplink = function(timeout) {
+// Ads calls
+MATPlugin.prototype.showBanner = function(placement, adMetadata, bannerPosition) {
+    console.log("MATPlugin.js: Calling showBanner");
+    exec(null, null, "MATPlugin", "showBanner", [placement, adMetadata, bannerPosition]);
+    return this;
+};
+
+MATPlugin.prototype.hideBanner = function() {
+    console.log("MATPlugin.js: Calling hideBanner");
+    exec(null, null, "MATPlugin", "hideBanner", []);
+    return this;
+};
+
+MATPlugin.prototype.cacheInterstitial = function(placement, adMetadata) {
+    console.log("MATPlugin.js: Calling cacheInterstitial");
+    exec(null, null, "MATPlugin", "cacheInterstitial", [placement, adMetadata]);
+    return this;
+};
+
+MATPlugin.prototype.showInterstitial = function(placement, adMetadata) {
+    console.log("MATPlugin.js: Calling showInterstitial");
+    exec(null, null, "MATPlugin", "showInterstitial", [placement, adMetadata]);
+    return this;
+};
+
+// Measure calls
+MATPlugin.prototype.checkForDeferredDeeplink = function(success, failure) {
     console.log("MATPlugin.js: Calling checkForDeferredDeeplink");
-    exec(null, null, "MATPlugin", "checkForDeferredDeeplink", [timeout]);
+    exec(success, failure, "MATPlugin", "checkForDeferredDeeplink", []);
     return this;
 };
 
@@ -71,9 +97,9 @@ MATPlugin.prototype.setAndroidIdSha256 = function(enable) {
     return this;
 };
 
-MATPlugin.prototype.setAppAdTracking = function(enable) {
-    console.log("MATPlugin.js: Calling setAppAdTracking");
-    exec(null, null, "MATPlugin", "setAppAdTracking", [enable]);
+MATPlugin.prototype.setAppAdMeasurement = function(enable) {
+    console.log("MATPlugin.js: Calling setAppAdMeasurement");
+    exec(null, null, "MATPlugin", "setAppAdMeasurement", [enable]);
     return this;
 };
 
@@ -89,9 +115,9 @@ MATPlugin.prototype.setDebugMode = function(enable) {
     return this;
 };
 
-MATPlugin.prototype.setDelegate = function(enable) {
+MATPlugin.prototype.setDelegate = function(enable, success, failure) {
     console.log("MATPlugin.js: Calling setDelegate");
-    exec(null, null, "MATPlugin", "setDelegate", [enable]);
+    exec(success, failure, "MATPlugin", "setDelegate", [enable]);
     return this;
 };
 
@@ -203,9 +229,21 @@ MATPlugin.prototype.setUserName = function(userName) {
     return this;
 };
 
-MATPlugin.prototype.setUseCookieTracking = function(enable) {
-    console.log("MATPlugin.js: Calling setUseCookieTracking");
-    exec(null, null, "MATPlugin", "setUseCookieTracking", [enable]);
+MATPlugin.prototype.setUseCookieMeasurement = function(enable) {
+    console.log("MATPlugin.js: Calling setUseCookieMeasurement");
+    exec(null, null, "MATPlugin", "setUseCookieMeasurement", [enable]);
+    return this;
+};
+
+MATPlugin.prototype.setShouldAutoCollectAppleAdvertisingIdentifier = function(autoCollect) {
+    console.log("MATPlugin.js: Calling setShouldAutoCollectAppleAdvertisingIdentifier");
+    exec(null, null, "MATPlugin", "setShouldAutoCollectAppleAdvertisingIdentifier", [autoCollect]);
+    return this;
+};
+
+MATPlugin.prototype.setShouldAutoCollectDeviceLocation = function(autoCollect) {
+    console.log("MATPlugin.js: Calling setShouldAutoCollectDeviceLocation");
+    exec(null, null, "MATPlugin", "setShouldAutoCollectDeviceLocation", [autoCollect]);
     return this;
 };
 
@@ -245,9 +283,9 @@ MATPlugin.prototype.applicationDidOpenURL = function(urlString, sourceApp) {
     return this;
 };
 
-MATPlugin.prototype.startAppToAppTracking = function(targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect) {
-    console.log("MATPlugin.js: Calling startAppToAppTracking");
-    exec(null, null, "MATPlugin", "startAppToAppTracking", [targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect]);
+MATPlugin.prototype.startAppToAppMeasurement = function(targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect) {
+    console.log("MATPlugin.js: Calling startAppToAppMeasurement");
+    exec(null, null, "MATPlugin", "startAppToAppMeasurement", [targetAppPackageName, targetAppAdvertiserId, targetAdvertiserOfferId, targetAdvertiserPublisherId, shouldRedirect]);
     return this;
 };
 
@@ -263,16 +301,16 @@ MATPlugin.prototype.measureSession = function() {
     return this;
 };
 
-MATPlugin.prototype.measureEvent = function(matEvent) {
-    if (typeof matEvent == 'number') {
+MATPlugin.prototype.measureEvent = function(tuneEvent) {
+    if (typeof tuneEvent == 'number') {
         console.log("MATPlugin.js: Calling measureEventId");
-        exec(null, null, "MATPlugin", "measureEventId", [matEvent]);
-    } else if (typeof matEvent == 'string') {
+        exec(null, null, "MATPlugin", "measureEventId", [tuneEvent]);
+    } else if (typeof tuneEvent == 'string') {
         console.log("MATPlugin.js: Calling measureEventName");
-        exec(null, null, "MATPlugin", "measureEventName", [matEvent]);
-    } else if (typeof matEvent == 'object') {
+        exec(null, null, "MATPlugin", "measureEventName", [tuneEvent]);
+    } else if (typeof tuneEvent == 'object') {
         console.log("MATPlugin.js: Calling measureEvent");
-        exec(null, null, "MATPlugin", "measureEvent", [matEvent]);
+        exec(null, null, "MATPlugin", "measureEvent", [tuneEvent]);
     }
     return this;
 };
