@@ -66,7 +66,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETPACKAGENAME = "setPackageName";
     public static final String SETPAYINGUSER = "setPayingUser";
     public static final String SETPRELOADDATA = "setPreloadData";
-    public static final String SETTPID = "setTRUSTeID";
+    public static final String SETTPID = "setTRUSTeId";
     public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
     public static final String SETUSERNAME = "setUserName";
@@ -74,6 +74,7 @@ public class MATPlugin extends CordovaPlugin {
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETGGUSERID = "setGoogleUserId";
     public static final String GETMATID = "getMatId";
+    public static final String GETTUNEID = "getTuneId";
     public static final String GETOPENLOGID = "getOpenLogId";
     public static final String GETISPAYINGUSER = "getIsPayingUser";
 
@@ -511,7 +512,7 @@ public class MATPlugin extends CordovaPlugin {
             }
             callbackContext.success();
             return true;
-        } else if (GETMATID.equals(action)) {
+        } else if (GETMATID.equals(action) || GETTUNEID.equals(action)) {
             String matId = mat.getMatId();
             callbackContext.success(matId);
             return true;

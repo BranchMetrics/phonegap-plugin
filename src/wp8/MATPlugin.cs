@@ -21,10 +21,20 @@ namespace Cordova.Extension.Commands
             DispatchCommandResult(new PluginResult(PluginResult.Status.OK, "initTracker succeeded"));
         }
 
+        /// <summary>
+        /// Gets the mat identifier.
+        /// </summary>
+        /// <param name="args">Arguments.</param>
+        /// [Obsolete("getMATId is deprecated. Please use getTuneId instead.")]
         public void getMatId(string args) 
         { 
-            string matId = MobileAppTracker.Instance.GetMatId();
-            DispatchCommandResult(new PluginResult(PluginResult.Status.OK, "{\"" + matId + "\"}"));
+            getTuneId (args);
+        }
+
+        public void getTuneId(string args)
+        {
+            string tuneId = MobileAppTracker.Instance.GetMatId();
+            DispatchCommandResult(new PluginResult(PluginResult.Status.OK, "{\"" + tuneId + "\"}"));
         }
 
         public void getOpenLogId(string args) 
@@ -303,21 +313,9 @@ namespace Cordova.Extension.Commands
 
         public void setAndroidId(string args) { return; } //Not supported
 
-        public void setAndroidIdMd5(string args) { return; } //Not supported
-
-        public void setAndroidIdSha1(string args) { return; } //Not supported
-
-        public void setAndroidIdSha256(string args) { return; } //Not supported
-
         public void setDeviceId(string args) { return; } //Not supported
 
-        public void setFacebookEventLogging(string args) { return; } //Not supported
-
         public void setGoogleAdvertisingId(string args) { return; } //Not supported
-
-        public void setEmailCollection(string args) { return; } //Not supported
-
-        public void checkForDeferredDeeplink(string args) { return; } //Not supported
 
         public void measureSession(string nothing)
         {

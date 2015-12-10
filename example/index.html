@@ -7,9 +7,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,7 +25,7 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>MAT PhoneGap Test App</title>
-        
+
         <style>
             button.btn {
                 width: 80%;  height: 40px;
@@ -41,53 +41,53 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, true);
-            
+
             var mat;
-            
+
             function onDeviceReady()
             {
                 mat = window.plugins.matPlugin;
-                
+
                 console.log('onDeviceReady: mat = ' + mat);
             }
-            
+
             function handleOpenURL(url)
             {
                 console.log('handleOpenURL: url = ' + url);
             }
-            
+
             function setTUNEDebugMode()
             {
                 mat.setDebugMode(true);
             }
-            
+
             function setAllowDuplicates()
             {
                 mat.setAllowDuplicates(true);
             }
-            
+
             function setTUNEDelegate()
             {
                 mat.setDelegate(true, resultHandler, errorHandler);
             }
-            
+
             function startTUNE()
             {
                 // for main app
                 mat.init("877", "8c14d6bbe466b65211e781d62e301eec");
                 mat.setPackageName("com.hasoffers.phonegaptestapp");
                 //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", false);
-                
+
                 // for wearables (e.g. Apple Watch)
                 //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", true);
-                
+
                 mat.setDelegate(true, resultHandler, errorHandler);
-                
+
                 mat.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
-                
+
                 mat.automateIapEventMeasurement(true);
             }
-            
+
             function testSetters()
             {
                 mat.setAge(23);
@@ -114,30 +114,30 @@
                 mat.setUserEmail("tempUserEmail@tempUserCompany.com");
                 mat.setUserId("tempUserId");
                 mat.setUserName("tempUserName");
-                
+
                 var preloadData = {
                     "publisherId":"1122334455",
                     "publisherReferenceId":"RX1357",
                     "agencyId":"66554477",
                     "publisherSub5":"some_pub_sub_value"
                 };
-                
+
                 mat.setPreloadData(preloadData);
             }
-            
+
             function testGetters()
             {
                 console.log('testGetters clicked');
-                
-                mat.getMatId(resultHandler, errorHandler);
+
+                mat.getTuneId(resultHandler, errorHandler);
                 mat.getOpenLogId(resultHandler, errorHandler);
                 mat.getIsPayingUser(resultHandler, errorHandler);
             }
-            
+
             function showInterstitial()
             {
                 console.log('showInterstitial clicked');
-                
+
                 var metadata = {
                     "gender": "female",
                     "birthdate": new Date(2015, 6, 1).getTime(),
@@ -149,46 +149,46 @@
                 };
                 mat.showInterstitial("Test", metadata);
             }
-            
+
             function showBanner() {
                 console.log('showBanner clicked');
                 mat.showBanner("Test", null, 0);
             }
-            
+
             function showBannerTop() {
                 console.log('showBannerTop clicked');
                 mat.showBanner("Test", null, 1);
             }
-            
+
             function hideBanner() {
                 console.log('hideBanner clicked');
                 mat.hideBanner();
             }
-            
+
             function measureSessionTest()
             {
                 mat.measureSession();
             }
-            
+
             function measureEventNameTest()
             {
                 // event name
                 mat.measureEvent("purchase1");
-                
+
                 // event id
                 //mat.measureEvent(12345678);
             }
-            
+
             function measureEventTest()
             {
                 measureEventTest1();
                 measureEventTest2();
             }
-            
+
             function measureEventTest1()
             {
                 var eventItems = new Array();
-                
+
                 var eventItem1 = {
                     "item":"item1",
                     "quantity":1,
@@ -201,7 +201,7 @@
                     "attribute_sub5":"5"
                 };
                 eventItems[0] = eventItem1;
-                
+
                 var eventItem2 = {
                     "item":"item2",
                     "quantity":2,
@@ -209,7 +209,7 @@
                     "revenue":1
                 };
                 eventItems[1] = eventItem2;
-                
+
                 var matEvent1 = {
                     "name": "purchase2",
                     "revenue": 0.99,
@@ -231,10 +231,10 @@
                     "attribute4": "attr4",
                     "attribute5": "attr5"
                 };
-                
+
                 mat.measureEvent(matEvent1);
             }
-            
+
             function measureEventTest2()
             {
                 var matEvent2 = {
@@ -247,44 +247,44 @@
                     "attribute1": "attr1",
                     "attribute5": "attr5"
                 };
-                
+
                 mat.measureEvent(matEvent2);
             }
-            
+
             function getSampleiTunesIAPReceipt()
             {
                 return "dGhpcyBpcyBhIHNhbXBsZSBpb3MgYXBwIHN0b3JlIHJlY2VpcHQ=";
             }
-            
+
             function resultHandler (result)
             {
                 console.log('resultHandler: ' + result);
             }
-            
+
             function errorHandler (error)
             {
                 console.log('errorHandler: ' + error);
             }
-            
+
             function deeplinkReceived (deeplink)
             {
                 console.log('deferred deeplink success: ' + deeplink);
-                
+
                 // TODO: add your code to handle the deeplink url as appropriate
             }
-            
+
             function deeplinkFailed (error)
             {
                 console.log('deferred deeplink failed: ' + error);
             }
-            
+
             function handleOpenURL(url)
             {
                 console.log('deeplink-url to be opened: ' + url);
             }
-            
+
             </script>
-        
+
         <div>
             <br>
             <h1>MAT PhoneGap Test App</h1>

@@ -48,7 +48,13 @@ MATPlugin.prototype.automateIapEventMeasurement = function(automate) {
 
 MATPlugin.prototype.getMatId = function(success, failure) {
     console.log("MATPlugin.js: Calling getMatId");
-    exec(success, failure, "MATPlugin", "getMatId", []);
+    console.log("MATPlugin.js: getMatId() is deprecated. Please use getTuneId() instead.");
+    MATPlugin.prototype.getTuneId(success, failure);
+};
+
+MATPlugin.prototype.getTuneId = function(success, failure) {
+    console.log("MATPlugin.js: Calling getTuneId");
+    exec(success, failure, "MATPlugin", "getTuneId", []);
 };
 
 MATPlugin.prototype.getOpenLogId = function(success, failure) {

@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-tune",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "This Cordova plugin allows you to measure installs and events with the TUNE SDK.",
   "cordova": {
     "id": "cordova-plugin-tune",

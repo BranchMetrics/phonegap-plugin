@@ -445,7 +445,7 @@ NSString *tuneDeeplinkCallbackId;
 
 - (void)setSiteId:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"MATPlugin: setSiteId");
+    NSLog(@"MATPlugin: setSiteId: is deprecated, please use setPackageName: instead");
     
     NSArray *arguments = command.arguments;
     
@@ -1143,13 +1143,19 @@ NSString *tuneDeeplinkCallbackId;
 
 - (void)getMatId:(CDVInvokedUrlCommand *)command
 {
-    NSLog(@"MATPlugin: getMatId");
+    NSLog(@"MATPlugin: getMatId: is deprecated, please use getTuneId: instead.");
+    [self getTuneId:command];
+}
+
+- (void)getTuneId:(CDVInvokedUrlCommand *)command
+{
+    NSLog(@"MATPlugin: getTuneId");
     
-    NSString *matId = [Tune matId];
+    NSString *tuneId = [Tune tuneId];
     
-    NSLog(@"MATPlugin: getMatId: %@", matId);
+    NSLog(@"MATPlugin: getTuneId: %@", tuneId);
     
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:matId];
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:tuneId];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

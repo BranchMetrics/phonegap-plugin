@@ -21,7 +21,7 @@
 - (void)setDelegate:(CDVInvokedUrlCommand*)command;
 
 - (void)setPackageName:(CDVInvokedUrlCommand*)command;
-- (void)setSiteId:(CDVInvokedUrlCommand*)command;
+- (void)setSiteId:(CDVInvokedUrlCommand*)command DEPRECATED_MSG_ATTRIBUTE("Please use -(void)setPackageName:(CDVInvokedUrlCommand*)command instead.");
 
 - (void)setAppAdMeasurement:(CDVInvokedUrlCommand*)command;
 - (void)setAppleAdvertisingIdentifier:(CDVInvokedUrlCommand*)command;
@@ -63,7 +63,8 @@
 - (void)measureEventId:(CDVInvokedUrlCommand*)command;
 - (void)measureEvent:(CDVInvokedUrlCommand*)command;
 
-- (void)getMatId:(CDVInvokedUrlCommand *)command;
+- (void)getMatId:(CDVInvokedUrlCommand *)command DEPRECATED_MSG_ATTRIBUTE("Please use -(void)getTuneId:(CDVInvokedUrlCommand*)command instead.");;
+- (void)getTuneId:(CDVInvokedUrlCommand *)command;
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command;
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
 
