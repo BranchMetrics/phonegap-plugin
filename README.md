@@ -4,6 +4,6 @@ Please see the Quick Start guide here:
 
 [PhoneGap Quick Start](https://developers.mobileapptracking.com/phonegap-plugin/)
 
-TUNE PhoneGap Plugin Version : 4.2.0
-Android SDK Version         : 3.11.4
-iOS SDK Version             : 3.15.0
+TUNE PhoneGap Plugin Version : 5.0.0
+Android SDK Version         : 4.2.0
+iOS SDK Version             : 4.4.0

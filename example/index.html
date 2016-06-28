@@ -24,7 +24,7 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>MAT PhoneGap Test App</title>
+        <title>TUNE PhoneGap Test App</title>
 
         <style>
             button.btn {
@@ -42,13 +42,13 @@
         <script type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, true);
 
-            var mat;
+            var tune;
 
             function onDeviceReady()
             {
-                mat = window.plugins.matPlugin;
+                tune = window.plugins.tunePlugin;
 
-                console.log('onDeviceReady: mat = ' + mat);
+                console.log('onDeviceReady: tune = ' + tune);
             }
 
             function handleOpenURL(url)
@@ -58,62 +58,57 @@
 
             function setTUNEDebugMode()
             {
-                mat.setDebugMode(true);
-            }
-
-            function setAllowDuplicates()
-            {
-                mat.setAllowDuplicates(true);
+                tune.setDebugMode(true);
             }
 
             function setTUNEDelegate()
             {
-                mat.setDelegate(true, resultHandler, errorHandler);
+                tune.setDelegate(true, resultHandler, errorHandler);
             }
 
             function startTUNE()
             {
                 // for main app
-                mat.init("877", "8c14d6bbe466b65211e781d62e301eec");
-                mat.setPackageName("com.hasoffers.phonegaptestapp");
-                //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", false);
+                tune.init("877", "8c14d6bbe466b65211e781d62e301eec");
+                tune.setPackageName("com.hasoffers.phonegaptestapp");
+                //tune.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", false);
 
                 // for wearables (e.g. Apple Watch)
-                //mat.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", true);
+                //tune.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", true);
 
-                mat.setDelegate(true, resultHandler, errorHandler);
+                tune.setDelegate(true, resultHandler, errorHandler);
 
-                mat.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
+                tune.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
 
-                mat.automateIapEventMeasurement(true);
+                tune.automateIapEventMeasurement(true);
             }
 
             function testSetters()
             {
-                mat.setAge(23);
-                mat.setAppAdMeasurement(true);
-                mat.setAppleVendorIdentifier("12345678-1234-1234-1234-123456789012");
-                mat.setCurrencyCode("AUD");
-                mat.setExistingUser(false);
-                mat.setFacebookEventLogging(true, false);
-                mat.setFacebookUserId("198273645");
-                mat.setGender(1);
-                mat.setGoogleUserId("5647382910");
-                mat.setJailbroken(false);
-                mat.setLocation(1.1, 2.2);
-                mat.setLocationWithAltitude(3.3, 4.4, 5.5);
-                mat.setPackageName("com.mycompany.myapp");
-                mat.setPayingUser(true);
-                mat.setShouldAutoCollectAppleAdvertisingIdentifier(true);
-                mat.setShouldAutoCollectDeviceLocation(true);
-                mat.setShouldAutoDetectJailbroken(true);
-                mat.setShouldAutoGenerateAppleVendorIdentifier(true);
-                mat.setTRUSTeId("tempTrusteId");
-                mat.setTwitterUserId("1357908642");
-                mat.setUseCookieMeasurement(false);
-                mat.setUserEmail("tempUserEmail@tempUserCompany.com");
-                mat.setUserId("tempUserId");
-                mat.setUserName("tempUserName");
+                tune.setAge(23);
+                tune.setAppAdMeasurement(true);
+                tune.setAppleVendorIdentifier("12345678-1234-1234-1234-123456789012");
+                tune.setCurrencyCode("AUD");
+                tune.setExistingUser(false);
+                tune.setFacebookEventLogging(true, false);
+                tune.setFacebookUserId("198273645");
+                tune.setGender(1);
+                tune.setGoogleUserId("5647382910");
+                tune.setJailbroken(false);
+                tune.setLocation(1.1, 2.2);
+                tune.setLocationWithAltitude(3.3, 4.4, 5.5);
+                tune.setPackageName("com.mycompany.myapp");
+                tune.setPayingUser(true);
+                tune.setShouldAutoCollectAppleAdvertisingIdentifier(true);
+                tune.setShouldAutoCollectDeviceLocation(true);
+                tune.setShouldAutoDetectJailbroken(true);
+                tune.setShouldAutoGenerateAppleVendorIdentifier(true);
+                tune.setTRUSTeId("tempTrusteId");
+                tune.setTwitterUserId("1357908642");
+                tune.setUseCookieMeasurement(false);
+                tune.setUserEmail("tempUserEmail@tempUserCompany.com");
+                tune.setUserId("tempUserId");
+                tune.setUserName("tempUserName");
 
                 var preloadData = {
                     "publisherId":"1122334455",
@@ -122,61 +117,30 @@
                     "publisherSub5":"some_pub_sub_value"
                 };
 
-                mat.setPreloadData(preloadData);
+                tune.setPreloadData(preloadData);
             }
 
             function testGetters()
             {
                 console.log('testGetters clicked');
 
-                mat.getTuneId(resultHandler, errorHandler);
-                mat.getOpenLogId(resultHandler, errorHandler);
-                mat.getIsPayingUser(resultHandler, errorHandler);
-            }
-
-            function showInterstitial()
-            {
-                console.log('showInterstitial clicked');
-
-                var metadata = {
-                    "gender": "female",
-                    "birthdate": new Date(2015, 6, 1).getTime(),
-                    "latitude": 67.88,
-                    "longitude": -122.33,
-                    "keywords": ["game", "puzzle", "animals"],
-                    "customTargets": { "key1": "value1", "key2": "value2" },
-                    "debug": true
-                };
-                mat.showInterstitial("Test", metadata);
-            }
-
-            function showBanner() {
-                console.log('showBanner clicked');
-                mat.showBanner("Test", null, 0);
-            }
-
-            function showBannerTop() {
-                console.log('showBannerTop clicked');
-                mat.showBanner("Test", null, 1);
-            }
-
-            function hideBanner() {
-                console.log('hideBanner clicked');
-                mat.hideBanner();
+                tune.getTuneId(resultHandler, errorHandler);
+                tune.getOpenLogId(resultHandler, errorHandler);
+                tune.getIsPayingUser(resultHandler, errorHandler);
             }
 
             function measureSessionTest()
             {
-                mat.measureSession();
+                tune.measureSession();
             }
 
             function measureEventNameTest()
             {
                 // event name
-                mat.measureEvent("purchase1");
+                tune.measureEvent("purchase1");
 
                 // event id
-                //mat.measureEvent(12345678);
+                //tune.measureEvent(12345678);
             }
 
             function measureEventTest()
@@ -210,7 +174,7 @@
                 };
                 eventItems[1] = eventItem2;
 
-                var matEvent1 = {
+                var tuneEvent1 = {
                     "name": "purchase2",
                     "revenue": 0.99,
                     "currency": "USD",
@@ -232,12 +196,12 @@
                     "attribute5": "attr5"
                 };
 
-                mat.measureEvent(matEvent1);
+                tune.measureEvent(tuneEvent1);
             }
 
             function measureEventTest2()
             {
-                var matEvent2 = {
+                var tuneEvent2 = {
                     "name": "event3",
                     "revenue": 9.99,
                     "currency": "AUD",
@@ -248,7 +212,7 @@
                     "attribute5": "attr5"
                 };
 
-                mat.measureEvent(matEvent2);
+                tune.measureEvent(tuneEvent2);
             }
 
             function getSampleiTunesIAPReceipt()
@@ -287,19 +251,16 @@
 
         <div>
             <br>
-            <h1>MAT PhoneGap Test App</h1>
+            <h1>TUNE PhoneGap Test App</h1>
             <br>
             <div class="btnDiv">
-                <button id="btnStart" class="btn" onclick="startTUNE();">Start MAT SDK</button>
+                <button id="btnStart" class="btn" onclick="startTUNE();">Start TUNE SDK</button>
             </div>
             <div class="btnDiv">
-                <button id="btnDebug" class="btn" onclick="setTUNEDebugMode();">MAT Debug Mode</button>
+                <button id="btnDebug" class="btn" onclick="setTUNEDebugMode();">TUNE Debug Mode</button>
             </div>
             <div class="btnDiv">
-                <button id="btnAllowDuplicates" class="btn" onclick="setAllowDuplicates();">MAT Allow Duplicates</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnDelegate" class="btn" onclick="setTUNEDelegate();">MAT Delegate</button>
+                <button id="btnDelegate" class="btn" onclick="setTUNEDelegate();">TUNE Delegate</button>
             </div>
             <div class="btnDiv">
                 <button id="btnSession" class="btn" onclick="measureSessionTest();">Measure Session</button>
@@ -315,18 +276,6 @@
             </div>
             <div class="btnDiv">
                 <button id="btnGetters" class="btn" onclick="testGetters();">Test Getter Methods</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnShowInterstitial" class="btn" onclick="showInterstitial();">Show Interstitial</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnShowBanner" class="btn" onclick="showBanner();">Show Banner</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnShowBannerTop" class="btn" onclick="showBannerTop();">Show Banner Top</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnHideBanner" class="btn" onclick="hideBanner();">Hide Banner</button>
             </div>
         </div>
     </body>
