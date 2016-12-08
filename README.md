@@ -2,8 +2,8 @@
 
 Please see the Quick Start guide here:
 
-[PhoneGap Quick Start](https://developers.mobileapptracking.com/phonegap-plugin/)
+[PhoneGap Quick Start](https://developers.tune.com/sdk/phonegap-quick-start/)
 
-TUNE PhoneGap Plugin Version : 5.0.0
+TUNE PhoneGap Plugin Version : 5.0.1
 Android SDK Version         : 4.2.0
 iOS SDK Version             : 4.4.0
