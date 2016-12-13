@@ -1,10 +1,30 @@
 var exec = require("cordova/exec");
 
-var TunePlugin = function() {}
+var noop = function() {};
 
-TunePlugin.prototype.init = function(tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable) {
+var successCallback = function(fnname, cb) {
+    cb = cb || noop;
+
+    return function(r) {
+        console.log('TunePlugin.js: success(' + fnname + ')', r);
+        cb(r);
+    };
+};
+
+var failureCallback = function(fnname, cb) {
+    cb = cb || noop;
+
+    return function(e) {
+        console.log('TunePlugin.js: failure(' + fnname + ')', e);
+        cb(e);
+    };
+};
+
+var TunePlugin = function() {};
+
+TunePlugin.prototype.init = function(tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable, success, failure) {
     console.log("TunePlugin.js: Calling init");
-    exec(null, null, "TunePlugin", "init", [tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable]);
+    exec(successCallback('init', success), failureCallback('init', failure), "TunePlugin", "init", [tuneAdvertiserId, tuneConversionKey, tunePackageName, tuneIsWearable]);
     return this;
 };
 
@@ -24,22 +44,22 @@ TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
 TunePlugin.prototype.getMatId = function(success, failure) {
     console.log("TunePlugin.js: Calling getMatId");
     console.log("TunePlugin.js: getMatId() is deprecated. Please use getTuneId() instead.");
-    TunePlugin.prototype.getTuneId(success, failure);
+    TunePlugin.prototype.getTuneId(successCallback('getMatId', success), failureCallback('getMatId', failure));
 };
 
 TunePlugin.prototype.getTuneId = function(success, failure) {
     console.log("TunePlugin.js: Calling getTuneId");
-    exec(success, failure, "TunePlugin", "getTuneId", []);
+    exec(successCallback('getTuneId', success), failureCallback('getTuneId', failure), "TunePlugin", "getTuneId", []);
 };
 
 TunePlugin.prototype.getOpenLogId = function(success, failure) {
     console.log("TunePlugin.js: Calling getOpenLogId");
-    exec(success, failure, "TunePlugin", "getOpenLogId", []);
+    exec(successCallback('getOpenLogId', success), failureCallback('getOpenLogId', failure), "TunePlugin", "getOpenLogId", []);
 };
 
 TunePlugin.prototype.getIsPayingUser = function(success, failure) {
     console.log("TunePlugin.js: Calling getIsPayingUser");
-    exec(success, failure, "TunePlugin", "getIsPayingUser", []);
+    exec(successCallback('getIsPayingUser', success), failureCallback('getIsPayingUser', failure), "TunePlugin", "getIsPayingUser", []);
 };
 
 TunePlugin.prototype.setAge = function(age) {
@@ -98,7 +118,7 @@ TunePlugin.prototype.setDeepLink = function(deepLinkUrl) {
 
 TunePlugin.prototype.setDelegate = function(enable, success, failure) {
     console.log("TunePlugin.js: Calling setDelegate");
-    exec(success, failure, "TunePlugin", "setDelegate", [enable]);
+    exec(successCallback('setDelegate', success), failureCallback('setDelegate', failure), "TunePlugin", "setDelegate", [enable]);
     return this;
 };
 
@@ -270,9 +290,9 @@ TunePlugin.prototype.setRedirectUrl = function(redirectUrl) {
     return this;
 };
 
-TunePlugin.prototype.measureSession = function() {
+TunePlugin.prototype.measureSession = function(success, failure) {
     console.log("TunePlugin.js: calling measureSession");
-    exec(null, null, "TunePlugin", "measureSession", []);
+    exec(successCallback('measureSession', success), failureCallback('measureSession', failure), "TunePlugin", "measureSession", []);
     return this;
 };
 
