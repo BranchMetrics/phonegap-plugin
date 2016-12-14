@@ -21,6 +21,11 @@ TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
     return this;
 };
 
+TunePlugin.prototype.getAdvertisingId = function(success, failure) {
+    console.log("TunePlugin.js: Calling getAdvertisingId");
+    exec(success, failure, "TunePlugin", "getAdvertisingId", []);
+};
+
 TunePlugin.prototype.getMatId = function(success, failure) {
     console.log("TunePlugin.js: Calling getMatId");
     console.log("TunePlugin.js: getMatId() is deprecated. Please use getTuneId() instead.");

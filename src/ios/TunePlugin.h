@@ -61,6 +61,7 @@
 - (void)measureEventId:(CDVInvokedUrlCommand*)command;
 - (void)measureEvent:(CDVInvokedUrlCommand*)command;
 
+- (void)getAdvertisingId:(CDVInvokedUrlCommand *)command;
 - (void)getMatId:(CDVInvokedUrlCommand *)command DEPRECATED_MSG_ATTRIBUTE("Please use -(void)getTuneId:(CDVInvokedUrlCommand*)command instead.");;
 - (void)getTuneId:(CDVInvokedUrlCommand *)command;
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command;

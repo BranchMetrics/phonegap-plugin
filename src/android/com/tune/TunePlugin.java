@@ -67,13 +67,14 @@ public class TunePlugin extends CordovaPlugin {
     public static final String SETFBUSERID = "setFacebookUserId";
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETGGUSERID = "setGoogleUserId";
+    public static final String GETADVERTISINGID = "getAdvertisingId";
     public static final String GETMATID = "getMatId";
     public static final String GETTUNEID = "getTuneId";
     public static final String GETOPENLOGID = "getOpenLogId";
     public static final String GETISPAYINGUSER = "getIsPayingUser";
-    
+
     private Tune tune;
-    
+
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
         if (INIT.equals(action)) {
@@ -163,7 +164,7 @@ public class TunePlugin extends CordovaPlugin {
                             String attribute_sub3 = item.optString("attribute_sub3");
                             String attribute_sub4 = item.optString("attribute_sub4");
                             String attribute_sub5 = item.optString("attribute_sub5");
-                            
+
                             TuneEventItem eventItem = new TuneEventItem(name)
                                                          .withQuantity(itemQuantity)
                                                          .withUnitPrice(unitPrice)
@@ -216,12 +217,14 @@ public class TunePlugin extends CordovaPlugin {
                     @Override
                     public void didReceiveDeeplink(String deeplink) {
                         PluginResult result = new PluginResult(PluginResult.Status.OK, deeplink);
+                        result.setKeepCallback(true);
                         callbackContext.sendPluginResult(result);
                     }
 
                     @Override
                     public void didFailDeeplink(String error) {
                         PluginResult result = new PluginResult(PluginResult.Status.ERROR, error);
+                        result.setKeepCallback(true);
                         callbackContext.sendPluginResult(result);
                     }
                 });
@@ -497,6 +500,10 @@ public class TunePlugin extends CordovaPlugin {
             }
             callbackContext.success();
             return true;
+        } else if (GETADVERTISINGID.equals(action)) {
+            String advertisingId = tune.getGoogleAdvertisingId();
+            callbackContext.success(advertisingId);
+            return true;
         } else if (GETMATID.equals(action) || GETTUNEID.equals(action)) {
             String tuneId = tune.getMatId();
             callbackContext.success(tuneId);
@@ -521,12 +528,14 @@ public class TunePlugin extends CordovaPlugin {
                     @Override
                     public void didSucceedWithData(JSONObject data) {
                         PluginResult result = new PluginResult(PluginResult.Status.OK, data.toString());
+                        result.setKeepCallback(true);
                         callbackContext.sendPluginResult(result);
                     }
 
                     @Override
                     public void didFailWithError(JSONObject error) {
                         PluginResult result = new PluginResult(PluginResult.Status.ERROR, error.toString());
+                        result.setKeepCallback(true);
                         callbackContext.sendPluginResult(result);
                     }
                 });
