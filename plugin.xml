@@ -31,6 +31,10 @@
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET" />
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE"/>
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -39,15 +43,24 @@
                     <action android:name="com.android.vending.INSTALL_REFERRER" />
                 </intent-filter>
             </receiver>
+            <receiver android:name="com.tune.ma.push.service.TunePushReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+                <intent-filter>
+                    <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                    <category android:name="$PACKAGE_NAME" />
+                    <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                </intent-filter>
+            </receiver>
+            <service android:exported="false" android:name="com.tune.ma.push.service.TunePushService" />
         </config-file>
 
-        <source-file src="src/android/lib/TuneMarketingConsoleSDK-4.2.0.jar" target-dir="libs/" />
+        <source-file src="src/android/lib/TuneMarketingConsoleSDK-4.11.1.jar" target-dir="libs/" />
         <source-file src="src/android/com/tune/TunePlugin.java"
                      target-dir="src/com/tune" />
 
         <framework src="com.android.support:support-v4:23.+" />
-        <framework src="com.google.android.gms:play-services-ads:+" />
         <framework src="de.greenrobot:eventbus:2.4.0" />
+        <framework src="com.google.android.gms:play-services-basement:11.0.1" />
+        <framework src="com.google.android.gms:play-services-gcm:11.0.1" />
     </platform>
 
     <!-- ios -->
@@ -66,10 +79,18 @@
         <header-file src="src/ios/TunePlugin.h" />
 
         <!-- TUNE framework -->
-        <source-file src="src/ios/Tune-4.4.0.a" framework="true" />
+        <source-file src="src/ios/Tune-4.13.4.a" framework="true" />
+
+        <header-file src="src/ios/SmartWhere.h" />
+        <header-file src="src/ios/SWAction.h" />
+        <header-file src="src/ios/SWNotification.h" />
+        <header-file src="src/ios/SWTag.h" />
+        <header-file src="src/ios/SWTrigger.h" />
+        <header-file src="src/ios/SWTuneBridge.h" />
 
         <header-file src="src/ios/Tune.h" />
         <header-file src="src/ios/TuneConstants.h" />
+        <header-file src="src/ios/TuneDebugUtilities.h" />
         <header-file src="src/ios/TuneEvent.h" />
         <header-file src="src/ios/TuneEventItem.h" />
         <header-file src="src/ios/TuneExperimentDetails.h" />
@@ -78,9 +99,11 @@
         <header-file src="src/ios/TunePowerHookExperimentDetails.h" />
         <header-file src="src/ios/TunePreloadData.h" />
         <header-file src="src/ios/TunePushInfo.h" />
+        <header-file src="src/ios/UIViewController+NameTag.h" />
 
         <!-- system frameworks -->
         <framework src="AdSupport.framework" />
+        <framework src="CoreLocation.framework" />
         <framework src="CoreSpotlight.framework" />
         <framework src="CoreTelephony.framework" />
         <framework src="iAd.framework" />
@@ -90,5 +113,6 @@
         <framework src="Security.framework" />
         <framework src="StoreKit.framework" />
         <framework src="SystemConfiguration.framework" />
+        <framework src="UserNotifications.framework" />
     </platform>
 </plugin>

@@ -21,9 +21,7 @@
 NSString *tuneDelegateCallbackId;
 NSString *tuneDeeplinkCallbackId;
 
-
 #pragma mark - Init Methods
-
 
 - (void)init:(CDVInvokedUrlCommand*)command
 {
@@ -66,6 +64,40 @@ NSString *tuneDeeplinkCallbackId;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)initTune:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"TunePlugin: initTune");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *advertiserId = [arguments objectAtIndex:0];
+    NSString *conversionKey = [arguments objectAtIndex:1];
+
+    NSLog(@"TunePlugin: init: advertiserId = %@, tuneConversionKey = %@", advertiserId, conversionKey);
+
+    CDVPluginResult *pluginResult = nil;
+    if (advertiserId == nil || conversionKey == nil || 0 == [advertiserId length] || 0 == [conversionKey length]) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Advertiser Id and Conversion Key cannot be nil"];
+    } else {
+
+        [Tune initializeWithTuneAdvertiserId:advertiserId tuneConversionKey:conversionKey];
+        [Tune setPluginName:@"phonegap"];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)enablePushNotifications:(CDVInvokedUrlCommand *)command {
+    // pre iOS 10 push notifications
+    [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Xcode 9 complains that this is on a background thread
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    });
+
 }
 
 - (void)setDebugMode:(CDVInvokedUrlCommand*)command
@@ -976,9 +1008,431 @@ NSString *tuneDeeplinkCallbackId;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+#pragma mark - IAM Methods
+
+- (void)registerPowerHook:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerPowerHook");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *hookId = [arguments objectAtIndex:0];
+    NSString *friendlyName = [arguments objectAtIndex:1];
+    NSString *defaultValue = [arguments objectAtIndex:2];
+
+    if (![self isNull:hookId] && ![self isNull:friendlyName] && ![self isNull:defaultValue]) {
+
+        [Tune registerHookWithId:hookId friendlyName:friendlyName defaultValue:defaultValue];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getValueForHookById:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getValueForHookById");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *hookId = [arguments objectAtIndex:0];
+
+    if (![self isNull:hookId]) {
+
+        NSString *value = [Tune getValueForHookById:hookId];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:value];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)registerCustomProfileString:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerCustomProfileString");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        NSString *defaultValue = nil;
+        if (arguments.count > 1 && ![self isNull:[arguments objectAtIndex:1]]) {
+            defaultValue = [arguments objectAtIndex:1];
+        }
+
+        if (defaultValue) {
+            [Tune registerCustomProfileString:variableName withDefault:defaultValue];
+        } else {
+            [Tune registerCustomProfileString:variableName];
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setCustomProfileString:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: setCustomProfileString");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+    NSString *value = [arguments objectAtIndex:1];
+
+    if (![self isNull:variableName] && ![self isNull:value]) {
+
+        [Tune setCustomProfileStringValue:value forVariable:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getCustomProfileString:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getCustomProfileString");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        NSString *value = [Tune getCustomProfileString:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:value];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)registerCustomProfileDate:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerCustomProfileDate");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        NSNumber *defaultValue = nil;
+        if (arguments.count > 1 && ![self isNull:[arguments objectAtIndex:1]]) {
+            NSNumber *tmp = [arguments objectAtIndex:1];
+            defaultValue = [NSNumber numberWithDouble:(tmp.doubleValue / 1000)];
+        }
+
+        if (defaultValue) {
+            [Tune registerCustomProfileDateTime:variableName withDefault:[NSDate dateWithTimeIntervalSinceNow:defaultValue.doubleValue]];
+        } else {
+            [Tune registerCustomProfileDateTime:variableName];
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setCustomProfileDate:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: setCustomProfileDate");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+    NSNumber *value = [arguments objectAtIndex:1];
+
+    if (![self isNull:variableName] && ![self isNull:value]) {
+        value = [NSNumber numberWithDouble:(value.doubleValue / 1000)];
+
+        [Tune setCustomProfileDateTimeValue:[NSDate dateWithTimeIntervalSince1970:value.doubleValue] forVariable:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getCustomProfileDate:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getCustomProfileDate");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        // just so we return as a null string instead of 0 if we don't have a date
+        // this makes it consistent with Android
+        NSString *dateAsString;
+
+        NSDate *date = [Tune getCustomProfileDateTime:variableName];
+        NSNumber *tmp = [NSNumber numberWithDouble:date.timeIntervalSince1970];
+        tmp = [NSNumber numberWithDouble:(tmp.doubleValue * 1000)];
+        if (date) {
+            dateAsString = [tmp stringValue];
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:dateAsString];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)registerCustomProfileNumber:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerCustomProfileNumber");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        NSNumber *defaultValue = nil;
+        if (arguments.count > 1 && ![self isNull:[arguments objectAtIndex:1]]) {
+            defaultValue = [arguments objectAtIndex:1];
+        }
+
+        if (defaultValue) {
+            [Tune registerCustomProfileNumber:variableName withDefault:defaultValue];
+        } else {
+            [Tune registerCustomProfileNumber:variableName];
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setCustomProfileNumber:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: setCustomProfileNumber");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+    NSNumber *value = [arguments objectAtIndex:1];
+
+    if (![self isNull:variableName] && ![self isNull:value]) {
+
+        [Tune setCustomProfileNumberValue:value forVariable:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getCustomProfileNumber:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getCustomProfileNumber");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        NSNumber *number = [Tune getCustomProfileNumber:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[number stringValue]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)registerCustomProfileGeolocation:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerCustomProfileGeolocation");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        [Tune registerCustomProfileGeolocation:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)setCustomProfileGeolocation:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: setCustomProfileGeolocation");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+    TuneLocation *location = [TuneLocation new];
+    location.latitude = [arguments objectAtIndex:1];
+    location.longitude = [arguments objectAtIndex:2];
+    location.altitude = [arguments objectAtIndex:3];
+
+
+    if (![self isNull:variableName] && ![self isNull:location]) {
+
+        [Tune setCustomProfileGeolocationValue:location forVariable:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getCustomProfileGeolocation:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getCustomProfileGeolocation");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        TuneLocation *location = [Tune getCustomProfileGeolocation:variableName];
+        NSMutableDictionary *dict = [NSMutableDictionary new];
+        [dict setObject:location.latitude forKey:@"latitude"];
+        [dict setObject:location.longitude forKey:@"longitude"];
+        [dict setObject:location.altitude forKey:@"altitude"];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)clearCustomProfileVariable:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: clearCustomProfileVariable");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *variableName = [arguments objectAtIndex:0];
+
+    if (![self isNull:variableName]) {
+
+        [Tune clearCustomProfileVariable:variableName];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)clearAllCustomProfileVariables:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: clearAllCustomProfileVariables");
+
+    [Tune clearAllCustomProfileVariables];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)isTuneLink:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: isTuneLink");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *tuneLink = [arguments objectAtIndex:0];
+
+    if (![self isNull:tuneLink]) {
+
+        BOOL isTuneLink = [Tune isTuneLink:tuneLink];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:isTuneLink];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)registerCustomTuneLinkDomain:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerCustomTuneLinkDomain");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *customDomain = [arguments objectAtIndex:0];
+
+    if (![self isNull:customDomain]) {
+
+        [Tune registerCustomTuneLinkDomain:customDomain];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+#pragma mark - Smartwhere Methods
+
+- (void)enableSmartwhere:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: enableSmartwhere");
+
+    [Tune enableSmartwhereIntegration];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)disableSmartwhere:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: disableSmartwhere");
+
+    [Tune disableSmartwhereIntegration];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)configureSmartwhere:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: configureSmartwhere");
+
+    NSArray *arguments = command.arguments;
+    NSDictionary *config = [arguments objectAtIndex:0];
+    NSNumber *tmp = [config objectForKey:@"ShareEventData"];
+
+    if (![self isNull:tmp] && tmp.intValue == 1) {
+
+        [Tune configureSmartwhereIntegrationWithOptions:TuneSmartwhereShareEventData];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 #pragma mark - Android only placeholder methods
 
 - (void)setAndroidId:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setAndroidIdMd5:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setAndroidIdSha1:(CDVInvokedUrlCommand*)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setAndroidIdSha256:(CDVInvokedUrlCommand*)command
 {
     // no-op Android only placeholder method
 }
@@ -989,6 +1443,16 @@ NSString *tuneDeeplinkCallbackId;
 }
 
 - (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setEmailCollection:(CDVInvokedUrlCommand *)command
+{
+    // no-op Android only placeholder method
+}
+
+- (void)setPushNotificationRegistrationId:(CDVInvokedUrlCommand *)command
 {
     // no-op Android only placeholder method
 }

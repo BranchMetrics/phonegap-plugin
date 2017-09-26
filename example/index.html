@@ -41,6 +41,7 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, true);
+            document.addEventListener('deviceready', pushNotification, false);
 
             var tune;
 
@@ -49,6 +50,8 @@
                 tune = window.plugins.tunePlugin;
 
                 console.log('onDeviceReady: tune = ' + tune);
+
+                startTUNE();
             }
 
             function handleOpenURL(url)
@@ -69,18 +72,20 @@
             function startTUNE()
             {
                 // for main app
-                tune.init("877", "8c14d6bbe466b65211e781d62e301eec");
-                tune.setPackageName("com.hasoffers.phonegaptestapp");
-                //tune.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", false);
+                tune.initTune("877", "8c14d6bbe466b65211e781d62e301eec", true);
+                //tune.setPackageName("com.hasoffers.phonegaptestapp");
 
-                // for wearables (e.g. Apple Watch)
-                //tune.init("877", "8c14d6bbe466b65211e781d62e301eec", "com.hasoffers.phonegaptestapp", true);
+                tune.enablePushNotifications("fcm_project_sender_id");
 
                 tune.setDelegate(true, resultHandler, errorHandler);
 
                 tune.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
 
                 tune.automateIapEventMeasurement(true);
+
+                tune.registerPowerHook("PowerButton", "Power Hook Button Title", "Test Power Hooks");
+
+                tune.registerCustomTuneLinkDomain("customize.it");
             }
 
             function testSetters()
@@ -128,6 +133,66 @@
                 tune.getTuneId(resultHandler, errorHandler);
                 tune.getOpenLogId(resultHandler, errorHandler);
                 tune.getIsPayingUser(resultHandler, errorHandler);
+
+                tune.isTuneLink("https://tlnk.io", resultHandler, errorHandler);            // should be true
+                tune.isTuneLink("http://wow.foobarz.com", resultHandler, errorHandler);     // should be false
+                tune.isTuneLink("https://1235.customize.it", resultHandler, errorHandler);  // should be true
+            }
+
+            function testCustomData()
+            {
+                console.log('testCustomData() clicked');
+
+                // Register, Set, and Get Custom Profile Strings
+                tune.registerCustomProfileString("CustomProfileString");
+                tune.setCustomProfileString("CustomProfileString", "CustomProfileString Test Value");
+                tune.getCustomProfileString("CustomProfileString", resultHandler, errorHandler);
+
+                // Register, Set, and Get Custom Profile Dates
+                tune.registerCustomProfileDate("CustomProfileDate");
+                tune.setCustomProfileDate("CustomProfileDate", 1505165736307);  // 9/11/17
+                tune.getCustomProfileDate("CustomProfileDate", resultHandler, errorHandler);
+
+                // Register, Set, and Get Custom Profile Numbers
+                tune.registerCustomProfileNumber("CustomProfileNumber");
+                tune.setCustomProfileNumber("CustomProfileNumber", 99.99);
+                tune.getCustomProfileNumber("CustomProfileNumber", resultHandler, errorHandler);
+
+                // Register, Set, and Get Custom Profile Geolocation
+                tune.registerCustomProfileGeolocation("CustomProfileGeolocation");
+                tune.setCustomProfileGeolocation("CustomProfileGeolocation", 47.612278, -122.345858, 88);
+                tune.getCustomProfileGeolocation("CustomProfileGeolocation", jsonResultHandler, errorHandler);
+
+
+                // Register Custom Data with "Default" values.
+                tune.registerCustomProfileString("DefaultProfileString", "DefaultProfileString -- Default String");
+                tune.getCustomProfileString("DefaultProfileString", resultHandler, errorHandler);
+
+                tune.registerCustomProfileDate("DefaultProfileDate", 1478592000000);
+                tune.getCustomProfileDate("DefaultProfileDate", resultHandler, errorHandler);
+
+                tune.registerCustomProfileNumber("DefaultProfileNumber", 3.14);
+                tune.getCustomProfileNumber("DefaultProfileNumber", resultHandler, errorHandler);
+
+                // Get non-existent values
+                tune.getCustomProfileString("NotDefinedString", resultHandler, errorHandler);
+                tune.getCustomProfileDate("NotDefinedDate", resultHandler, errorHandler);
+                tune.getCustomProfileNumber("NotDefinedNumber", resultHandler, errorHandler);
+            }
+
+            function testClearCustomData()
+            {
+                // Register some Custom Data
+                tune.registerCustomProfileString("CustomData");
+                tune.setCustomProfileString("CustomData", "Kilroy was here");
+                console.log('Custom Data Set: ' + tune.getCustomProfileString("CustomData"));
+
+                // Clear the Custom Data
+                tune.clearCustomProfileVariable("CustomData");
+                console.log('Custom Data UnSet: ' + tune.getCustomProfileString("CustomData"));
+
+                // Clear all custom data
+                tune.clearAllCustomProfileVariables();
             }
 
             function measureSessionTest()
@@ -216,6 +281,39 @@
                 tune.measureEvent(tuneEvent2);
             }
 
+            function testPowerHook()
+            {
+                // Update the title based on the power hook value
+                tune.getValueForHookById(
+                    "PowerButton",
+                    function(result)
+                    {
+                        console.log('PowerHook Value: ' + result);
+                        document.getElementById('btnPowerhook').innerText = result;
+                    },
+                    errorHandler
+                );
+            }
+
+            function testDisableSmartwhere()
+            {
+                tune.disableSmartwhere(resultHandler, errorHandler);
+            }
+
+            function testEnableSmartwhere()
+            {
+                tune.enableSmartwhere(resultHandler, errorHandler);
+            }
+
+            function testConfigureSmartwhere()
+            {
+                var jsonConfig = {
+                    "ShareEventData":true
+                };
+
+                tune.configureSmartwhere(jsonConfig, resultHandler, errorHandler);
+            }
+
             function getSampleiTunesIAPReceipt()
             {
                 return "dGhpcyBpcyBhIHNhbXBsZSBpb3MgYXBwIHN0b3JlIHJlY2VpcHQ=";
@@ -223,7 +321,11 @@
 
             function resultHandler (result)
             {
-                console.log('resultHandler: ' + result);
+                console.log('resultHandler: ' + (result==null?"NULL":result));
+            }
+            function jsonResultHandler(result)
+            {
+                console.log('JSON resultHandler: ' + JSON.stringify(result));
             }
 
             function errorHandler (error)
@@ -248,15 +350,12 @@
                 console.log('deeplink-url to be opened: ' + url);
             }
 
-            </script>
+        </script>
 
         <div>
             <br>
             <h1>TUNE PhoneGap Test App</h1>
             <br>
-            <div class="btnDiv">
-                <button id="btnStart" class="btn" onclick="startTUNE();">Start TUNE SDK</button>
-            </div>
             <div class="btnDiv">
                 <button id="btnDebug" class="btn" onclick="setTUNEDebugMode();">TUNE Debug Mode</button>
             </div>
@@ -278,6 +377,28 @@
             <div class="btnDiv">
                 <button id="btnGetters" class="btn" onclick="testGetters();">Test Getter Methods</button>
             </div>
+            <div class="btnDiv">
+                <button id="btnCustomData" class="btn" onclick="testCustomData();">Test Custom Profile Data</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnClearCustomData" class="btn" onclick="testClearCustomData();">Test Clear Custom Profile Data</button>
+            </div>
+            <div class="btnDiv">
+                <button id="btnPowerhook" class="btn" onclick="testPowerHook();">Test Power Hooks</button>
+            </div>
+            <table style="width:80%" align="center">
+                <tr>
+                    <td width="33%">
+                        <div class="btnDiv"><button id="btnDisableSmartwhere" class="btn" onclick="testDisableSmartwhere();">Disable Smartwhere</button></div>
+                    </td>
+                    <td width="34%">
+                        <div class="btnDiv"><button id="btnEnableSmartwhere" class="btn" onclick="testEnableSmartwhere();">Enable Smartwhere</button></div>
+                    </td>
+                    <td width="33%">
+                        <div class="btnDiv"><button id="btnConfigureSmartwhere" class="btn" onclick="testConfigureSmartwhere();">Configure Smartwhere</button></div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </body>
 </html>
