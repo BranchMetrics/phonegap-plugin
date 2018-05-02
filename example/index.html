@@ -79,13 +79,13 @@
 
                 tune.setDelegate(true, resultHandler, errorHandler);
 
-                tune.checkForDeferredDeeplink(deeplinkReceived, deeplinkFailed);
-
                 tune.automateIapEventMeasurement(true);
 
                 tune.registerPowerHook("PowerButton", "Power Hook Button Title", "Test Power Hooks");
 
                 tune.registerCustomTuneLinkDomain("customize.it");
+
+                tune.registerDeeplinkListener(resultHandler, errorHandler);
             }
 
             function testSetters()
@@ -114,6 +114,7 @@
                 tune.setUserEmail("tempUserEmail@tempUserCompany.com");
                 tune.setUserId("tempUserId");
                 tune.setUserName("tempUserName");
+                tune.setPrivacyProtectedDueToAge(true);
 
                 var preloadData = {
                     "publisherId":"1122334455",
@@ -137,6 +138,8 @@
                 tune.isTuneLink("https://tlnk.io", resultHandler, errorHandler);            // should be true
                 tune.isTuneLink("http://wow.foobarz.com", resultHandler, errorHandler);     // should be false
                 tune.isTuneLink("https://1235.customize.it", resultHandler, errorHandler);  // should be true
+
+                tune.getIsPrivacyProtectedDueToAge();
             }
 
             function testCustomData()
@@ -350,6 +353,11 @@
                 console.log('deeplink-url to be opened: ' + url);
             }
 
+            function handlePrivacyChange(checkboxElement) {
+                console.log('CheckBox: ' + checkboxElement.checked);
+                tune.setPrivacyProtectedDueToAge(checkboxElement.checked)
+            }
+
         </script>
 
         <div>
@@ -398,7 +406,16 @@
                         <div class="btnDiv"><button id="btnConfigureSmartwhere" class="btn" onclick="testConfigureSmartwhere();">Configure Smartwhere</button></div>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <div>
+                            <input type="checkbox" id="chkPrivacyProtected" name="privacyProtected" onchange="handlePrivacyChange(this);"></input>
+                            <label for="chkPrivacyProtected">Privacy Protected Due To Age?</label>
+                        </div>
+                    </td>
+                </tr>
             </table>
+
         </div>
     </body>
 </html>

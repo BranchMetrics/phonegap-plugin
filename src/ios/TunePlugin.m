@@ -145,15 +145,6 @@ NSString *tuneDeeplinkCallbackId;
     }
 }
 
-- (void)checkForDeferredDeeplink:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"TunePlugin: checkForDeferredDeeplink");
-
-    tuneDeeplinkCallbackId = command.callbackId;
-
-    [Tune checkForDeferredDeeplink:self];
-}
-
 - (void)automateIapEventMeasurement:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"TunePlugin: automateIapEventMeasurement");
@@ -202,29 +193,6 @@ NSString *tuneDeeplinkCallbackId;
     if(![self isNull:eventName])
     {
         [Tune measureEventName:eventName];
-
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }
-    else
-    {
-        [self throwInvalidArgsErrorForCommand:command];
-    }
-}
-
-- (void)measureEventId:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"TunePlugin: measureEventId");
-
-    NSArray *arguments = command.arguments;
-
-    NSString *strEventId = [arguments objectAtIndex:0];
-
-    if(![self isNull:strEventId])
-    {
-        int eventId = [strEventId intValue];
-
-        [Tune measureEventId:eventId];
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -592,6 +560,37 @@ NSString *tuneDeeplinkCallbackId;
     }
 }
 
+- (void)setPrivacyProtectedDueToAge:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: setPrivacyProtectedDueToAge");
+
+    NSArray *arguments = command.arguments;
+    NSString *privacyProtectedString = [arguments objectAtIndex:0];
+
+    if(![self isNull:privacyProtectedString])
+    {
+        BOOL privacyProtected = [privacyProtectedString boolValue];
+        [Tune setPrivacyProtectedDueToAge:privacyProtected];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
+- (void)getIsPrivacyProtectedDueToAge:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: getIsPrivacyProtectedDueToAge");
+
+    BOOL privacyProtected = [Tune isPrivacyProtectedDueToAge];
+
+    NSLog(@"TunePlugin: getIsPrivacyProtectedDueToAge: %d", privacyProtected);
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:privacyProtected];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setLocation:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"TunePlugin: setLocation");
@@ -808,6 +807,17 @@ NSString *tuneDeeplinkCallbackId;
     }
 }
 
+- (void)registerDeeplinkListener:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: registerDeeplinkListener");
+    tuneDeeplinkCallbackId = command.callbackId;
+    [Tune registerDeeplinkListener:self];
+}
+
+- (void)unregisterDeeplinkListener:(CDVInvokedUrlCommand *)command {
+    NSLog(@"TunePlugin: unregisterDeeplinkListener");
+    [Tune unregisterDeeplinkListener];
+}
+
 - (void)setDeepLink:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"TunePlugin: setDeepLink");
@@ -966,12 +976,6 @@ NSString *tuneDeeplinkCallbackId;
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:advertisingId];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)getMatId:(CDVInvokedUrlCommand *)command
-{
-    NSLog(@"TunePlugin: getMatId: is deprecated, please use getTuneId: instead.");
-    [self getTuneId:command];
 }
 
 - (void)getTuneId:(CDVInvokedUrlCommand *)command

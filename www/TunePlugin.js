@@ -31,15 +31,6 @@ TunePlugin.prototype.initTune = function(tuneAdvertiserId, tuneConversionKey, tu
 };
 
 /**
- * @deprecated Since version 6.0. Register your TuneDeeplinkListener via registerDeeplinkListener.
- */
-TunePlugin.prototype.checkForDeferredDeeplink = function(success, failure) {
-    console.log("TunePlugin.js: Calling checkForDeferredDeeplink");
-    exec(success, failure, "TunePlugin", "checkForDeferredDeeplink", []);
-    return this;
-};
-
-/**
  * IOS Only.
  */
 TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
@@ -55,15 +46,6 @@ TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
 TunePlugin.prototype.getAdvertisingId = function(success, failure) {
     console.log("TunePlugin.js: Calling getAdvertisingId");
     exec(success, failure, "TunePlugin", "getAdvertisingId", []);
-};
-
-/**
- * @deprecated Since version 6.0. Use getTuneId().
- */
-TunePlugin.prototype.getMatId = function(success, failure) {
-    console.log("TunePlugin.js: Calling getMatId");
-    console.log("TunePlugin.js: getMatId() is deprecated. Please use getTuneId() instead.");
-    TunePlugin.prototype.getTuneId(success, failure);
 };
 
 /**
@@ -100,6 +82,44 @@ TunePlugin.prototype.getOpenLogId = function(success, failure) {
 TunePlugin.prototype.getIsPayingUser = function(success, failure) {
     console.log("TunePlugin.js: Calling getIsPayingUser");
     exec(success, failure, "TunePlugin", "getIsPayingUser", []);
+};
+
+/**
+ * @function getIsPrivacyProtectedDueToAge
+ * @summary Returns whether this device profile is flagged as privacy protected.
+ * @description This will be true if either the age is set to less than 13 or if setPrivacyProtectedDueToAge(boolean) is set to true.
+ *
+ * @param {callback} success Callback returns true if the age has been set to less than 13 OR this profile has been set explicitly as privacy protected.
+ * @param {callback} failure Callback Message if there was an error.
+ */
+TunePlugin.prototype.getIsPrivacyProtectedDueToAge = function(success, failure) {
+    console.log("TunePlugin.js: Calling getIsPrivacyProtectedDueToAge");
+    exec(success, failure, "TunePlugin", "getIsPrivacyProtectedDueToAge", []);
+};
+
+/**
+ * @function registerDeeplinkListener
+ * @summary Set the deeplink listener that will be called.
+ * @description This will be called when either a deferred deeplink is found for a fresh install or for handling an opened Tune Link.  Registering a deeplink listener will trigger an asynchronous call to check for deferred deeplinks
+ *
+ * @param {callback} success Callback returns if successfully did Receive a Deeplink
+ * @param {callback} failure Callback Message if registration failed.
+ */
+TunePlugin.prototype.registerDeeplinkListener = function(success, failure) {
+    console.log("TunePlugin.js: Calling registerDeeplinkListener");
+    exec(success, failure, "TunePlugin", "registerDeeplinkListener", []);
+    return this;
+};
+
+/**
+ * @function unregisterDeeplinkListener
+ * @summary Unregister the deeplink listener.
+ * @description Remove the deeplink listener previously set with registerDeeplinkListener().
+ */
+TunePlugin.prototype.unregisterDeeplinkListener = function() {
+    console.log("TunePlugin.js: Calling unregisterDeeplinkListener");
+    exec(null, null, "TunePlugin", "unregisterDeeplinkListener", []);
+    return this;
 };
 
 /**
@@ -368,6 +388,19 @@ TunePlugin.prototype.setPreloadData = function(preloadData) {
 };
 
 /**
+ * @function setPrivacyProtectedDueToAge
+ * @summary Set privacy as protected.
+ * @description Set this device profile as privacy protected for the purposes of the protection of children from ad targeting and personal data collection. In the US this is part of the COPPA law.
+ *
+ * @param {boolean} isPrivacyProtected true if privacy should be protected for this user.
+ */
+TunePlugin.prototype.setPrivacyProtectedDueToAge = function(isPrivacyProtected) {
+    console.log("TunePlugin.js: Calling setPrivacyProtectedDueToAge");
+    exec(null, null, "TunePlugin", "setPrivacyProtectedDueToAge", [isPrivacyProtected]);
+    return this;
+};
+
+/**
  * @function setTRUSTeId
  * @summary Sets the TRUSTe ID
  *
@@ -537,10 +570,7 @@ TunePlugin.prototype.measureSession = function() {
  * @param {object} tuneEvent the TuneEvent.  Can be a number, string, or JSON object.
  */
 TunePlugin.prototype.measureEvent = function(tuneEvent) {
-    if (typeof tuneEvent == 'number') {
-        console.log("TunePlugin.js: Calling measureEventId");
-        exec(null, null, "TunePlugin", "measureEventId", [tuneEvent]);
-    } else if (typeof tuneEvent == 'string') {
+    if (typeof tuneEvent == 'string') {
         console.log("TunePlugin.js: Calling measureEventName");
         exec(null, null, "TunePlugin", "measureEventName", [tuneEvent]);
     } else if (typeof tuneEvent == 'object') {

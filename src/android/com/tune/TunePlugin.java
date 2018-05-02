@@ -32,7 +32,7 @@ import com.tune.TuneUtils;
 import com.tune.ma.application.TuneActivity;
 import com.tune.ma.application.TuneActivityLifecycleCallbacks;
 import com.tune.ma.configuration.TuneConfiguration;
-import com.tune.smartwhere.TuneSmartwhereConfiguration;
+import com.tune.smartwhere.TuneSmartWhereConfiguration;
 
 public class TunePlugin extends CordovaPlugin {
     private static final String TAG = "TunePlugin::";
@@ -40,16 +40,15 @@ public class TunePlugin extends CordovaPlugin {
     public static final String INIT = "init";
     public static final String INITTUNE = "initTune";
 
-    public static final String CHECKFORDEFERREDDEEPLINK = "checkForDeferredDeeplink";
     public static final String GETADVERTISINGID = "getAdvertisingId";
     public static final String GETISPAYINGUSER = "getIsPayingUser";
-    public static final String GETMATID = "getMatId";
+    public static final String GETISPRIVACYPROTECTEDDUETOAGE = "getIsPrivacyProtectedDueToAge";
     public static final String GETOPENLOGID = "getOpenLogId";
     public static final String GETTUNEID = "getTuneId";
     public static final String MEASUREEVENT = "measureEvent";
-    public static final String MEASUREEVENTID = "measureEventId";
     public static final String MEASUREEVENTNAME = "measureEventName";
     public static final String MEASURESESSION = "measureSession";
+    public static final String REGISTERDEEPLINKLISTENER = "registerDeeplinkListener";
     public static final String SETAGE = "setAge";
     public static final String SETANDROIDID = "setAndroidId";
     public static final String SETANDROIDIDMD5 = "setAndroidIdMd5";
@@ -72,11 +71,13 @@ public class TunePlugin extends CordovaPlugin {
     public static final String SETPACKAGENAME = "setPackageName";
     public static final String SETPAYINGUSER = "setPayingUser";
     public static final String SETPRELOADDATA = "setPreloadData";
+    public static final String SETPRIVACYPROTECTEDDUETOAGE = "setPrivacyProtectedDueToAge";
     public static final String SETTPID = "setTRUSTeId";
     public static final String SETTWUSERID = "setTwitterUserId";
     public static final String SETUSEREMAIL = "setUserEmail";
     public static final String SETUSERID = "setUserId";
     public static final String SETUSERNAME = "setUserName";
+    public static final String UNREGISTERDEEPLINKLISTENER = "unregisterDeeplinkListener";
 
     /** IAM ******************************************************************/
 
@@ -125,7 +126,6 @@ public class TunePlugin extends CordovaPlugin {
                 if (advertiserId.length() > 0 && advertiserKey.length() > 0) {
                     tune = Tune.init(cordova.getActivity().getApplicationContext(), advertiserId, advertiserKey);
                     tune.setPluginName("phonegap");
-                    tune.setReferralSources(cordova.getActivity());
                     callbackContext.success();
                 } else {
                     callbackContext.error("TUNE advertiser ID or key is empty");
@@ -152,9 +152,6 @@ public class TunePlugin extends CordovaPlugin {
                     tune = Tune.init(cordova.getActivity().getApplicationContext(), advertiserId, advertiserKey, turnOnIAM, tuneConfig);
                     tune.setPluginName("phonegap");
 
-                    // Triggers the playlist download
-                    TuneActivity.onStart(cordova.getActivity());
-
                     callbackContext.success();
                 } else {
                     callbackContext.error("TUNE advertiser ID or key is empty");
@@ -169,7 +166,7 @@ public class TunePlugin extends CordovaPlugin {
             return true;
 
         } else if (MEASURESESSION.equals(action)) {
-            tune.measureSession();
+            tune.measureSessionInternal();
             callbackContext.success();
             return true;
         } else if (MEASUREEVENTNAME.equals(action)) {
@@ -180,11 +177,6 @@ public class TunePlugin extends CordovaPlugin {
             } else {
                 callbackContext.error("Event name is empty");
             }
-            return true;
-        } else if (MEASUREEVENTID.equals(action)) {
-            int eventId = args.optInt(0);
-            tune.measureEvent(eventId);
-            callbackContext.success();
             return true;
         } else if (MEASUREEVENT.equals(action)) {
             // Parse TuneEvent from first arg
@@ -283,23 +275,6 @@ public class TunePlugin extends CordovaPlugin {
                     callbackContext.error("Event name is empty");
                 }
             }
-            return true;
-        } else if (CHECKFORDEFERREDDEEPLINK.equals(action)) {
-            tune.checkForDeferredDeeplink(new TuneDeeplinkListener() {
-                @Override
-                public void didReceiveDeeplink(String deeplink) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, deeplink);
-                    result.setKeepCallback(true);
-                    callbackContext.sendPluginResult(result);
-                }
-
-                @Override
-                public void didFailDeeplink(String error) {
-                    PluginResult result = new PluginResult(PluginResult.Status.ERROR, error);
-                    result.setKeepCallback(true);
-                    callbackContext.sendPluginResult(result);
-                }
-            });
             return true;
         } else if (SETAGE.equals(action)) {
             int age = args.optInt(0);
@@ -444,6 +419,11 @@ public class TunePlugin extends CordovaPlugin {
             }
             callbackContext.success();
             return true;
+        } else if (SETPRIVACYPROTECTEDDUETOAGE.equals(action)) {
+            boolean privacyProtected = args.optBoolean(0);
+            tune.setPrivacyProtectedDueToAge(privacyProtected);
+            callbackContext.success();
+            return true;
         } else if (SETUSEREMAIL.equals(action)) {
             String userEmail = args.optString(0);
             if (!userEmail.isEmpty()) {
@@ -544,7 +524,7 @@ public class TunePlugin extends CordovaPlugin {
             String advertisingId = tune.getGoogleAdvertisingId();
             callbackContext.success(advertisingId);
             return true;
-        } else if (GETMATID.equals(action) || GETTUNEID.equals(action)) {
+        } else if (GETTUNEID.equals(action)) {
             String tuneId = tune.getMatId();
             callbackContext.success(tuneId);
             return true;
@@ -555,6 +535,10 @@ public class TunePlugin extends CordovaPlugin {
         } else if (GETISPAYINGUSER.equals(action)) {
             boolean payingUser = tune.getIsPayingUser();
             callbackContext.success(String.valueOf(payingUser));
+            return true;
+        } else if (GETISPRIVACYPROTECTEDDUETOAGE.equals(action)) {
+            boolean isProtected = tune.isPrivacyProtectedDueToAge();
+            callbackContext.success(String.valueOf(isProtected));
             return true;
         } else if (SETDELEGATE.equals(action)) {
             // default to true
@@ -740,6 +724,28 @@ public class TunePlugin extends CordovaPlugin {
             tune.registerCustomTuneLinkDomain(domainSuffix);
             return true;
 
+        } else if (REGISTERDEEPLINKLISTENER.equals(action)) {
+            tune.registerDeeplinkListener(new TuneDeeplinkListener() {
+                @Override
+                public void didReceiveDeeplink(String deeplink) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, deeplink);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
+                }
+
+                @Override
+                public void didFailDeeplink(String error) {
+                    PluginResult result = new PluginResult(PluginResult.Status.ERROR, error);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
+                }
+            });
+            return true;
+
+        } else if (UNREGISTERDEEPLINKLISTENER.equals(action)) {
+            tune.unregisterDeeplinkListener();
+            return true;
+
         } else if (ISTUNELINK.equals(action)) {
             String appLinkUrl = args.optString(0);
             boolean isTuneLInk = tune.isTuneLink(appLinkUrl);
@@ -779,11 +785,11 @@ public class TunePlugin extends CordovaPlugin {
             } else {
                 boolean shareEventData = config.optBoolean("ShareEventData");
 
-                TuneSmartwhereConfiguration smartwhereConfiguration = new TuneSmartwhereConfiguration();
+                TuneSmartWhereConfiguration smartwhereConfiguration = new TuneSmartWhereConfiguration();
                 if (shareEventData) {
-                    smartwhereConfiguration.grant(TuneSmartwhereConfiguration.GRANT_SMARTWHERE_TUNE_EVENTS);
+                    smartwhereConfiguration.grant(TuneSmartWhereConfiguration.GRANT_SMARTWHERE_TUNE_EVENTS);
                 } else {
-                    smartwhereConfiguration.revoke(TuneSmartwhereConfiguration.GRANT_SMARTWHERE_TUNE_EVENTS);
+                    smartwhereConfiguration.revoke(TuneSmartWhereConfiguration.GRANT_SMARTWHERE_TUNE_EVENTS);
                 }
 
                 try {
@@ -803,35 +809,24 @@ public class TunePlugin extends CordovaPlugin {
     }
 
     @Override
-    public void onStart() {
-        Log.v(TAG, "onStart()");
-        super.onStart();
-        if (Tune.getInstance() != null) {
-            TuneActivity.onStart(cordova.getActivity());
-        } else {
-            Log.d(TAG, "onStart() -- no Instance!");
-        }
-    }
-
-    @Override
-    public void onStop() {
-        Log.v(TAG, "onStop()");
-        super.onStop();
-        if (Tune.getInstance() != null) {
-            TuneActivity.onStop(cordova.getActivity());
-        } else {
-            Log.d(TAG, "onStop() -- no Instance!");
-        }
-    }
-
-    @Override
     public void onResume(boolean multitasking) {
-        Log.v(TAG, "onResume()");
         super.onResume(multitasking);
+        Log.v(TAG, "onResume()");
         if (Tune.getInstance() != null) {
             TuneActivity.onResume(cordova.getActivity());
         } else {
             Log.d(TAG, "onResume() -- no Instance!");
+        }
+    }
+
+    @Override
+    public void onPause(boolean multitasking) {
+        super.onPause(multitasking);
+        Log.v(TAG, "onPause()");
+        if (Tune.getInstance() != null) {
+            TuneActivity.onPause(cordova.getActivity());
+        } else {
+            Log.d(TAG, "onPause() -- no Instance!");
         }
     }
 }
