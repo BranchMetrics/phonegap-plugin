@@ -59,15 +59,6 @@ TunePlugin.prototype.initTune = function(tuneAdvertiserId, tuneConversionKey, tu
 };
 
 /**
- * @deprecated Since version 6.0. Register your TuneDeeplinkListener via registerDeeplinkListener.
- */
-TunePlugin.prototype.checkForDeferredDeeplink = function(success, failure) {
-    console.log("TunePlugin.js: Calling checkForDeferredDeeplink");
-    exec(success, failure, "TunePlugin", "checkForDeferredDeeplink", []);
-    return this;
-};
-
-/**
  * IOS Only.
  */
 TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
@@ -83,15 +74,6 @@ TunePlugin.prototype.automateIapEventMeasurement = function(automate) {
 TunePlugin.prototype.getAdvertisingId = function(success, failure) {
     console.log("TunePlugin.js: Calling getAdvertisingId");
     exec(success, failure, "TunePlugin", "getAdvertisingId", []);
-};
-
-/**
- * @deprecated Since version 6.0. Use getTuneId().
- */
-TunePlugin.prototype.getMatId = function(success, failure) {
-    console.log("TunePlugin.js: Calling getMatId");
-    console.log("TunePlugin.js: getMatId() is deprecated. Please use getTuneId() instead.");
-    TunePlugin.prototype.getTuneId(success, failure);
 };
 
 /**
@@ -128,6 +110,44 @@ TunePlugin.prototype.getOpenLogId = function(success, failure) {
 TunePlugin.prototype.getIsPayingUser = function(success, failure) {
     console.log("TunePlugin.js: Calling getIsPayingUser");
     exec(success, failure, "TunePlugin", "getIsPayingUser", []);
+};
+
+/**
+ * @function getIsPrivacyProtectedDueToAge
+ * @summary Returns whether this device profile is flagged as privacy protected.
+ * @description This will be true if either the age is set to less than 13 or if setPrivacyProtectedDueToAge(boolean) is set to true.
+ *
+ * @param {callback} success Callback returns true if the age has been set to less than 13 OR this profile has been set explicitly as privacy protected.
+ * @param {callback} failure Callback Message if there was an error.
+ */
+TunePlugin.prototype.getIsPrivacyProtectedDueToAge = function(success, failure) {
+    console.log("TunePlugin.js: Calling getIsPrivacyProtectedDueToAge");
+    exec(success, failure, "TunePlugin", "getIsPrivacyProtectedDueToAge", []);
+};
+
+/**
+ * @function registerDeeplinkListener
+ * @summary Set the deeplink listener that will be called.
+ * @description This will be called when either a deferred deeplink is found for a fresh install or for handling an opened Tune Link.  Registering a deeplink listener will trigger an asynchronous call to check for deferred deeplinks
+ *
+ * @param {callback} success Callback returns if successfully did Receive a Deeplink
+ * @param {callback} failure Callback Message if registration failed.
+ */
+TunePlugin.prototype.registerDeeplinkListener = function(success, failure) {
+    console.log("TunePlugin.js: Calling registerDeeplinkListener");
+    exec(success, failure, "TunePlugin", "registerDeeplinkListener", []);
+    return this;
+};
+
+/**
+ * @function unregisterDeeplinkListener
+ * @summary Unregister the deeplink listener.
+ * @description Remove the deeplink listener previously set with registerDeeplinkListener().
+ */
+TunePlugin.prototype.unregisterDeeplinkListener = function() {
+    console.log("TunePlugin.js: Calling unregisterDeeplinkListener");
+    exec(null, null, "TunePlugin", "unregisterDeeplinkListener", []);
+    return this;
 };
 
 /**
@@ -396,6 +416,19 @@ TunePlugin.prototype.setPreloadData = function(preloadData) {
 };
 
 /**
+ * @function setPrivacyProtectedDueToAge
+ * @summary Set privacy as protected.
+ * @description Set this device profile as privacy protected for the purposes of the protection of children from ad targeting and personal data collection. In the US this is part of the COPPA law.
+ *
+ * @param {boolean} isPrivacyProtected true if privacy should be protected for this user.
+ */
+TunePlugin.prototype.setPrivacyProtectedDueToAge = function(isPrivacyProtected) {
+    console.log("TunePlugin.js: Calling setPrivacyProtectedDueToAge");
+    exec(null, null, "TunePlugin", "setPrivacyProtectedDueToAge", [isPrivacyProtected]);
+    return this;
+};
+
+/**
  * @function setTRUSTeId
  * @summary Sets the TRUSTe ID
  *
@@ -565,10 +598,7 @@ TunePlugin.prototype.measureSession = function() {
  * @param {object} tuneEvent the TuneEvent.  Can be a number, string, or JSON object.
  */
 TunePlugin.prototype.measureEvent = function(tuneEvent) {
-    if (typeof tuneEvent == 'number') {
-        console.log("TunePlugin.js: Calling measureEventId");
-        exec(null, null, "TunePlugin", "measureEventId", [tuneEvent]);
-    } else if (typeof tuneEvent == 'string') {
+    if (typeof tuneEvent == 'string') {
         console.log("TunePlugin.js: Calling measureEventName");
         exec(null, null, "TunePlugin", "measureEventName", [tuneEvent]);
     } else if (typeof tuneEvent == 'object') {
@@ -946,13 +976,13 @@ module.exports = new TunePlugin();
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#clearAllCustomProfileVariables">clearAllCustomProfileVariables</a></li><li><a href="global.html#clearCustomProfileVariable">clearCustomProfileVariable</a></li><li><a href="global.html#configureSmartwhere">configureSmartwhere</a></li><li><a href="global.html#disableSmartwhere">disableSmartwhere</a></li><li><a href="global.html#enablePushNotifications">enablePushNotifications</a></li><li><a href="global.html#enableSmartwhere">enableSmartwhere</a></li><li><a href="global.html#getCustomProfileDate">getCustomProfileDate</a></li><li><a href="global.html#getCustomProfileGeolocation">getCustomProfileGeolocation</a></li><li><a href="global.html#getCustomProfileNumber">getCustomProfileNumber</a></li><li><a href="global.html#getCustomProfileString">getCustomProfileString</a></li><li><a href="global.html#getIsPayingUser">getIsPayingUser</a></li><li><a href="global.html#getOpenLogId">getOpenLogId</a></li><li><a href="global.html#getTuneId">getTuneId</a></li><li><a href="global.html#getValueForHookById">getValueForHookById</a></li><li><a href="global.html#initTune">initTune</a></li><li><a href="global.html#isTuneLink">isTuneLink</a></li><li><a href="global.html#measureEvent">measureEvent</a></li><li><a href="global.html#measureSession">measureSession</a></li><li><a href="global.html#registerCustomProfileDate">registerCustomProfileDate</a></li><li><a href="global.html#registerCustomProfileGeolocation">registerCustomProfileGeolocation</a></li><li><a href="global.html#registerCustomProfileNumber">registerCustomProfileNumber</a></li><li><a href="global.html#registerCustomProfileString">registerCustomProfileString</a></li><li><a href="global.html#registerCustomTuneLinkDomain">registerCustomTuneLinkDomain</a></li><li><a href="global.html#registerPowerHook">registerPowerHook</a></li><li><a href="global.html#setAge">setAge</a></li><li><a href="global.html#setAppAdMeasurement">setAppAdMeasurement</a></li><li><a href="global.html#setCurrencyCode">setCurrencyCode</a></li><li><a href="global.html#setCustomProfileDate">setCustomProfileDate</a></li><li><a href="global.html#setCustomProfileGeolocation">setCustomProfileGeolocation</a></li><li><a href="global.html#setCustomProfileNumber">setCustomProfileNumber</a></li><li><a href="global.html#setCustomProfileString">setCustomProfileString</a></li><li><a href="global.html#setDebugMode">setDebugMode</a></li><li><a href="global.html#setDeepLink">setDeepLink</a></li><li><a href="global.html#setDelegate">setDelegate</a></li><li><a href="global.html#setExistingUser">setExistingUser</a></li><li><a href="global.html#setFacebookEventLogging">setFacebookEventLogging</a></li><li><a href="global.html#setFacebookUserId">setFacebookUserId</a></li><li><a href="global.html#setGender">setGender</a></li><li><a href="global.html#setLocation">setLocation</a></li><li><a href="global.html#setLocationWithAltitude">setLocationWithAltitude</a></li><li><a href="global.html#setPackageName">setPackageName</a></li><li><a href="global.html#setPayingUser">setPayingUser</a></li><li><a href="global.html#setPreloadData">setPreloadData</a></li><li><a href="global.html#setPushNotificationRegistrationId">setPushNotificationRegistrationId</a></li><li><a href="global.html#setShouldAutoCollectDeviceLocation">setShouldAutoCollectDeviceLocation</a></li><li><a href="global.html#setTRUSTeId">setTRUSTeId</a></li><li><a href="global.html#setTwitterUserId">setTwitterUserId</a></li><li><a href="global.html#setUseId">setUseId</a></li><li><a href="global.html#setUserEmail">setUserEmail</a></li><li><a href="global.html#setUserName">setUserName</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#clearAllCustomProfileVariables">clearAllCustomProfileVariables</a></li><li><a href="global.html#clearCustomProfileVariable">clearCustomProfileVariable</a></li><li><a href="global.html#configureSmartwhere">configureSmartwhere</a></li><li><a href="global.html#disableSmartwhere">disableSmartwhere</a></li><li><a href="global.html#enablePushNotifications">enablePushNotifications</a></li><li><a href="global.html#enableSmartwhere">enableSmartwhere</a></li><li><a href="global.html#getCustomProfileDate">getCustomProfileDate</a></li><li><a href="global.html#getCustomProfileGeolocation">getCustomProfileGeolocation</a></li><li><a href="global.html#getCustomProfileNumber">getCustomProfileNumber</a></li><li><a href="global.html#getCustomProfileString">getCustomProfileString</a></li><li><a href="global.html#getIsPayingUser">getIsPayingUser</a></li><li><a href="global.html#getIsPrivacyProtectedDueToAge">getIsPrivacyProtectedDueToAge</a></li><li><a href="global.html#getOpenLogId">getOpenLogId</a></li><li><a href="global.html#getTuneId">getTuneId</a></li><li><a href="global.html#getValueForHookById">getValueForHookById</a></li><li><a href="global.html#initTune">initTune</a></li><li><a href="global.html#isTuneLink">isTuneLink</a></li><li><a href="global.html#measureEvent">measureEvent</a></li><li><a href="global.html#measureSession">measureSession</a></li><li><a href="global.html#registerCustomProfileDate">registerCustomProfileDate</a></li><li><a href="global.html#registerCustomProfileGeolocation">registerCustomProfileGeolocation</a></li><li><a href="global.html#registerCustomProfileNumber">registerCustomProfileNumber</a></li><li><a href="global.html#registerCustomProfileString">registerCustomProfileString</a></li><li><a href="global.html#registerCustomTuneLinkDomain">registerCustomTuneLinkDomain</a></li><li><a href="global.html#registerDeeplinkListener">registerDeeplinkListener</a></li><li><a href="global.html#registerPowerHook">registerPowerHook</a></li><li><a href="global.html#setAge">setAge</a></li><li><a href="global.html#setAppAdMeasurement">setAppAdMeasurement</a></li><li><a href="global.html#setCurrencyCode">setCurrencyCode</a></li><li><a href="global.html#setCustomProfileDate">setCustomProfileDate</a></li><li><a href="global.html#setCustomProfileGeolocation">setCustomProfileGeolocation</a></li><li><a href="global.html#setCustomProfileNumber">setCustomProfileNumber</a></li><li><a href="global.html#setCustomProfileString">setCustomProfileString</a></li><li><a href="global.html#setDebugMode">setDebugMode</a></li><li><a href="global.html#setDeepLink">setDeepLink</a></li><li><a href="global.html#setDelegate">setDelegate</a></li><li><a href="global.html#setExistingUser">setExistingUser</a></li><li><a href="global.html#setFacebookEventLogging">setFacebookEventLogging</a></li><li><a href="global.html#setFacebookUserId">setFacebookUserId</a></li><li><a href="global.html#setGender">setGender</a></li><li><a href="global.html#setLocation">setLocation</a></li><li><a href="global.html#setLocationWithAltitude">setLocationWithAltitude</a></li><li><a href="global.html#setPackageName">setPackageName</a></li><li><a href="global.html#setPayingUser">setPayingUser</a></li><li><a href="global.html#setPreloadData">setPreloadData</a></li><li><a href="global.html#setPrivacyProtectedDueToAge">setPrivacyProtectedDueToAge</a></li><li><a href="global.html#setPushNotificationRegistrationId">setPushNotificationRegistrationId</a></li><li><a href="global.html#setShouldAutoCollectDeviceLocation">setShouldAutoCollectDeviceLocation</a></li><li><a href="global.html#setTRUSTeId">setTRUSTeId</a></li><li><a href="global.html#setTwitterUserId">setTwitterUserId</a></li><li><a href="global.html#setUseId">setUseId</a></li><li><a href="global.html#setUserEmail">setUserEmail</a></li><li><a href="global.html#setUserName">setUserName</a></li><li><a href="global.html#unregisterDeeplinkListener">unregisterDeeplinkListener</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Tue Sep 26 2017 13:27:52 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed May 02 2018 10:27:18 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
