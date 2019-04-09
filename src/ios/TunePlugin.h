@@ -50,10 +50,8 @@
 
 // iOS specific APIs
 
-- (void)automateIapEventMeasurement:(CDVInvokedUrlCommand *)command;
+- (void)automateInAppPurchaseEventMeasurement:(CDVInvokedUrlCommand *)command;
 - (void)setJailbroken:(CDVInvokedUrlCommand *)command;
-
-- (void)setRedirectUrl:(CDVInvokedUrlCommand *)command;
 
 // Android specific APIs
 

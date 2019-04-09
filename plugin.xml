@@ -8,9 +8,9 @@
     <name>TunePlugin</name>
 
     <description>This Cordova plugin allows you to measure installs and events with the TUNE SDK.</description>
-    <repo>https://github.com/MobileAppTracking/phonegap-plugin.git</repo>
+    <repo>https://github.com/tuneinc/phonegap-plugin</repo>
     <keywords>cordova,mat,mobileapptracking,tracking,tune,attribution,analytics</keywords>
-    <license>Apache 2.0</license>
+    <license>MIT</license>
 
     <engines>
         <engine name="cordova" version=">=9.0.0" />

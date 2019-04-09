@@ -298,15 +298,6 @@ TunePlugin.prototype.setJailbroken = function(enable) {
 };
 
 /**
- * IOS Only.
- */
-TunePlugin.prototype.setRedirectUrl = function(redirectUrl) {
-    console.log("TunePlugin.js: Calling setRedirectUrl");
-    exec(null, null, "TunePlugin", "setRedirectUrl", [redirectUrl]);
-    return this;
-};
-
-/**
  * @function measureSession
  * @summary To be called when an app opens.
  * TODO: Handle Android activity lifecycle on init
