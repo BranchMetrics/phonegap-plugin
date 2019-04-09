@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-tune"
-        version="5.1.0">
+        version="8.0.0">
 
     <name>TunePlugin</name>
 
@@ -13,7 +13,7 @@
     <license>Apache 2.0</license>
 
     <engines>
-        <engine name="cordova" version=">=3.0.0" />
+        <engine name="cordova" version=">=9.0.0" />
     </engines>
 
     <js-module src="www/TunePlugin.js" name="TunePlugin">
@@ -56,13 +56,12 @@
         <source-file src="src/android/com/tune/TunePlugin.java"
                      target-dir="src/com/tune" />
 
-        <framework src="com.tune:tune-marketing-console-sdk:5.2.3" />
+        <framework src="com.tune:tune-marketing-console-sdk:6.1.1" />
         <framework src="com.google.android.gms:play-services-gcm:12.0.1" />
     </platform>
 
     <!-- ios -->
     <platform name="ios">
-        <!-- Cordova < 2.3 -->
         <plugins-plist key="TunePlugin" string="TunePlugin" />
 
         <config-file target="config.xml" parent="/*">
@@ -75,6 +74,13 @@
         <source-file src="src/ios/TunePlugin.m" />
         <header-file src="src/ios/TunePlugin.h" />
 
-        <framework src="Tune" type="podspec" spec="~> 5.1.0" />
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="Tune" spec="~> 6.1.0" />
+            </pods>
+        </podspec>
     </platform>
 </plugin>

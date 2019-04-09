@@ -7,9 +7,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,351 +25,220 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>TUNE PhoneGap Test App</title>
-
+        
         <style>
             button.btn {
                 width: 80%;  height: 40px;
                 font-size: 16px;
             }
-            div.btnDiv {
-                text-align: center;
-                margin-bottom:0.5em;
-            }
+        div.btnDiv {
+            text-align: center;
+            margin-bottom:0.5em;
+        }
         </style>
     </head>
     <body>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, true);
-            document.addEventListener('deviceready', pushNotification, false);
-
+            
             var tune;
-
+            
             function onDeviceReady()
             {
                 tune = window.plugins.tunePlugin;
-
+                
                 console.log('onDeviceReady: tune = ' + tune);
-
+                
                 startTUNE();
             }
+        
+        function handleOpenURL(url)
+        {
+            console.log('handleOpenURL: url = ' + url);
+        }
+        
 
-            function handleOpenURL(url)
-            {
-                console.log('handleOpenURL: url = ' + url);
-            }
+        function startTUNE()
+        {
+            // for main app
+            tune.initTune("877", "8c14d6bbe466b65211e781d62e301eec", null);
+            tune.setDebugMode(true);
 
-            function setTUNEDebugMode()
-            {
-                tune.setDebugMode(true);
-            }
-
-            function setTUNEDelegate()
-            {
-                tune.setDelegate(true, resultHandler, errorHandler);
-            }
-
-            function startTUNE()
-            {
-                // for main app
-                tune.initTune("877", "8c14d6bbe466b65211e781d62e301eec", true);
-                //tune.setPackageName("com.hasoffers.phonegaptestapp");
-
-                tune.enablePushNotifications("fcm_project_sender_id");
-
-                tune.setDelegate(true, resultHandler, errorHandler);
-
-                tune.automateIapEventMeasurement(true);
-
-                tune.registerPowerHook("PowerButton", "Power Hook Button Title", "Test Power Hooks");
-
-                tune.registerCustomTuneLinkDomain("customize.it");
-
-                tune.registerDeeplinkListener(resultHandler, errorHandler);
-            }
-
-            function testSetters()
-            {
-                tune.setAge(23);
-                tune.setAppAdMeasurement(true);
-                tune.setAppleVendorIdentifier("12345678-1234-1234-1234-123456789012");
-                tune.setCurrencyCode("AUD");
-                tune.setExistingUser(false);
-                tune.setFacebookEventLogging(true, false);
-                tune.setFacebookUserId("198273645");
-                tune.setGender(1);
-                tune.setGoogleUserId("5647382910");
-                tune.setJailbroken(false);
-                tune.setLocation(1.1, 2.2);
-                tune.setLocationWithAltitude(3.3, 4.4, 5.5);
-                tune.setPackageName("com.mycompany.myapp");
-                tune.setPayingUser(true);
-                tune.setShouldAutoCollectAppleAdvertisingIdentifier(true);
-                tune.setShouldAutoCollectDeviceLocation(true);
-                tune.setShouldAutoDetectJailbroken(true);
-                tune.setShouldAutoGenerateAppleVendorIdentifier(true);
-                tune.setTRUSTeId("tempTrusteId");
-                tune.setTwitterUserId("1357908642");
-                tune.setUseCookieMeasurement(false);
-                tune.setUserEmail("tempUserEmail@tempUserCompany.com");
-                tune.setUserId("tempUserId");
-                tune.setUserName("tempUserName");
-                tune.setPrivacyProtectedDueToAge(true);
-
-                var preloadData = {
-                    "publisherId":"1122334455",
-                    "publisherReferenceId":"RX1357",
-                    "agencyId":"66554477",
-                    "publisherSub5":"some_pub_sub_value"
-                };
-
-                tune.setPreloadData(preloadData);
-            }
-
-            function testGetters()
-            {
-                console.log('testGetters clicked');
-
-                tune.getAdvertisingId(resultHandler, errorHandler);
-                tune.getTuneId(resultHandler, errorHandler);
-                tune.getOpenLogId(resultHandler, errorHandler);
-                tune.getIsPayingUser(resultHandler, errorHandler);
-
-                tune.isTuneLink("https://tlnk.io", resultHandler, errorHandler);            // should be true
-                tune.isTuneLink("http://wow.foobarz.com", resultHandler, errorHandler);     // should be false
-                tune.isTuneLink("https://1235.customize.it", resultHandler, errorHandler);  // should be true
-
-                tune.getIsPrivacyProtectedDueToAge();
-            }
-
-            function testCustomData()
-            {
-                console.log('testCustomData() clicked');
-
-                // Register, Set, and Get Custom Profile Strings
-                tune.registerCustomProfileString("CustomProfileString");
-                tune.setCustomProfileString("CustomProfileString", "CustomProfileString Test Value");
-                tune.getCustomProfileString("CustomProfileString", resultHandler, errorHandler);
-
-                // Register, Set, and Get Custom Profile Dates
-                tune.registerCustomProfileDate("CustomProfileDate");
-                tune.setCustomProfileDate("CustomProfileDate", 1505165736307);  // 9/11/17
-                tune.getCustomProfileDate("CustomProfileDate", resultHandler, errorHandler);
-
-                // Register, Set, and Get Custom Profile Numbers
-                tune.registerCustomProfileNumber("CustomProfileNumber");
-                tune.setCustomProfileNumber("CustomProfileNumber", 99.99);
-                tune.getCustomProfileNumber("CustomProfileNumber", resultHandler, errorHandler);
-
-                // Register, Set, and Get Custom Profile Geolocation
-                tune.registerCustomProfileGeolocation("CustomProfileGeolocation");
-                tune.setCustomProfileGeolocation("CustomProfileGeolocation", 47.612278, -122.345858, 88);
-                tune.getCustomProfileGeolocation("CustomProfileGeolocation", jsonResultHandler, errorHandler);
-
-
-                // Register Custom Data with "Default" values.
-                tune.registerCustomProfileString("DefaultProfileString", "DefaultProfileString -- Default String");
-                tune.getCustomProfileString("DefaultProfileString", resultHandler, errorHandler);
-
-                tune.registerCustomProfileDate("DefaultProfileDate", 1478592000000);
-                tune.getCustomProfileDate("DefaultProfileDate", resultHandler, errorHandler);
-
-                tune.registerCustomProfileNumber("DefaultProfileNumber", 3.14);
-                tune.getCustomProfileNumber("DefaultProfileNumber", resultHandler, errorHandler);
-
-                // Get non-existent values
-                tune.getCustomProfileString("NotDefinedString", resultHandler, errorHandler);
-                tune.getCustomProfileDate("NotDefinedDate", resultHandler, errorHandler);
-                tune.getCustomProfileNumber("NotDefinedNumber", resultHandler, errorHandler);
-            }
-
-            function testClearCustomData()
-            {
-                // Register some Custom Data
-                tune.registerCustomProfileString("CustomData");
-                tune.setCustomProfileString("CustomData", "Kilroy was here");
-                console.log('Custom Data Set: ' + tune.getCustomProfileString("CustomData"));
-
-                // Clear the Custom Data
-                tune.clearCustomProfileVariable("CustomData");
-                console.log('Custom Data UnSet: ' + tune.getCustomProfileString("CustomData"));
-
-                // Clear all custom data
-                tune.clearAllCustomProfileVariables();
-            }
-
-            function measureSessionTest()
-            {
-                tune.measureSession();
-            }
-
-            function measureEventNameTest()
-            {
-                // event name
-                tune.measureEvent("purchase1");
-
-                // event id
-                //tune.measureEvent(12345678);
-            }
-
-            function measureEventTest()
-            {
-                measureEventTest1();
-                measureEventTest2();
-            }
-
-            function measureEventTest1()
-            {
-                var eventItems = new Array();
-
-                var eventItem1 = {
-                    "item":"item1",
-                    "quantity":1,
-                    "unit_price":0.99,
-                    "revenue":0.99,
-                    "attribute_sub1":"1",
-                    "attribute_sub2":"2",
-                    "attribute_sub3":"3",
-                    "attribute_sub4":"4",
-                    "attribute_sub5":"5"
-                };
-                eventItems[0] = eventItem1;
-
-                var eventItem2 = {
-                    "item":"item2",
-                    "quantity":2,
-                    "unit_price":0.50,
-                    "revenue":1
-                };
-                eventItems[1] = eventItem2;
-
-                var tuneEvent1 = {
-                    "name": "purchase2",
-                    "revenue": 0.99,
-                    "currency": "USD",
-                    "advertiserRefId": "ref123",
-                    "eventItems": eventItems,
-                    "receipt": getSampleiTunesIAPReceipt(),
-                    "contentType": "content type",
-                    "contentId": "content id",
-                    "level": 5,
-                    "quantity": 10,
-                    "searchString": "shoes",
-                    "rating": 3.5,
-                    "date1": new Date().getTime(),
-                    "date2": new Date().getTime() + 60 * 1000,
-                    "attribute1": "attr1",
-                    "attribute2": "attr2",
-                    "attribute3": "attr3",
-                    "attribute4": "attr4",
-                    "attribute5": "attr5"
-                };
-
-                tune.measureEvent(tuneEvent1);
-            }
-
-            function measureEventTest2()
-            {
-                var tuneEvent2 = {
-                    "name": "event3",
-                    "revenue": 9.99,
-                    "currency": "AUD",
-                    "advertiserRefId": "ref222",
-                    "searchString": "magic boots",
-                    "date2": new Date().getTime() + 360 * 1000,
-                    "attribute1": "attr1",
-                    "attribute5": "attr5"
-                };
-
-                tune.measureEvent(tuneEvent2);
-            }
-
-            function testPowerHook()
-            {
-                // Update the title based on the power hook value
-                tune.getValueForHookById(
-                    "PowerButton",
-                    function(result)
-                    {
-                        console.log('PowerHook Value: ' + result);
-                        document.getElementById('btnPowerhook').innerText = result;
-                    },
-                    errorHandler
-                );
-            }
-
-            function testDisableSmartwhere()
-            {
-                tune.disableSmartwhere(resultHandler, errorHandler);
-            }
-
-            function testEnableSmartwhere()
-            {
-                tune.enableSmartwhere(resultHandler, errorHandler);
-            }
-
-            function testConfigureSmartwhere()
-            {
-                var jsonConfig = {
-                    "ShareEventData":true
-                };
-
-                tune.configureSmartwhere(jsonConfig, resultHandler, errorHandler);
-            }
-
-            function getSampleiTunesIAPReceipt()
-            {
-                return "dGhpcyBpcyBhIHNhbXBsZSBpb3MgYXBwIHN0b3JlIHJlY2VpcHQ=";
-            }
-
-            function resultHandler (result)
-            {
-                console.log('resultHandler: ' + (result==null?"NULL":result));
-            }
-            function jsonResultHandler(result)
-            {
-                console.log('JSON resultHandler: ' + JSON.stringify(result));
-            }
-
-            function errorHandler (error)
-            {
-                console.log('errorHandler: ' + error);
-            }
-
-            function deeplinkReceived (deeplink)
-            {
-                console.log('deferred deeplink success: ' + deeplink);
-
-                // TODO: add your code to handle the deeplink url as appropriate
-            }
-
-            function deeplinkFailed (error)
-            {
-                console.log('deferred deeplink failed: ' + error);
-            }
-
-            function handleOpenURL(url)
-            {
-                console.log('deeplink-url to be opened: ' + url);
-            }
-
-            function handlePrivacyChange(checkboxElement) {
-                console.log('CheckBox: ' + checkboxElement.checked);
-                tune.setPrivacyProtectedDueToAge(checkboxElement.checked)
-            }
-
-        </script>
-
+            tune.registerCustomTuneLinkDomain("customize.it");
+            
+            tune.registerDeeplinkListener(resultHandler, errorHandler);
+        }
+        
+        function testSetters()
+        {
+            tune.setAppAdMeasurement(true);
+            tune.setExistingUser(false);
+            tune.setFacebookEventLogging(true, false);
+            tune.setJailbroken(false);
+            tune.setPayingUser(true);
+            tune.setUserId("tempUserId");
+            tune.setPrivacyProtectedDueToAge(true);
+            
+            var preloadData = {
+                "publisherId":"1122334455",
+                "publisherReferenceId":"RX1357",
+                "agencyId":"66554477",
+                "publisherSub5":"some_pub_sub_value"
+            };
+            
+            tune.setPreloadData(preloadData);
+        }
+        
+        function testGetters()
+        {
+            console.log('testGetters clicked');
+            
+            tune.getAdvertisingId(resultHandler, errorHandler);
+            tune.getTuneId(resultHandler, errorHandler);
+            tune.getOpenLogId(resultHandler, errorHandler);
+            tune.getIsPayingUser(resultHandler, errorHandler);
+            
+            tune.isTuneLink("https://tlnk.io", resultHandler, errorHandler);            // should be true
+            tune.isTuneLink("http://wow.foobarz.com", resultHandler, errorHandler);     // should be false
+            tune.isTuneLink("https://1235.customize.it", resultHandler, errorHandler);  // should be true
+            
+            tune.getIsPrivacyProtectedDueToAge();
+        }
+        
+        function measureSessionTest()
+        {
+            tune.measureSession();
+        }
+        
+        function measureEventNameTest()
+        {
+            // event name
+            tune.measureEvent("purchase1");
+            
+            // event id
+            //tune.measureEvent(12345678);
+        }
+        
+        function measureEventTest()
+        {
+            measureEventTest1();
+            measureEventTest2();
+        }
+        
+        function measureEventTest1()
+        {
+            var eventItems = new Array();
+            
+            var eventItem1 = {
+                "item":"item1",
+                "quantity":1,
+                "unit_price":0.99,
+                "revenue":0.99,
+                "attribute_sub1":"1",
+                "attribute_sub2":"2",
+                "attribute_sub3":"3",
+                "attribute_sub4":"4",
+                "attribute_sub5":"5"
+            };
+            eventItems[0] = eventItem1;
+            
+            var eventItem2 = {
+                "item":"item2",
+                "quantity":2,
+                "unit_price":0.50,
+                "revenue":1
+            };
+            eventItems[1] = eventItem2;
+            
+            var tuneEvent1 = {
+                "name": "purchase2",
+                "revenue": 0.99,
+                "currency": "USD",
+                "advertiserRefId": "ref123",
+                "eventItems": eventItems,
+                "receipt": getSampleiTunesIAPReceipt(),
+                "contentType": "content type",
+                "contentId": "content id",
+                "level": 5,
+                "quantity": 10,
+                "searchString": "shoes",
+                "rating": 3.5,
+                "date1": new Date().getTime(),
+                "date2": new Date().getTime() + 60 * 1000,
+                "attribute1": "attr1",
+                "attribute2": "attr2",
+                "attribute3": "attr3",
+                "attribute4": "attr4",
+                "attribute5": "attr5"
+            };
+            
+            tune.measureEvent(tuneEvent1);
+        }
+        
+        function measureEventTest2()
+        {
+            var tuneEvent2 = {
+                "name": "event3",
+                "revenue": 9.99,
+                "currency": "AUD",
+                "advertiserRefId": "ref222",
+                "searchString": "magic boots",
+                "date2": new Date().getTime() + 360 * 1000,
+                "attribute1": "attr1",
+                "attribute5": "attr5"
+            };
+            
+            tune.measureEvent(tuneEvent2);
+        }
+        
+        function getSampleiTunesIAPReceipt()
+        {
+            return "dGhpcyBpcyBhIHNhbXBsZSBpb3MgYXBwIHN0b3JlIHJlY2VpcHQ=";
+        }
+        
+        function resultHandler (result)
+        {
+            console.log('resultHandler: ' + (result==null?"NULL":result));
+        }
+        function jsonResultHandler(result)
+        {
+            console.log('JSON resultHandler: ' + JSON.stringify(result));
+        }
+        
+        function errorHandler (error)
+        {
+            console.log('errorHandler: ' + error);
+        }
+        
+        function deeplinkReceived (deeplink)
+        {
+            console.log('deferred deeplink success: ' + deeplink);
+            
+            // TODO: add your code to handle the deeplink url as appropriate
+        }
+        
+        function deeplinkFailed (error)
+        {
+            console.log('deferred deeplink failed: ' + error);
+        }
+        
+        function handleOpenURL(url)
+        {
+            console.log('deeplink-url to be opened: ' + url);
+        }
+        
+        function handlePrivacyChange(checkboxElement) {
+            console.log('CheckBox: ' + checkboxElement.checked);
+            tune.setPrivacyProtectedDueToAge(checkboxElement.checked)
+        }
+        
+            </script>
+        
         <div>
             <br>
             <h1>TUNE PhoneGap Test App</h1>
             <br>
-            <div class="btnDiv">
-                <button id="btnDebug" class="btn" onclick="setTUNEDebugMode();">TUNE Debug Mode</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnDelegate" class="btn" onclick="setTUNEDelegate();">TUNE Delegate</button>
-            </div>
             <div class="btnDiv">
                 <button id="btnSession" class="btn" onclick="measureSessionTest();">Measure Session</button>
             </div>
@@ -385,27 +254,7 @@
             <div class="btnDiv">
                 <button id="btnGetters" class="btn" onclick="testGetters();">Test Getter Methods</button>
             </div>
-            <div class="btnDiv">
-                <button id="btnCustomData" class="btn" onclick="testCustomData();">Test Custom Profile Data</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnClearCustomData" class="btn" onclick="testClearCustomData();">Test Clear Custom Profile Data</button>
-            </div>
-            <div class="btnDiv">
-                <button id="btnPowerhook" class="btn" onclick="testPowerHook();">Test Power Hooks</button>
-            </div>
             <table style="width:80%" align="center">
-                <tr>
-                    <td width="33%">
-                        <div class="btnDiv"><button id="btnDisableSmartwhere" class="btn" onclick="testDisableSmartwhere();">Disable Smartwhere</button></div>
-                    </td>
-                    <td width="34%">
-                        <div class="btnDiv"><button id="btnEnableSmartwhere" class="btn" onclick="testEnableSmartwhere();">Enable Smartwhere</button></div>
-                    </td>
-                    <td width="33%">
-                        <div class="btnDiv"><button id="btnConfigureSmartwhere" class="btn" onclick="testConfigureSmartwhere();">Configure Smartwhere</button></div>
-                    </td>
-                </tr>
                 <tr>
                     <td>
                         <div>
@@ -415,7 +264,7 @@
                     </td>
                 </tr>
             </table>
-
+            
         </div>
     </body>
 </html>
