@@ -78,6 +78,29 @@ NSString *tuneDeeplinkCallbackId;
     }
 }
 
+- (void)setAppAdTrackingEnabled:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"TunePlugin: setAppAdTrackingEnabled");
+
+    NSArray *arguments = command.arguments;
+
+    NSString *strEnable = [arguments objectAtIndex:0];
+
+    if(![self isNull:strEnable])
+    {
+        BOOL enable = [strEnable boolValue];
+
+        [Tune setAppAdTrackingEnabled:enable];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        [self throwInvalidArgsErrorForCommand:command];
+    }
+}
+
 - (void)automateInAppPurchaseEventMeasurement:(CDVInvokedUrlCommand*)command {
     NSLog(@"TunePlugin: automateInAppPurchaseEventMeasurement");
 
@@ -263,22 +286,6 @@ NSString *tuneDeeplinkCallbackId;
 - (void)unregisterDeeplinkListener:(CDVInvokedUrlCommand *)command {
     NSLog(@"TunePlugin: unregisterDeeplinkListener");
     [Tune unregisterDeeplinkListener];
-}
-
-- (void)setDeepLink:(CDVInvokedUrlCommand*)command {
-    NSLog(@"TunePlugin: setDeepLink");
-
-    NSArray *arguments = command.arguments;
-
-    NSString *strURL = [arguments objectAtIndex:0];
-    if (![self isNull:strURL]) {
-        [Tune handleOpenURL:[NSURL URLWithString:strURL] sourceApplication:nil];
-
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }  else {
-        [self throwInvalidArgsErrorForCommand:command];
-    }
 }
 
 - (void)setExistingUser:(CDVInvokedUrlCommand *)command {

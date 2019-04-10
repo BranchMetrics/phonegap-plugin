@@ -42,6 +42,18 @@ TunePlugin.prototype.automateInAppPurchaseEventMeasurement = function(automate) 
 };
 
 /**
+ * @function setAppAdTrackingEnabled
+ * @summary Sets whether app-level ad tracking is enabled.
+ *
+ * @param {boolean} enable true if user has opted-in of ad tracking, false if not
+ */
+TunePlugin.prototype.setAppAdTrackingEnabled = function(enable) {
+    console.log("TunePlugin.js: Calling setAppAdTrackingEnabled");
+    exec(null, null, "TunePlugin", "setAppAdTrackingEnabled", [enable]);
+    return this;
+};
+
+/**
  * IOS Only.
  * TODO: Implement for Android
  */
@@ -157,19 +169,6 @@ TunePlugin.prototype.setAndroidIdSha1 = function(enable) {
 TunePlugin.prototype.setAndroidIdSha256 = function(enable) {
     console.log("TunePlugin.js: Calling setAndroidIdSha256");
     exec(null, null, "TunePlugin", "setAndroidIdSha256", [enable]);
-    return this;
-};
-
-/**
- * @function setDeepLink
- * @summary Set referral url (deeplink).
- * @description Set referral url (deeplink). You usually do not need to call this directly.
- *
- * @param {string} deepLinkUrl deeplink with which app was invoked
- */
-TunePlugin.prototype.setDeepLink = function(deepLinkUrl) {
-    console.log("TunePlugin.js: Calling setDeepLink");
-    exec(null, null, "TunePlugin", "setDeepLink", [deepLinkUrl]);
     return this;
 };
 

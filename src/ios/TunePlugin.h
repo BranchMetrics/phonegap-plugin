@@ -20,6 +20,8 @@
 
 - (void)setDebugMode:(CDVInvokedUrlCommand *)command;
 
+- (void)setAppAdTrackingEnabled:(CDVInvokedUrlCommand *)command;
+
 - (void)setFacebookEventLogging:(CDVInvokedUrlCommand *)command;
 
 // Attribution APIs
@@ -33,7 +35,6 @@
 
 - (void)registerDeeplinkListener:(CDVInvokedUrlCommand *)command;
 - (void)unregisterDeeplinkListener:(CDVInvokedUrlCommand *)command;
-- (void)setDeepLink:(CDVInvokedUrlCommand *)command;
 
 - (void)setExistingUser:(CDVInvokedUrlCommand *)command;
 - (void)measureSession:(CDVInvokedUrlCommand *)command;
