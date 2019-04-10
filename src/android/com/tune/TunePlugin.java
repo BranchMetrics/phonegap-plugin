@@ -76,8 +76,8 @@ public class TunePlugin extends CordovaPlugin {
 
                 if (advertiserId.length() > 0 && advertiserKey.length() > 0) {
                     tune = Tune.init(cordova.getActivity().getApplicationContext(), advertiserId, advertiserKey, packageName);
-                    // TODO: access tuneInternal
-                    //tune.setPluginName("phonegap");
+                    TuneInternal tuneInternal = (TuneInternal)tune;
+                    tuneInternal.setPluginName("phonegap");
 
                     callbackContext.success();
                 } else {
@@ -93,8 +93,8 @@ public class TunePlugin extends CordovaPlugin {
             return true;
 
         } else if (MEASURESESSION.equals(action)) {
-            // TODO: access tuneInternal
-            //tune.measureSessionInternal();
+            TuneInternal tuneInternal = (TuneInternal)tune;
+            tuneInternal.measureSessionInternal();
             callbackContext.success();
             return true;
         } else if (MEASUREEVENTNAME.equals(action)) {
