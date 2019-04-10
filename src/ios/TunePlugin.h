@@ -54,15 +54,4 @@
 - (void)automateInAppPurchaseEventMeasurement:(CDVInvokedUrlCommand *)command;
 - (void)setJailbroken:(CDVInvokedUrlCommand *)command;
 
-// Android specific APIs
-
-- (void)setAndroidId:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdMd5:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdSha1:(CDVInvokedUrlCommand *)command;
-- (void)setAndroidIdSha256:(CDVInvokedUrlCommand *)command;
-
-- (void)setDeviceId:(CDVInvokedUrlCommand *)command;
-- (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command;
-- (void)setEmailCollection:(CDVInvokedUrlCommand *)command;
-
 @end

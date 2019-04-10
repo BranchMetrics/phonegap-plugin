@@ -55,7 +55,6 @@ TunePlugin.prototype.setAppAdTrackingEnabled = function(enable) {
 
 /**
  * IOS Only.
- * TODO: Implement for Android
  */
 TunePlugin.prototype.getAdvertisingId = function(success, failure) {
     console.log("TunePlugin.js: Calling getAdvertisingId");
@@ -137,60 +136,6 @@ TunePlugin.prototype.unregisterDeeplinkListener = function() {
 };
 
 /**
- * Android Only.
- */
-TunePlugin.prototype.setAndroidId = function(enable) {
-    console.log("TunePlugin.js: Calling setAndroidId");
-    exec(null, null, "TunePlugin", "setAndroidId", [enable]);
-    return this;
-};
-
-/**
- * Android Only.
- */
-TunePlugin.prototype.setAndroidIdMd5 = function(enable) {
-    console.log("TunePlugin.js: Calling setAndroidIdMd5");
-    exec(null, null, "TunePlugin", "setAndroidIdMd5", [enable]);
-    return this;
-};
-
-/**
- * Android Only.
- */
-TunePlugin.prototype.setAndroidIdSha1 = function(enable) {
-    console.log("TunePlugin.js: Calling setAndroidIdSha1");
-    exec(null, null, "TunePlugin", "setAndroidIdSha1", [enable]);
-    return this;
-};
-
-/**
- * Android Only.
- */
-TunePlugin.prototype.setAndroidIdSha256 = function(enable) {
-    console.log("TunePlugin.js: Calling setAndroidIdSha256");
-    exec(null, null, "TunePlugin", "setAndroidIdSha256", [enable]);
-    return this;
-};
-
-/**
- * Android only.
- */
-TunePlugin.prototype.setDeviceId = function(enable) {
-    console.log("TunePlugin.js: Calling setDeviceId");
-    exec(null, null, "TunePlugin", "setDeviceId", [enable]);
-    return this;
-};
-
-/**
- * Android only.
- */
-TunePlugin.prototype.setEmailCollection = function(enable) {
-    console.log("TunePlugin.js: Calling setEmailCollection");
-    exec(null, null, "TunePlugin", "setEmailCollection", [enable]);
-    return this;
-};
-
-/**
  * @function setExistingUser
  * @summary Set whether this is an existing user or a new one.
  * @description This is generally used to distinguish users who were using previous versions of the
@@ -216,24 +161,6 @@ TunePlugin.prototype.setExistingUser = function(existingUser) {
 TunePlugin.prototype.setFacebookEventLogging = function(enable, limit) {
     console.log("TunePlugin.js: Calling setFacebookEventLogging");
     exec(null, null, "TunePlugin", "setFacebookEventLogging", [enable, limit]);
-    return this;
-};
-
-/**
- * Android only.
- */
-TunePlugin.prototype.setGoogleAdvertisingId = function(googleAid, isLAT) {
-    console.log("TunePlugin.js: Calling setGoogleAdvertisingId");
-    exec(null, null, "TunePlugin", "setGoogleAdvertisingId", [googleAid, isLAT]);
-    return this;
-};
-
-/**
- * Android only.
- */
-TunePlugin.prototype.setGoogleUserId = function(googleUserId) {
-    console.log("TunePlugin.js: Calling setGoogleUserId");
-    exec(null, null, "TunePlugin", "setGoogleUserId", [googleUserId]);
     return this;
 };
 

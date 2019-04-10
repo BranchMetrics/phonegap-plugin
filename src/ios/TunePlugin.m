@@ -435,48 +435,6 @@ NSString *tuneDeeplinkCallbackId;
     }
 }
 
-#pragma mark - Android only placeholder methods
-
-- (void)setAndroidId:(CDVInvokedUrlCommand*)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setAndroidIdMd5:(CDVInvokedUrlCommand*)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setAndroidIdSha1:(CDVInvokedUrlCommand*)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setAndroidIdSha256:(CDVInvokedUrlCommand*)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setDeviceId:(CDVInvokedUrlCommand*)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setGoogleAdvertisingId:(CDVInvokedUrlCommand *)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setEmailCollection:(CDVInvokedUrlCommand *)command
-{
-    // no-op Android only placeholder method
-}
-
-- (void)setPushNotificationRegistrationId:(CDVInvokedUrlCommand *)command
-{
-    // no-op Android only placeholder method
-}
-
 #pragma mark - Helper Methods
 
 - (TuneEvent *)convertToTuneEvent:(NSDictionary *)dict {
