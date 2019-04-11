@@ -47,6 +47,7 @@
 - (void)getOpenLogId:(CDVInvokedUrlCommand *)command;
 - (void)getIsPayingUser:(CDVInvokedUrlCommand *)command;
 
+- (void)registerCustomTuneLinkDomain:(CDVInvokedUrlCommand *)command;
 - (void)isTuneLink:(CDVInvokedUrlCommand *)command;
 
 // iOS specific APIs

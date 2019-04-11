@@ -50,7 +50,7 @@ public class TunePlugin extends CordovaPlugin {
     private static final String SET_USER_ID = "setUserId";
     private static final String UNREGISTER_DEEPLINK_LISTENER = "unregisterDeeplinkListener";
     private static final String IS_TUNE_LINK = "isTuneLink";
-    private static final String REGISTER_CUSTOM_TUNE_LINK_DOMAIN = "registerCustomTuneLinkDomain"; // not implemented on iOS, fix this.
+    private static final String REGISTER_CUSTOM_TUNE_LINK_DOMAIN = "registerCustomTuneLinkDomain";
 
     // methods only available on iOS
     private static final String GET_ADVERTISING_ID = "getAdvertisingId"; // There is no Tune API to retrieve the GAID
