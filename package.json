@@ -27,7 +27,7 @@
   ],
   "engines": [
     {
-      "name": "cordova", 
+      "name": "cordova",
       "version": ">=9.0.0"
     }
   ],
@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/MobileAppTracking/phonegap-plugin/issues"
   },
-  "homepage": "https://github.com/MobileAppTracking/phonegap-plugin#readme"
+  "homepage": "https://github.com/MobileAppTracking/phonegap-plugin#readme",
+  "dependencies": {
+    "jsdoc-to-markdown": "^4.0.1"
+  }
 }

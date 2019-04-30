@@ -9,5 +9,5 @@ TUNE PhoneGap Plugin Version : 8.0.0
 
 [Tune Phonegap Documentation](https://tune.docs.branch.io/sdk/phonegap-quick-start/)
 
-[API Documentation](https://htmlpreview.github.io/?https://github.com/BranchMetrics/phonegap-plugin/blob/master/docs/cordova-plugin-tune/8.0.0/index.html)
+[API Documentation](/docs/TunePhonegap.md)
 
