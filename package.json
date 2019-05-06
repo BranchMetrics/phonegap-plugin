@@ -37,7 +37,8 @@
     "url": "https://github.com/MobileAppTracking/phonegap-plugin/issues"
   },
   "homepage": "https://github.com/MobileAppTracking/phonegap-plugin#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "jsdoc-to-markdown": "^4.0.1"
   }
 }
