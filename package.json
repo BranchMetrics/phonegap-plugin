@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-tune",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "This Cordova plugin allows you to measure installs and events with the TUNE SDK.",
   "cordova": {
     "id": "cordova-plugin-tune",
@@ -28,13 +28,17 @@
   "engines": [
     {
       "name": "cordova",
-      "version": ">=3.0.0"
+      "version": ">=9.0.0"
     }
   ],
-  "author": "John Gu",
-  "license": "Apache 2.0",
+  "author": "BranchMetrics Inc",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MobileAppTracking/phonegap-plugin/issues"
   },
-  "homepage": "https://github.com/MobileAppTracking/phonegap-plugin#readme"
+  "homepage": "https://github.com/MobileAppTracking/phonegap-plugin#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "jsdoc-to-markdown": "^4.0.1"
+  }
 }

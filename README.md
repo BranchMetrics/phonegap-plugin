@@ -1,12 +1,13 @@
-# TUNE PhoneGap Plugin
+# Legacy TUNE PhoneGap Plugin
 
-Please see the Quick Start guide here:
+[Get the Branch PhoneGap SDK here!](https://github.com/BranchMetrics/cordova-ionic-phonegap-branch-deep-linking)
 
-[PhoneGap Quick Start](https://developers.tune.com/sdk/phonegap-quick-start/)
+TUNE PhoneGap Plugin Version : 8.0.0
 
-[PhoneGap TUNE API](docs/cordova-plugin-tune/7.0.0/index.html)
+- Android SDK Version        : 6.1.1
+- iOS SDK Version            : 6.1.X
 
-TUNE PhoneGap Plugin Version : 7.0.0
+[Tune Phonegap Documentation](https://tune.docs.branch.io/sdk/phonegap-quick-start/)
 
-- Android SDK Version         : 5.2.3
-- iOS SDK Version             : 5.1.X
+[API Documentation](/docs/TunePhonegap.md)
+

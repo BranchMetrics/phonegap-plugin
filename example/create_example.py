@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 """
-This module can create the TUNE example application using either the latest 
-TUNE SDK, or build it from local TUNE SDK sources.
+Creates the TUNE example application using either the latest TUNE SDK, or from local TUNE SDK sources.
+
+Only supports ANDROID.
 
 Example: Create the project and add the latest version of TUNE
     $ python create_example.py -c
@@ -81,4 +82,5 @@ if args._build or args._run:
 # Run
 if args._run:
 	os.system("cordova run")
+
 
