@@ -1,3 +1,5 @@
+This SDK is deprecated
+
 # Legacy TUNE PhoneGap Plugin
 
 [Get the Branch PhoneGap SDK here!](https://github.com/BranchMetrics/cordova-ionic-phonegap-branch-deep-linking)
